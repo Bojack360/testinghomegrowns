@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Booking Calendar - User</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="event.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <img src="assets/images/Logo.png" alt="Le Café Potager Logo">
+        </div>
+        <div class="mobile-menu-btn" onclick="toggleMenu()">☰</div>
+        <nav>
+            <ul id="nav-list">
+                <li><a href="../index.html#about">About Us</a></li>
+                <li><a href="../index.html#menu">Menu</a></li>
+                <li><a href="event.html">Events</a></li>
+                <li><a href="../merchandise/merchandise.html">Merchandise</a></li>
+                <li><a href="../index.html#news">News Feed</a></li>
+                <li><a href="../login page/login.html" class="btn-account">Log-in</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <button class="nav-btn" id="prevMonth">&lt;</button>
+            <span id="monthYearDisplay">Month Year</span>
+            <button class="nav-btn" id="nextMonth">&gt;</button>
+        </div>
+        
+        <div class="weekdays">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+        </div>
+
+        <div class="days" id="calendarDays">
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Book an Event</h2>
+            </div>
+            
+            <div class="selected-date-display" id="modalDateDisplay">
+            </div>
+
+            <div class="booking-status-info">
+                <p>Your booking request will be sent to admin for approval. You will see it on the calendar once approved.</p>
+            </div>
+
+            <form id="bookingForm">
+                <div class="time-row">
+                    <div class="form-group">
+                        <label for="startTime">Start Time</label>
+                        <input type="time" id="startTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endTime">End Time</label>
+                        <input type="time" id="endTime" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventType">Type of Event</label>
+                    <select id="eventType" required>
+                        <option value="" disabled selected>Select Event Type</option>
+                        <option value="Conference">Conference</option>
+                        <option value="Birthday Party">Birthday Party</option>
+                        <option value="Wedding">Wedding</option>
+                        <option value="Corporate Meeting">Corporate Meeting</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pax">Number of Pax</label>
+                    <input type="number" id="pax" min="1" placeholder="e.g. 50" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" rows="3" placeholder="Any special requests or details..."></textarea>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-cancel" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-book">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="detailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Booking Details</h2>
+            </div>
+            
+            <div class="selected-date-display" id="detailsDateDisplay">
+            </div>
+
+            <div id="bookingDetailsList">
+            </div>
+
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-cancel" id="closeDetailsBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="pendingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Pending Booking</h2>
+            </div>
+            
+            <div class="selected-date-display" id="pendingDateDisplay">
+            </div>
+
+            <div class="pending-info">
+                <p>⏳ This booking is pending admin approval.</p>
+                <p>Once approved, it will appear on the calendar.</p>
+            </div>
+
+            <div id="pendingBookingDetails">
+            </div>
+
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-cancel" id="closePendingBtn">Close</button>
+            </div>
+        </div>
+    </div>
+<script src="event.js"></script>
+</body>
+</html>
