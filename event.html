@@ -19,12 +19,11 @@
         <div class="mobile-menu-btn" onclick="toggleMenu()">☰</div>
         <nav>
             <ul id="nav-list">
-                <li><a href="../index.html#about">About Us</a></li>
-                <li><a href="../index.html#menu">Menu</a></li>
+                <li><a href="index.html#about">About Us</a></li>
                 <li><a href="event.html">Events</a></li>
-                <li><a href="../merchandise/merchandise.html">Merchandise</a></li>
-                <li><a href="../index.html#news">News Feed</a></li>
-                <li><a href="../login page/login.html" class="btn-account">Log-in</a></li>
+                <li><a href="merchandise.html">Merchandise</a></li>
+                <li><a href="newsfeed.html">News Feed</a></li>
+                <li><a href="login.html" class="btn-account">Log-in</a></li>
             </ul>
         </nav>
     </header>
@@ -87,13 +86,19 @@
                     </select>
                 </div>
 
+                <!-- ADD THIS AFTER THE eventType SELECT -->
+                <div class="form-group" id="otherEventTypeGroup" style="display: none;">
+                    <label for="otherEventType">Please specify event type:</label>
+                    <input type="text" id="otherEventType" placeholder="">
+                </div>
+
                 <div class="form-group">
                     <label for="pax">Number of Pax</label>
                     <input type="number" id="pax" min="1" placeholder="e.g. 50" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="description">Description</label>
+                    <label for="description">Requests</label>
                     <textarea id="description" rows="3" placeholder="Any special requests or details..."></textarea>
                 </div>
 
@@ -145,6 +150,7 @@
             </div>
         </div>
     </div>
-<script src="event.js"></script>
+
+    <script type="module" src="event.js"></script>
 </body>
 </html>

@@ -13,17 +13,15 @@
 <body>
     <header>
         <div class="logo">
-        
             <img src="assets/images/Logo.png" alt="Le Café Potager Logo">
         </div>
         <nav>
             <ul id="nav-list">
-                <li><a href="../index.html#about">ABOUT US</a></li>
-                <li><a href="../index.html#menu">MENU</a></li>
-                <li><a href="../Event/event.html">EVENTS</a></li>
-                <li><a href="#merchandise">MERCHANDISE</a></li>
-                <li><a href="../index.html#news">NEWS FEED</a></li>
-                <li><a href="../login page/login.html" class="btn-account">LOG IN</a></li>
+                <li><a href="index.html">ABOUT US</a></li>
+                <li><a href="event.html">EVENTS</a></li>
+                <li><a href="merchadmin.html">MERCHANDISE</a></li>
+                <li><a href="newsfeed.html">NEWS FEED</a></li>
+                <li><a href="login.html" class="btn-account">LOG IN</a></li>
                 <button class="butones" onclick="shoppingCart()">
                     <a id="showcart" href="#" class="cart" style="text-decoration: none;">
                         <img src="assets/images/shoppingcart1.png" alt="cart" width="40" height="40" style="display:block;">
@@ -34,64 +32,11 @@
         </nav>
     </header>
     
-    <div class="apatkabayo">
-        <div class="bayo1">
-            <img id="product1" src="assets/images/whitetee.png" alt="Mandog Shirt" width="100" height="150">
-            <h2>White Tee</h2>
-            <h3>Mandog Shirt!</h3>
-            <h4>₱1000 <button id="addtocrt" class="balhin" data-name="Mandog Shirt" data-price="1000"
-                    data-img="assets/images/whitetee.png">Add To Cart</button></h4>
-        </div>
-        <div class="bayo2">
-            <img id="product2" src="assets/images/blacktee.png" alt="Mandag Shirt" width="100" height="150">
-            <h2>Black Tee</h2>
-            <h3>Mandag Shirt!</h3>
-            <h4>₱900 <button class="balhin" data-name="Mandag Shirt" data-price="900" data-img="assets/images/blacktee.png">Add To
-                    Cart</button></h4>
-        </div>
-        <div class="bayo3">
-            <img id="product3" src="assets/images/whitetee.png" alt="Popoy Shirt" width="100" height="150">
-            <h2>White Tee</h2>
-            <h3>Popoy Shirt!</h3>
-            <h4>₱899 <button class="balhin" data-name="Popoy Shirt" data-price="899" data-img="assets/images/whitetee.png">Add To
-                    Cart</button></h4>
-        </div>
-        <div class="bayo4">
-            <img id="product4" src="assets/images/blacktee.png" alt="Homegrowns T-shirt" width="100" height="150">
-            <h2>Black Tee</h2>
-            <h3>Mandog Shirt!</h3>
-            <h4>₱700 <button class="balhin" data-name="Homegrowns T-shirt" data-price="700"
-                    data-img="assets/images/blacktee.png">Add To Cart</button></h4>
-        </div>
-        <div class="bayo5">
-            <img src="assets/images/whitetee.png" alt="Migo Nico Shirt" width="100" height="150">
-            <h2>White Tee</h2>
-            <h3>Migo Shirt!</h3>
-            <h4>₱800 <button class="balhin" data-name="Migo Nico Shirt" data-price="800"
-                    data-img="assets/images/whitetee.png">Add To Cart</button></h4>
-        </div>
-        <div class="bayo6">
-            <img src="assets/images/blacktee.png" alt="Chupilading" width="100" height="150">
-            <h2>Black Tee</h2>
-            <h3>Chupildo Shirt!</h3>
-            <h4>₱1024 <button class="balhin" data-name="Chupilading" data-price="1024" data-img="assets/images/blacktee.png">Add
-                    To Cart</button></h4>
-        </div>
-        <div id="outofstock" class="bayo7">
-            <img src="assets/images/pulsiras.png" alt="Marvino Gurobino" width="100" height="150">
-            <h2>Mandag Bracelet</h2>
-            <h3>MARVIN!!!</h3>
-            <h4>₱250 <button class="balhin1" data-name="Marvino Gurobino" data-price="250"
-                    data-img="assets/images/pulsiras.png">Out of Stock</button></h4>
-        </div>
-        <div class="bayo8">
-            <img src="assets/images/pulsiras.png" alt="Marvino Gurobino" width="100" height="150">
-            <h2>Mandag Bracelet</h2>
-            <h3>MARVIN!!!</h3>
-            <h4>₱250 <button class="balhin" data-name="Marvino Gurobino" data-price="250"
-                    data-img="assets/images/pulsiras.png">Add To Cart</button></h4>
-        </div>
+    <!-- Dynamic Product Grid - Products will be loaded from localStorage -->
+    <div class="apatkabayo" id="product-grid">
+        <!-- Products will be rendered here by JavaScript -->
     </div>
+    
     <div id="cartcart" class="shoppingcart">
         <div class="cartclass">
             <div class="cartheader">
@@ -134,8 +79,7 @@
         <a><img src="assets/images/fblogo.png" alt="facebooklogo1" width="30" height="25"></a>
         <a><img src="assets/images/iglogo.png" alt="iglogo" width="30" height="25"></a>
     </footer>
-    <script src="merch.js"></script>
+    <script type="module" src="merch.js"></script>
 </body>
 
 </html>
-

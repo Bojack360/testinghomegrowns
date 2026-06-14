@@ -218,23 +218,87 @@ button {
 
 .apatkabayo {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
-    padding: 40px;
-    max-width: 1400px;
-    border-radius: 2%;
-    margin: 120px auto 0;
+    padding: 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.product-card-dynamic {
+    background: rgba(255, 255, 255, 0.05); /* Adjust to your theme */
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.product-card-dynamic:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.product-card-dynamic img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.product-card-dynamic h2 {
+    font-size: 1.2rem;
+    margin: 10px 0 5px;
+    color: #fff;
+}
+
+.product-card-dynamic h3 {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 10px;
+}
+
+.product-card-dynamic h4 {
+    font-size: 1.1rem;
+    color: #f39c12;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
 }
 
 footer {
-    border-top: 1px solid #666666;
-    margin-top: auto;
-    color: white;
-    text-align: center;
+    background-color: #0a0a0a; 
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px 20px;
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    height: 45px;
+    justify-content: center; 
+    align-items: center;     
+    gap: 25px;               
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: auto;
+    position: relative;
+}
+
+/* Style the links/images inside the footer */
+footer a {
+    display: inline-block;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    opacity: 0.8;
+}
+
+footer a:hover {
+    transform: scale(1.1);   /* Slight zoom on hover */
+    opacity: 1;
+}
+
+footer img {
+    display: block;          /* Removes extra space below images */
+    /* If your icons look too small/big, adjust width here */
+    width: 30px; 
+    height: auto;
 }
 
 .cart {
@@ -440,4 +504,27 @@ footer {
     font-size: 10px;
     width: 145px;
     height: 40px;
+}
+
+/* Force modal buttons to be clickable and properly sized */
+.cartclass button,
+#sizeModal button {
+    padding: 10px 20px !important;
+    font-size: 14px !important;
+    margin: 5px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 3000 !important; /* Higher than overlay */
+}
+
+/* Ensure overlay doesn't block clicks when modal is open */
+.shoppingcart[style*="display: block"] {
+    pointer-events: auto !important;
+}
+
+.cartclass {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 3001 !important; /* Highest layer */
 }

@@ -1,0 +1,445 @@
+/* merchadmin.css - Matching Homegrowns Theme */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=system-ui&display=swap');
+
+:root {
+    --bg-dark: #121212;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --accent-gold: #f39c12;
+    --text-white: #ffffff;
+    --text-gray: #aaaaaa;
+    --success: #2ecc71;
+    --danger: #e74c3c;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                url('assets/images/realbg.jpg'); /* Same bg as main site */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: var(--text-white);
+    font-family: system-ui, -apple-system, sans-serif;
+    padding-bottom: 50px;
+}
+
+/* --- NAVBAR (Matching Header) --- */
+.navbar {
+    background: rgba(18, 18, 18, 0.95);
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.navdiv {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.logo img { height: 60px; width: auto; }
+
+.navbar ul {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+    align-items: center;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: var(--text-white);
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+}
+
+.navbar a:hover { color: var(--accent-gold); }
+
+.butones {
+    background: transparent;
+    border: 1px solid var(--text-white);
+    color: var(--text-white);
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.butones:hover {
+    background: var(--text-white);
+    color: #000;
+}
+
+/* --- MAIN CONTAINER --- */
+main {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.panel-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    letter-spacing: 1px;
+}
+
+.add-item-btn {
+    background: var(--accent-gold);
+    color: #000;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.add-item-btn:hover { transform: translateY(-2px); }
+
+/* --- STATS CARDS --- */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    backdrop-filter: blur(5px);
+}
+
+.stat-card h3 {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.stat-card p {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--text-white);
+}
+
+.stat-card.pending p { color: var(--accent-gold); }
+.stat-card.approved p { color: var(--success); }
+.stat-card.declined p { color: var(--danger); }
+
+/* --- FILTERS --- */
+.filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.filter-group label {
+    display: block;
+    color: var(--text-gray);
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+}
+
+.filter-group select,
+.filter-group input {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+    color: var(--text-white);
+    padding: 10px 15px;
+    border-radius: 8px;
+    outline: none;
+}
+
+.clear-filters {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-gray);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.clear-filters:hover { border-color: var(--text-white); color: var(--text-white); }
+
+/* --- TABLES --- */
+.table-container {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow-x: auto;
+    margin-bottom: 50px;
+    backdrop-filter: blur(5px);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+th, td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    color: var(--text-gray);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover { background: rgba(255,255,255,0.02); }
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-badge.pending { background: rgba(243,156,18,0.2); color: var(--accent-gold); }
+.status-badge.approved { background: rgba(46,204,113,0.2); color: var(--success); }
+.status-badge.declined { background: rgba(231,76,60,0.2); color: var(--danger); }
+
+.action-btn.btn-delete {
+    all: unset !important;
+    background-color: #000 !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 15px 40px !important;
+    margin: 10px !important;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+    font-size: 10px !important;
+    width: 145px !important;
+    height: 40px !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+}
+
+.btn-edit,
+.action-btn.btn-edit {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+.product-actions {
+    display: flex !important;
+    gap: 10px !important;
+    justify-content: center !important;
+}
+
+.product-actions .btn-delete {
+    margin: 0 !important; /* Remove extra margin in grid context */
+}
+
+.action-btn:hover { background: rgba(255,255,255,0.1); }
+.btn-approve { border-color: var(--success); color: var(--success); }
+.btn-decline { border-color: var(--danger); color: var(--danger); }
+
+/* --- PRODUCTS GRID --- */
+.products-section h2 {
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.product-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.product-card:hover { transform: translateY(-5px); border-color: var(--accent-gold); }
+
+.product-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+}
+
+.product-card h3 { font-size: 1rem; margin-bottom: 5px; }
+.product-card .price { color: var(--accent-gold); font-weight: bold; margin-bottom: 5px; }
+.product-card .stock { color: var(--text-gray); font-size: 0.8rem; margin-bottom: 15px; }
+
+.product-actions { display: flex; gap: 10px; justify-content: center; }
+.btn-edit { border-color: var(--accent-gold); color: var(--accent-gold); }
+.btn-delete {
+    background-color: #000 !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 15px 40px !important;
+    margin: 10px !important;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+    font-size: 10px !important;
+    width: 145px !important;
+    height: 40px !important;
+    cursor: pointer !important;
+    transition: opacity 0.3s ease !important;
+}
+
+.btn-delete:hover {
+    opacity: 0.8;
+}
+
+/* --- MODALS --- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(5px);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #1a1a1a;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-title {
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    align-items: flex-start;
+}
+
+.detail-label {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    min-width: 140px;
+}
+
+.detail-value {
+    color: var(--text-white);
+    text-align: right;
+    flex: 1;
+}
+
+.detail-input {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+    color: var(--text-white);
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 5px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.modal-actions button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: opacity 0.2s;
+}
+
+.modal-actions button:hover { opacity: 0.8; }
+
+.btn-approve { background: var(--success); color: #fff; }
+.btn-decline { background: var(--danger); color: #fff; }
+.btn-confirm { background: var(--accent-gold); color: #000; }
+.btn-cancel { background: rgba(255,255,255,0.1); color: var(--text-white); }
+
+/* --- FOOTER --- */
+footer {
+    text-align: center;
+    padding: 30px;
+    border-top: 1px solid var(--border-color);
+    margin-top: 50px;
+    background: rgba(0,0,0,0.5);
+}
+
+footer img { opacity: 0.6; transition: opacity 0.3s; margin: 0 10px; }
+footer img:hover { opacity: 1; }
+
+/* Revert Button - Gold Accent */
+.btn-revert {
+    background-color: #f39c12 !important;
+    color: #000 !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    border-radius: 8px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: opacity 0.2s !important;
+}
+
+.btn-revert:hover {
+    opacity: 0.8;
+    background-color: #e67e22 !important;
+}

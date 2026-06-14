@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - Register</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="left-content">
+                <h2>Welcome Back!</h2>
+                <p>Already have an account?</p>
+                <a href="login.html" class="btn-login">Login</a>
+            </div>
+        </div>
+        
+        <div class="formbox">
+            <a href="index.html" class="btn-cancel" title="Cancel">
+                <i class="fas fa-times"></i>
+            </a>
+            
+            <div class="form-container">
+                <h1>Create Account</h1>
+                <p class="subtitle">Register to get started</p>
+                
+                <form action="#" method="POST">
+                    <div class="form-group">
+                        <input type="text" placeholder="Full Name" required>
+                        <i class="fas fa-user"></i>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="email" placeholder="Email Address" required>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="text" placeholder="Username" required>
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="password" placeholder="Password" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="password" placeholder="Confirm Password" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    
+                    <div class="terms">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms">
+                            I agree to the <a href="terms.html" target="_blank">Terms & Conditions</a> 
+                            and <a href="privacy.html" target="_blank">Privacy Policy</a>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Register</button>
+                </form>
+                
+                <div class="already-account">
+                    Already have an account? <a href="login.html">Login here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
