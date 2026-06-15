@@ -141,15 +141,15 @@ function togglePicker(postId, btnEl) {
         `).join('');
     }
 
-    // Show first so we can measure its size
+    // position: fixed uses viewport coords — do NOT add scrollY/scrollX
     picker.style.display = 'block';
 
     const rect    = btnEl.getBoundingClientRect();
     const pickerW = picker.offsetWidth  || 280;
     const pickerH = picker.offsetHeight || 70;
-    let top  = rect.top  + window.scrollY - pickerH - 14;
-    let left = rect.left + window.scrollX + (rect.width / 2) - (pickerW / 2);
-    if (top < window.scrollY + 10) top = rect.bottom + window.scrollY + 10;
+    let top  = rect.top  - pickerH - 10;
+    let left = rect.left + (rect.width / 2) - (pickerW / 2);
+    if (top < 10) top = rect.bottom + 8;
     if (left < 8) left = 8;
     if (left + pickerW > window.innerWidth - 8) left = window.innerWidth - pickerW - 8;
     picker.style.top  = top + 'px';
