@@ -1,8 +1,7 @@
 ﻿import { supabase } from './supabaseConfig.js';
 
-let products      = [];
-let cart          = {};   // { id: { product, qty } }
-let selectedPayment = 'Cash';
+let products = [];
+let cart     = {};
 
 // ── Init ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
@@ -59,8 +58,8 @@ function changeQty(productId, delta) {
     if (!cart[productId]) return;
     cart[productId].qty += delta;
     const maxStock = cart[productId].product.stock_quantity;
-    if (cart[productId].qty <= 0)        { delete cart[productId]; }
-    else if (cart[productId].qty > maxStock) { cart[productId].qty = maxStock; }
+    if (cart[productId].qty <= 0)             { delete cart[productId]; }
+    else if (cart[productId].qty > maxStock)  { cart[productId].qty = maxStock; }
     renderCart();
 }
 
@@ -85,7 +84,6 @@ function renderCart() {
     if (items.length === 0) {
         el.innerHTML = '<p class="cart-empty">No items added yet.</p>';
         document.getElementById('cartTotal').textContent = '&#8369;0.00';
-        updateChange();
         return;
     }
 
@@ -108,18 +106,6 @@ function renderCart() {
     `).join('');
 
     document.getElementById('cartTotal').textContent = '&#8369;' + getTotal().toFixed(2);
-    updateChange();
-}
-
-// ── Payment ───────────────────────────────────────────────────────────────
-function updateChange() {
-    if (selectedPayment !== 'Cash') {
-        document.getElementById('changeAmount').textContent = '&#8369;0.00';
-        return;
-    }
-    const cash   = parseFloat(document.getElementById('cashReceived').value) || 0;
-    const change = Math.max(0, cash - getTotal());
-    document.getElementById('changeAmount').textContent = '&#8369;' + change.toFixed(2);
 }
 
 // ── Process Sale ──────────────────────────────────────────────────────────
@@ -127,16 +113,7 @@ async function processSale() {
     const items = Object.values(cart);
     if (items.length === 0) { alert('Cart is empty.'); return; }
 
-    const total = getTotal();
-
-    if (selectedPayment === 'Cash') {
-        const cash = parseFloat(document.getElementById('cashReceived').value) || 0;
-        if (cash < total) { alert('Cash received is less than the total amount.'); return; }
-    }
-
-    const cash   = selectedPayment === 'Cash' ? (parseFloat(document.getElementById('cashReceived').value) || 0) : null;
-    const change = selectedPayment === 'Cash' ? Math.max(0, cash - total) : null;
-
+    const total    = getTotal();
     const txnItems = items.map(({ product, qty }) => ({
         product_id: product.id,
         name:       product.name,
@@ -145,41 +122,36 @@ async function processSale() {
         subtotal:   parseFloat(product.price) * qty
     }));
 
-    document.getElementById('processBtn').disabled = true;
+    document.getElementById('processBtn').disabled    = true;
     document.getElementById('processBtn').textContent = 'Processing...';
 
     try {
-        // Deduct stock
         for (const { product, qty } of items) {
             const current  = products.find(p => p.id === product.id);
             const newStock = Math.max(0, current.stock_quantity - qty);
             await supabase.from('products').update({ stock_quantity: newStock }).eq('id', product.id);
         }
 
-        // Insert transaction
         const { error } = await supabase.from('pos_transactions').insert({
-            items:          txnItems,
+            items:      txnItems,
             total,
-            payment_method: selectedPayment,
-            cash_received:  cash,
-            change_amount:  change,
-            created_at:     new Date().toISOString()
+            created_at: new Date().toISOString()
         });
         if (error) throw error;
 
-        showReceipt(txnItems, total, selectedPayment, cash, change);
+        showReceipt(txnItems, total);
         await loadProducts();
         clearCart();
 
     } catch (err) {
         alert('Error processing sale: ' + err.message);
     } finally {
-        document.getElementById('processBtn').disabled = false;
+        document.getElementById('processBtn').disabled    = false;
         document.getElementById('processBtn').textContent = 'Process Sale';
     }
 }
 
-function showReceipt(items, total, paymentMethod, cash, change) {
+function showReceipt(items, total) {
     const date = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
     document.getElementById('receiptBody').innerHTML = `
         <div class="receipt">
@@ -192,11 +164,10 @@ function showReceipt(items, total, paymentMethod, cash, change) {
                     </div>`).join('')}
             </div>
             <div class="receipt-divider"></div>
-            <div class="receipt-row total"><span>Total</span><span>&#8369;${total.toFixed(2)}</span></div>
-            <div class="receipt-row"><span>Payment</span><span>${esc(paymentMethod)}</span></div>
-            ${paymentMethod === 'Cash' ? `
-            <div class="receipt-row"><span>Cash</span><span>&#8369;${parseFloat(cash).toFixed(2)}</span></div>
-            <div class="receipt-row"><span>Change</span><span>&#8369;${parseFloat(change).toFixed(2)}</span></div>` : ''}
+            <div class="receipt-row total">
+                <span>Total</span>
+                <span>&#8369;${total.toFixed(2)}</span>
+            </div>
         </div>
     `;
     const modal = document.getElementById('receiptModal');
@@ -204,15 +175,13 @@ function showReceipt(items, total, paymentMethod, cash, change) {
     modal.classList.add('active');
 }
 
-// ── Events (delegation) ───────────────────────────────────────────────────
+// ── Event delegation ──────────────────────────────────────────────────────
 function setupEvents() {
-    // Product tile clicks
     document.getElementById('productsGrid').addEventListener('click', e => {
         const tile = e.target.closest('.product-tile');
         if (tile && !tile.classList.contains('out-of-stock')) addToCart(tile.dataset.id);
     });
 
-    // Cart actions
     document.getElementById('cartItems').addEventListener('click', e => {
         const btn = e.target.closest('[data-action]');
         if (!btn) return;
@@ -222,36 +191,15 @@ function setupEvents() {
         if (btn.dataset.action === 'remove') removeFromCart(id);
     });
 
-    // Clear cart
     document.getElementById('clearCartBtn').addEventListener('click', clearCart);
-
-    // Payment method
-    document.getElementById('paymentBtns').addEventListener('click', e => {
-        const btn = e.target.closest('.pay-btn');
-        if (!btn) return;
-        document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedPayment = btn.dataset.method;
-        document.getElementById('cashSection').style.display = selectedPayment === 'Cash' ? 'block' : 'none';
-        updateChange();
-    });
-
-    // Cash input
-    document.getElementById('cashReceived').addEventListener('input', updateChange);
-
-    // Process sale
     document.getElementById('processBtn').addEventListener('click', processSale);
 
-    // New transaction
     document.getElementById('newTxnBtn').addEventListener('click', () => {
         const modal = document.getElementById('receiptModal');
         modal.style.display = 'none';
         modal.classList.remove('active');
-        document.getElementById('cashReceived').value = '';
-        updateChange();
     });
 
-    // Search
     document.getElementById('searchInput').addEventListener('input', e => {
         const q = e.target.value.toLowerCase();
         renderProducts(products.filter(p => p.name.toLowerCase().includes(q)));

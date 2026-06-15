@@ -144,18 +144,6 @@ body {
 .cart-total-row { display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: bold; margin-bottom: 16px; }
 #cartTotal { color: var(--gold); }
 
-.section-label { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--gray); margin-bottom: 8px; }
-
-.payment-btns { display: flex; gap: 8px; margin-bottom: 14px; }
-.pay-btn { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--white); padding: 9px 4px; border-radius: 8px; cursor: pointer; font-size: 0.82rem; transition: all 0.2s; }
-.pay-btn:hover { border-color: var(--gold); }
-.pay-btn.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: bold; }
-
-.cash-section { margin-bottom: 14px; }
-.cash-input { width: 100%; background: rgba(0,0,0,0.35); border: 1px solid var(--border); color: var(--white); padding: 10px 12px; border-radius: 8px; font-size: 1rem; outline: none; margin-bottom: 8px; transition: border-color 0.2s; }
-.cash-input:focus { border-color: var(--gold); }
-.change-row { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--success); font-weight: bold; }
-
 .btn-process { width: 100%; background: var(--gold); color: #000; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: opacity 0.2s; letter-spacing: 0.5px; }
 .btn-process:hover { opacity: 0.85; }
 
