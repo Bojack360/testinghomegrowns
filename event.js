@@ -165,7 +165,9 @@ function showBookingDetails(dateString) {
     bookingDetailsList.innerHTML = approved.map((b, i) => `
         <div class="booking-card approved">
             <h3>Event #${i + 1}: ${b.type} <span class="status-badge approved">Approved</span></h3>
-            <p><strong>Time:</strong> ${b.start} - ${b.end}</p>
+            <p><strong>Time:</strong> ${b.start} – ${b.end}</p>
+            <p><strong>Venue:</strong> ${b.venue || '—'}</p>
+            <p><strong>Capacity:</strong> ${b.venue_capacity ? b.venue_capacity + ' pax' : '—'}</p>
             <p><strong>Number of Pax:</strong> ${b.pax}</p>
             <p><strong>Description:</strong> ${b.description || 'No description'}</p>
         </div>
@@ -180,7 +182,9 @@ function showPendingDetails(dateString) {
     pendingBookingDetails.innerHTML = pending.map((b, i) => `
         <div class="booking-card pending">
             <h3>Event #${i + 1}: ${b.type} <span class="status-badge pending">Pending</span></h3>
-            <p><strong>Time:</strong> ${b.start} - ${b.end}</p>
+            <p><strong>Time:</strong> ${b.start} – ${b.end}</p>
+            <p><strong>Venue:</strong> ${b.venue || '—'}</p>
+            <p><strong>Capacity:</strong> ${b.venue_capacity ? b.venue_capacity + ' pax' : '—'}</p>
             <p><strong>Number of Pax:</strong> ${b.pax}</p>
             <p><strong>Description:</strong> ${b.description || 'No description'}</p>
             <p><strong>Submitted:</strong> ${b.submittedAt}</p>
@@ -233,6 +237,44 @@ eventTypeSelect.addEventListener('change', () => {
 });
 
 // ==========================================
+// VENUE CAPACITY VALIDATION
+// ==========================================
+const venueSelect       = document.getElementById('venue');
+const paxInput          = document.getElementById('pax');
+const venueCapacityMsg  = document.getElementById('venueCapacityMsg');
+
+const VENUE_CAPACITIES = { 'Veranda': 100, 'Pool': 50, 'Coffee Shop': 50 };
+
+function validateVenueCapacity() {
+    const venue    = venueSelect.value;
+    const pax      = parseInt(paxInput.value);
+    if (!venue || !pax || pax <= 0) { hideVenueError(); return true; }
+    const capacity = VENUE_CAPACITIES[venue];
+    if (pax > capacity) {
+        showVenueError(`Selected venue only accommodates up to ${capacity} pax.`);
+        return false;
+    }
+    hideVenueError();
+    return true;
+}
+
+function showVenueError(msg) {
+    venueCapacityMsg.textContent     = msg;
+    venueCapacityMsg.style.display   = 'block';
+    paxInput.style.borderColor       = '#e74c3c';
+    venueSelect.style.borderColor    = '#e74c3c';
+}
+
+function hideVenueError() {
+    venueCapacityMsg.style.display   = 'none';
+    paxInput.style.borderColor       = '';
+    venueSelect.style.borderColor    = '';
+}
+
+venueSelect.addEventListener('change', validateVenueCapacity);
+paxInput.addEventListener('input',  validateVenueCapacity);
+
+// ==========================================
 // FORM SUBMISSION
 // ==========================================
 bookingForm.addEventListener('submit', async e => {
@@ -241,8 +283,13 @@ bookingForm.addEventListener('submit', async e => {
     const startTime = document.getElementById('startTime').value;
     const endTime   = document.getElementById('endTime').value;
 
+    // Time validation
+    if (startTime === endTime) {
+        alert('End time must be later than start time.');
+        return;
+    }
     if (startTime >= endTime) {
-        alert('End time must be after start time!');
+        alert('End time must be later than start time.');
         return;
     }
 
@@ -251,6 +298,17 @@ bookingForm.addEventListener('submit', async e => {
         finalEventType = otherEventTypeInput.value.trim();
         if (!finalEventType) { alert('Please specify the event type!'); return; }
     }
+
+    // Venue capacity validation
+    if (!venueSelect.value) {
+        alert('Please select a venue.');
+        venueSelect.focus();
+        return;
+    }
+    if (!validateVenueCapacity()) return;
+
+    const venue         = venueSelect.value;
+    const venueCapacity = VENUE_CAPACITIES[venue];
 
     // Double-booking check
     try {
@@ -273,19 +331,21 @@ bookingForm.addEventListener('submit', async e => {
     // Submit booking
     try {
         const { error } = await supabase.from('event_bookings').insert({
-            date:         selectedDate,
-            start:        startTime,
-            end:          endTime,
-            type:         finalEventType,
-            pax:          Number(document.getElementById('pax').value),
-            description:  document.getElementById('description').value,
-            status:       'pending',
-            submitted_at: new Date().toISOString()
+            date:           selectedDate,
+            start:          startTime,
+            end:            endTime,
+            type:           finalEventType,
+            pax:            Number(document.getElementById('pax').value),
+            venue:          venue,
+            venue_capacity: venueCapacity,
+            description:    document.getElementById('description').value,
+            status:         'pending',
+            submitted_at:   new Date().toISOString()
         });
 
         if (error) throw error;
 
-        alert(`Booking Request Submitted!\n\nDate: ${selectedDate}\nTime: ${startTime} - ${endTime}\n\nYour booking is pending admin approval.`);
+        alert(`Booking Request Submitted!\n\nDate: ${selectedDate}\nTime: ${startTime} – ${endTime}\nVenue: ${venue} (${venueCapacity} pax)\n\nYour booking is pending admin approval.`);
         closeBookingModal();
         await loadBookings();
         renderCalendar();

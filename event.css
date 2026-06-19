@@ -726,3 +726,4 @@ nav a:hover {
         font-size: 0.55rem;
     }
 }
+.field-error { color: #e74c3c; font-size: 0.8rem; margin-top: 6px; }
