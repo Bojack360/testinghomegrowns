@@ -94,9 +94,10 @@ function renderBookings() {
         row.innerHTML = `
             <td>#${booking.id.toString().slice(-6).toUpperCase()}</td>
             <td>${booking.date || 'N/A'}</td>
-            <td>${booking.start || ''} - ${booking.end || ''}</td>
+            <td>${booking.start || ''} – ${booking.end || ''}</td>
             <td>${booking.type || 'N/A'}</td>
             <td>${booking.pax || '-'}</td>
+            <td>${booking.venue ? `${booking.venue}<br><small style="color:#aaa;">${booking.venue_capacity ? booking.venue_capacity + ' pax max' : ''}</small>` : '-'}</td>
             <td><span class="status-badge ${booking.status}">${statusText}</span></td>
             <td>${booking.submittedAt}</td>
             <td>
@@ -125,10 +126,12 @@ function viewBooking(bookingId) {
     bookingDetailsContent.innerHTML = `
         <div class="detail-row"><label>Booking ID:</label><span>#${booking.id.toString().slice(-6).toUpperCase()}</span></div>
         <div class="detail-row"><label>Date:</label><span>${booking.date || 'N/A'}</span></div>
-        <div class="detail-row"><label>Time:</label><span>${booking.start || ''} - ${booking.end || ''}</span></div>
+        <div class="detail-row"><label>Time:</label><span>${booking.start || ''} – ${booking.end || ''}</span></div>
         <div class="detail-row"><label>Event Type:</label><span>${booking.type || 'N/A'}</span></div>
         <div class="detail-row"><label>Number of Pax:</label><span>${booking.pax || '-'}</span></div>
-        <div class="detail-row"><label>Description:</label><span>${booking.description || 'No description'}</span></div>
+        <div class="detail-row"><label>Venue:</label><span>${booking.venue || 'N/A'}</span></div>
+        <div class="detail-row"><label>Venue Capacity:</label><span>${booking.venue_capacity ? booking.venue_capacity + ' pax' : 'N/A'}</span></div>
+        <div class="detail-row"><label>Requests:</label><span>${booking.description || 'None'}</span></div>
         <div class="detail-row"><label>Status:</label><span class="status-badge ${booking.status}">${statusText}</span></div>
         <div class="detail-row"><label>Submitted:</label><span>${booking.submittedAt}</span></div>
         ${booking.approvedAt ? `<div class="detail-row"><label>Approved At:</label><span>${booking.approvedAt}</span></div>` : ''}
