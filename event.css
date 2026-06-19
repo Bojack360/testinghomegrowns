@@ -360,17 +360,6 @@ nav a:hover {
     font-size: 1.1rem;
 }
 
-.booking-status-info {
-    background-color: #252525;
-    border: 1px solid #7c5e4a;
-    padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    font-size: 0.9rem;
-    color: #cccccc;
-    line-height: 1.5;
-}
-
 .pending-info {
     background-color: #252525;
     border: 1px solid #7c5e4a;
