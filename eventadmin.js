@@ -15,6 +15,7 @@ const clearFiltersBtn   = document.getElementById('clearFilters');
 const pendingCountEl    = document.getElementById('pendingCount');
 const approvedCountEl   = document.getElementById('approvedCount');
 const rejectedCountEl   = document.getElementById('rejectedCount');
+const completedCountEl  = document.getElementById('completedCount');
 const totalCountEl      = document.getElementById('totalCount');
 
 const detailsModal          = document.getElementById('detailsModal');
@@ -63,10 +64,11 @@ async function loadBookings() {
 // STATS
 // ==========================================
 function updateStats() {
-    pendingCountEl.innerText  = bookings.filter(b => b.status === 'pending').length;
-    approvedCountEl.innerText = bookings.filter(b => b.status === 'approved').length;
-    rejectedCountEl.innerText = bookings.filter(b => b.status === 'rejected').length;
-    totalCountEl.innerText    = bookings.length;
+    pendingCountEl.innerText   = bookings.filter(b => b.status === 'pending').length;
+    approvedCountEl.innerText  = bookings.filter(b => b.status === 'approved').length;
+    rejectedCountEl.innerText  = bookings.filter(b => b.status === 'rejected').length;
+    completedCountEl.innerText = bookings.filter(b => b.status === 'completed').length;
+    totalCountEl.innerText     = bookings.length;
 }
 
 // ==========================================
@@ -105,6 +107,9 @@ function renderBookings() {
                 ${booking.status === 'pending' ? `
                     <button class="action-btn btn-approve" onclick="approveBooking('${booking.id}')">&#10003;</button>
                     <button class="action-btn btn-reject"  onclick="rejectBooking('${booking.id}')">&#10007;</button>
+                ` : ''}
+                ${booking.status === 'approved' ? `
+                    <button class="action-btn btn-complete" onclick="completeBooking('${booking.id}')">&#10003; Done</button>
                 ` : ''}
                 <button class="action-btn btn-delete" onclick="deleteBooking('${booking.id}')">&#128465;</button>
             </td>
@@ -148,10 +153,16 @@ function viewBooking(bookingId) {
             <button type="button" class="btn btn-reject"  onclick="rejectBooking('${booking.id}')">Reject</button>
             <button type="button" class="btn btn-cancel"  onclick="closeDetailsModal()">Close</button>
         `;
+    } else if (booking.status === 'approved') {
+        actionButtons.style.display = 'flex';
+        actionButtons.innerHTML = `
+            <button type="button" class="btn btn-done"   onclick="completeBooking('${booking.id}')">&#10003; Mark as Done</button>
+            <button type="button" class="btn btn-revert" onclick="revertBooking('${booking.id}')">&#8617; Revert to Pending</button>
+            <button type="button" class="btn btn-cancel" onclick="closeDetailsModal()">Close</button>
+        `;
     } else {
         actionButtons.style.display = 'flex';
         actionButtons.innerHTML = `
-            <button type="button" class="btn btn-revert" onclick="revertBooking('${booking.id}')">&#8617; Revert to Pending</button>
             <button type="button" class="btn btn-cancel" onclick="closeDetailsModal()">Close</button>
         `;
     }
@@ -213,6 +224,23 @@ async function deleteBooking(bookingId) {
     }
 }
 
+async function completeBooking(bookingId) {
+    if (!confirm('Mark this booking as Done?\nThe time slot and venue will become available again for new bookings.')) return;
+    try {
+        const { error } = await supabase
+            .from('event_bookings')
+            .update({ status: 'completed', completed_at: new Date().toISOString() })
+            .eq('id', bookingId);
+        if (error) throw error;
+        alert('Booking marked as completed. The slot is now available again.');
+        closeDetailsModal();
+        await loadBookings(); renderBookings(); updateStats();
+    } catch (error) {
+        console.error('Failed to complete booking:', error);
+        alert('Failed to update booking. Please try again.');
+    }
+}
+
 async function revertBooking(bookingId) {
     if (!confirm('Revert this booking to Pending?')) return;
     try {
@@ -259,10 +287,11 @@ rejectBtn.addEventListener('click',  () => { if (selectedBooking) rejectBooking(
 // ==========================================
 // EXPOSE TO GLOBAL SCOPE
 // ==========================================
-window.viewBooking    = viewBooking;
-window.approveBooking = approveBooking;
-window.rejectBooking  = rejectBooking;
-window.deleteBooking  = deleteBooking;
-window.revertBooking  = revertBooking;
+window.viewBooking      = viewBooking;
+window.approveBooking   = approveBooking;
+window.rejectBooking    = rejectBooking;
+window.completeBooking  = completeBooking;
+window.deleteBooking    = deleteBooking;
+window.revertBooking    = revertBooking;
 window.closeDetailsModal = closeDetailsModal;
 window.logout = () => { window.location.href = 'login.html'; };

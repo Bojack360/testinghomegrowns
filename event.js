@@ -65,6 +65,44 @@ async function loadBookings() {
 }
 
 // ==========================================
+// BOOKING HELPERS
+// ==========================================
+function isTimeOverlap(s1, e1, s2, e2) {
+    return s1 < e2 && e1 > s2;
+}
+
+
+function isVenueFullyBooked(dateString, bookings, venue) {
+    const approved = bookings.filter(b => b.status === 'approved' && b.venue === venue && b.start && b.end);
+    if (approved.length === 0) return false;
+
+    const date      = new Date(dateString);
+    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+    const openTime  = isWeekend ? '12:00' : '10:00';
+    const closeTime = '20:00';
+
+    const sorted = approved
+        .map(b => ({ start: b.start, end: b.end }))
+        .sort((a, b) => a.start.localeCompare(b.start));
+
+    const merged = [{ ...sorted[0] }];
+    for (let i = 1; i < sorted.length; i++) {
+        const last = merged[merged.length - 1];
+        if (sorted[i].start <= last.end) {
+            if (sorted[i].end > last.end) last.end = sorted[i].end;
+        } else {
+            merged.push({ ...sorted[i] });
+        }
+    }
+
+    return merged.length === 1 && merged[0].start <= openTime && merged[0].end >= closeTime;
+}
+
+function isDayFullyBooked(dateString, bookings) {
+    return ['Veranda', 'Pool', 'Coffee Shop'].every(v => isVenueFullyBooked(dateString, bookings, v));
+}
+
+// ==========================================
 // CALENDAR RENDERING
 // ==========================================
 function renderCalendar() {
@@ -100,10 +138,16 @@ function renderCalendar() {
             const approved = dateBookings.filter(b => b.status === 'approved');
             const pending  = dateBookings.filter(b => b.status === 'pending');
 
-            if (approved.length > 0) {
+            if (isDayFullyBooked(dateString, dateBookings)) {
                 bookedClass = 'booked';
                 dayContent += `<div class="booked-icon">&#10004;</div>`;
-                dayContent += `<div class="booking-time">${approved[0].start}</div>`;
+                dayContent += `<div class="booking-time">Full</div>`;
+            } else if (approved.length > 0) {
+                const slots = approved
+                    .sort((a, b) => a.start.localeCompare(b.start))
+                    .map(b => `<div class="cal-slot"><span class="cal-slot-time">${b.start}–${b.end}</span><span class="cal-slot-venue">${b.venue || ''}</span></div>`)
+                    .join('');
+                dayContent += `<div class="cal-slot-list">${slots}</div>`;
             } else if (pending.length > 0) {
                 bookedClass = 'pending';
                 dayContent += `<div class="pending-icon">&#9203;</div>`;
@@ -140,11 +184,10 @@ nextMonthBtn.addEventListener('click', async () => {
 // ==========================================
 function handleDayClick(dateString) {
     selectedDate = dateString;
-    if (bookingsData[dateString] && bookingsData[dateString].length > 0) {
-        const approved = bookingsData[dateString].filter(b => b.status === 'approved');
-        const pending  = bookingsData[dateString].filter(b => b.status === 'pending');
-        if (approved.length > 0)     showBookingDetails(dateString);
-        else if (pending.length > 0) showPendingDetails(dateString);
+    const dateBookings = bookingsData[dateString] || [];
+
+    if (isDayFullyBooked(dateString, dateBookings)) {
+        showBookingDetails(dateString);
     } else {
         openBookingForm(dateString);
     }
@@ -155,6 +198,40 @@ function handleDayClick(dateString) {
 // ==========================================
 function openBookingForm(dateString) {
     modalDateDisplay.innerText = `Date: ${dateString}`;
+
+    // Show existing taken slots
+    const dateBookings = bookingsData[dateString] || [];
+    const taken        = dateBookings.filter(b => b.status === 'approved' || b.status === 'pending');
+    const slotsInfo    = document.getElementById('bookedSlotsInfo');
+    const slotsList    = document.getElementById('bookedSlotsList');
+
+    if (taken.length > 0) {
+        slotsList.innerHTML = taken
+            .sort((a, b) => a.start.localeCompare(b.start))
+            .map(b => `<span class="booked-slot-tag ${b.status}">${b.start} – ${b.end}${b.venue ? ' · ' + b.venue : ''}</span>`)
+            .join('');
+        slotsInfo.style.display = 'block';
+    } else {
+        slotsInfo.style.display = 'none';
+    }
+
+    // Disable venues whose entire operating hours are already taken
+    const fullyBookedVenues = new Set(
+        ['Veranda', 'Pool', 'Coffee Shop'].filter(v => isVenueFullyBooked(dateString, dateBookings, v))
+    );
+    updateVenueOptions(fullyBookedVenues);
+
+    const date      = new Date(dateString);
+    const isWeekend = (date.getDay() === 0 || date.getDay() === 6);
+    const startMin  = isWeekend ? '12:00' : '10:00';
+
+    const startInput = document.getElementById('startTime');
+    const endInput   = document.getElementById('endTime');
+    startInput.min = startMin;
+    startInput.max = '20:00';
+    endInput.min   = startMin;
+    endInput.max   = '20:00';
+
     bookingModal.classList.add('active');
     bookingModal.style.display = 'flex';
 }
@@ -164,7 +241,7 @@ function showBookingDetails(dateString) {
     const approved = bookingsData[dateString].filter(b => b.status === 'approved');
     bookingDetailsList.innerHTML = approved.map((b, i) => `
         <div class="booking-card approved">
-            <h3>Event #${i + 1}: ${b.type} <span class="status-badge approved">Approved</span></h3>
+            <h3>Event #${i + 1}: ${b.type} <span class="status-badge approved">Reserved</span></h3>
             <p><strong>Time:</strong> ${b.start} – ${b.end}</p>
             <p><strong>Venue:</strong> ${b.venue || '—'}</p>
             <p><strong>Capacity:</strong> ${b.venue_capacity ? b.venue_capacity + ' pax' : '—'}</p>
@@ -245,6 +322,24 @@ const venueCapacityMsg  = document.getElementById('venueCapacityMsg');
 
 const VENUE_CAPACITIES = { 'Veranda': 100, 'Pool': 50, 'Coffee Shop': 50 };
 
+
+function updateVenueOptions(unavailable = new Set()) {
+    const current = venueSelect.value;
+    venueSelect.innerHTML =
+        '<option value="" disabled>Select Venue</option>' +
+        Object.entries(VENUE_CAPACITIES).map(([name, cap]) => {
+            const booked = unavailable.has(name);
+            return `<option value="${name}" data-capacity="${cap}"${booked ? ' disabled' : ''}>${name}${booked ? ' (Booked)' : ''}</option>`;
+        }).join('');
+
+    if (current && !unavailable.has(current)) {
+        venueSelect.value = current;
+    } else {
+        venueSelect.value = '';
+        hideVenueError();
+    }
+}
+
 function validateVenueCapacity() {
     const venue    = venueSelect.value;
     const pax      = parseInt(paxInput.value);
@@ -271,8 +366,46 @@ function hideVenueError() {
     venueSelect.style.borderColor    = '';
 }
 
-venueSelect.addEventListener('change', validateVenueCapacity);
+venueSelect.addEventListener('change', () => {
+    validateVenueCapacity();
+    const info = document.getElementById('venueMaxPaxInfo');
+    if (venueSelect.value) {
+        info.textContent = `This venue can accommodate up to ${VENUE_CAPACITIES[venueSelect.value]} pax.`;
+        info.style.display = 'block';
+    } else {
+        info.style.display = 'none';
+    }
+});
 paxInput.addEventListener('input',  validateVenueCapacity);
+
+function getUnavailableVenues(dateString, startTime, endTime) {
+    const dateBookings = bookingsData[dateString] || [];
+    const taken        = new Set();
+    dateBookings
+        .filter(b => b.status === 'approved' && b.venue && b.start && b.end)
+        .forEach(b => { if (isTimeOverlap(startTime, endTime, b.start, b.end)) taken.add(b.venue); });
+    return taken;
+}
+
+function refreshVenueAvailability() {
+    const start        = document.getElementById('startTime').value;
+    const end          = document.getElementById('endTime').value;
+    const dateBookings = bookingsData[selectedDate] || [];
+
+    // Always start with venues that are fully booked for the whole day
+    const unavailable = new Set(
+        ['Veranda', 'Pool', 'Coffee Shop'].filter(v => isVenueFullyBooked(selectedDate, dateBookings, v))
+    );
+
+    // Also disable venues that conflict with the chosen time range
+    if (start && end && start < end) {
+        getUnavailableVenues(selectedDate, start, end).forEach(v => unavailable.add(v));
+    }
+
+    updateVenueOptions(unavailable);
+}
+document.getElementById('startTime').addEventListener('change', refreshVenueAvailability);
+document.getElementById('endTime').addEventListener('change',   refreshVenueAvailability);
 
 // ==========================================
 // FORM SUBMISSION
@@ -293,6 +426,20 @@ bookingForm.addEventListener('submit', async e => {
         return;
     }
 
+    // Operating hours validation
+    const bookedDate   = new Date(selectedDate);
+    const isWeekendDay = (bookedDate.getDay() === 0 || bookedDate.getDay() === 6);
+    const openTime     = isWeekendDay ? '12:00' : '10:00';
+    const closeTime    = '20:00';
+    if (startTime < openTime) {
+        alert(`Operating hours: ${isWeekendDay ? 'Weekends open at 12:00 PM' : 'Weekdays open at 10:00 AM'}.\nPlease choose a start time at or after ${openTime}.`);
+        return;
+    }
+    if (endTime > closeTime) {
+        alert('Operating hours end at 8:00 PM.\nPlease choose an end time at or before 8:00 PM.');
+        return;
+    }
+
     let finalEventType = eventTypeSelect.value;
     if (finalEventType === 'Other') {
         finalEventType = otherEventTypeInput.value.trim();
@@ -310,22 +457,25 @@ bookingForm.addEventListener('submit', async e => {
     const venue         = venueSelect.value;
     const venueCapacity = VENUE_CAPACITIES[venue];
 
-    // Double-booking check
+    // Overlap check — same venue + overlapping time is a conflict
     try {
-        const { data: conflicts, error } = await supabase
+        const { data: existing, error } = await supabase
             .from('event_bookings')
-            .select('id')
+            .select('start, end, venue')
             .eq('date', selectedDate)
-            .eq('start', startTime)
+            .eq('venue', venue)
             .in('status', ['approved', 'pending']);
 
         if (error) throw error;
-        if (conflicts.length > 0) {
-            alert('This time slot is already booked or pending approval!\nPlease choose a different time.');
+
+        const overlapping = existing.filter(b => isTimeOverlap(startTime, endTime, b.start, b.end));
+        if (overlapping.length > 0) {
+            const taken = overlapping.map(b => `${b.start} – ${b.end}`).join(', ');
+            alert(`${venue} is already booked from ${taken}.\nPlease choose a different time or venue.`);
             return;
         }
     } catch (error) {
-        console.error('Conflict check failed:', error);
+        console.error('Overlap check failed:', error);
     }
 
     // Submit booking

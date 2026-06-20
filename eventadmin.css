@@ -146,9 +146,10 @@ body {
     color: var(--text-white);
 }
 
-.stat-card.pending p { color: var(--warning); }
-.stat-card.approved p { color: var(--success); }
-.stat-card.rejected p { color: var(--danger); }
+.stat-card.pending   p { color: var(--warning); }
+.stat-card.approved  p { color: var(--success); }
+.stat-card.rejected  p { color: var(--danger);  }
+.stat-card.completed p { color: #aaaaaa;         }
 
 /* --- FILTERS --- */
 .filter-section {
@@ -247,9 +248,10 @@ tr:hover { background: rgba(255,255,255,0.02); }
     text-transform: uppercase;
 }
 
-.status-badge.pending { background: rgba(241,196,15,0.2); color: var(--warning); }
-.status-badge.approved { background: rgba(46,204,113,0.2); color: var(--success); }
-.status-badge.rejected { background: rgba(231,76,60,0.2); color: var(--danger); }
+.status-badge.pending   { background: rgba(241,196,15,0.2);  color: var(--warning); }
+.status-badge.approved  { background: rgba(46,204,113,0.2);  color: var(--success); }
+.status-badge.rejected  { background: rgba(231,76,60,0.2);   color: var(--danger);  }
+.status-badge.completed { background: rgba(100,100,100,0.25); color: #aaaaaa;       }
 
 .action-btn {
     background: transparent;
@@ -264,9 +266,10 @@ tr:hover { background: rgba(255,255,255,0.02); }
 }
 
 .action-btn:hover { background: rgba(255,255,255,0.1); }
-.btn-view { border-color: var(--accent-gold); color: var(--accent-gold); }
-.btn-approve { border-color: var(--success); color: var(--success); }
-.btn-reject { border-color: var(--danger); color: var(--danger); }
+.btn-view     { border-color: var(--accent-gold); color: var(--accent-gold); }
+.btn-approve  { border-color: var(--success);    color: var(--success);     }
+.btn-reject   { border-color: var(--danger);     color: var(--danger);      }
+.btn-complete { border-color: #aaaaaa;           color: #aaaaaa;            }
 
 .no-bookings {
     text-align: center;
@@ -353,9 +356,10 @@ tr:hover { background: rgba(255,255,255,0.02); }
 
 .modal-buttons button:hover { opacity: 0.8; }
 
-.btn-approve { background: var(--success); color: #fff; }
-.btn-reject { background: var(--danger); color: #fff; }
-.btn-cancel { background: rgba(255,255,255,0.1); color: var(--text-white); }
+.btn-approve  { background: var(--success);           color: #fff;              }
+.btn-reject   { background: var(--danger);            color: #fff;              }
+.btn-cancel   { background: rgba(255,255,255,0.1);    color: var(--text-white); }
+.btn-done     { background: rgba(100,100,100,0.35);   color: #cccccc;           }
 
 /* --- RESPONSIVE --- */
 @media (max-width: 768px) {
