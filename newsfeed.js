@@ -52,23 +52,49 @@ function renderFeed() {
         const btnClass  = myOption ? 'react-btn reacted' : 'react-btn';
         const btnLabel  = myOption ? 'Reacted' : 'React';
         const date      = new Date(post.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        const caption   = escHtml(post.caption || '');
 
         return `
             <div class="post-card" id="post-${post.id}">
-                ${mediaHtml}
-                <div class="post-body">
-                    <p class="post-date">${date}</p>
-                    <p class="post-caption">${escHtml(post.caption)}</p>
+                <div class="post-header">
+                    <img class="post-avatar" src="assets/images/Logo.png" alt="The Homegrowns">
+                    <span class="post-username">thehomegrowns</span>
                 </div>
-                <div class="post-footer">
-                    <button class="${btnClass}" id="reactBtn-${post.id}" data-post-id="${post.id}">
-                        ${btnLabel}
-                    </button>
-                    <div class="reaction-tally" id="tally-${post.id}">${tallyHtml}</div>
+                ${mediaHtml}
+                <div class="post-actions">
+                    <div class="action-left">
+                        <button class="${btnClass}" id="reactBtn-${post.id}" data-post-id="${post.id}">
+                            ${btnLabel}
+                        </button>
+                        <div class="reaction-tally" id="tally-${post.id}">${tallyHtml}</div>
+                    </div>
+                </div>
+                <div class="post-body">
+                    <p class="post-caption" id="caption-${post.id}"><span class="post-username-inline">thehomegrowns</span>&nbsp;${caption}</p>
+                    <p class="post-date">${date}</p>
                 </div>
             </div>
         `;
     }).join('');
+
+    setupSeeMore();
+}
+
+function setupSeeMore() {
+    requestAnimationFrame(() => {
+        document.querySelectorAll('.post-caption').forEach(el => {
+            if (el.scrollHeight > el.clientHeight + 2) {
+                const btn = document.createElement('button');
+                btn.className = 'see-more-btn';
+                btn.textContent = '...more';
+                btn.onclick = () => {
+                    el.classList.add('expanded');
+                    btn.remove();
+                };
+                el.after(btn);
+            }
+        });
+    });
 }
 
 function buildMedia(post) {

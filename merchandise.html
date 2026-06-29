@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="merchandise.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
     <title>Merchandise</title>
 </head>
 
@@ -15,16 +16,18 @@
         <div class="logo">
             <img src="assets/images/Logo.png" alt="Le Café Potager Logo">
         </div>
+        <div class="mobile-menu-btn" onclick="toggleMenu()">☰</div>
         <nav>
             <ul id="nav-list">
-                <li><a href="index.html">ABOUT US</a></li>
-                <li><a href="event.html">EVENTS</a></li>
-                <li><a href="merchandise.html">MERCHANDISE</a></li>
-                <li><a href="newsfeed.html">NEWS FEED</a></li>
-                <li><a href="login.html" class="btn-account">LOG IN</a></li>
+                <li><a href="index.html#about">About Us</a></li>
+                <li><a href="index.html#menu">Café Menu</a></li>
+                <li><a href="event.html">Events</a></li>
+                <li><a href="merchandise.html">Merchandise</a></li>
+                <li><a href="newsfeed.html">News Feed</a></li>
+                <li><a href="login.html" class="btn-account">Log-in</a></li>
                 <button class="butones" onclick="shoppingCart()">
-                    <a id="showcart" href="#" class="cart" style="text-decoration: none;">
-                        <img src="assets/images/shoppingcart1.png" alt="cart" width="40" height="40" style="display:block;">
+                    <a id="showcart" href="#" class="cart" style="text-decoration:none;">
+                        <img src="assets/images/shoppingcart1.png" alt="cart" width="36" height="36" style="display:block;">
                         <span id="countercart" class="cartcounter">0</span>
                     </a>
                 </button>
@@ -76,8 +79,8 @@
         </div>
     </div>
     <footer>
-        <a><img src="assets/images/fblogo.png" alt="facebooklogo1" width="30" height="25"></a>
-        <a><img src="assets/images/iglogo.png" alt="iglogo" width="30" height="25"></a>
+        <a href="#"><img src="assets/images/fblogo.png" alt="Facebook"></a>
+        <a href="#"><img src="assets/images/iglogo.png" alt="Instagram"></a>
     </footer>
     <script type="module" src="merch.js"></script>
 </body>

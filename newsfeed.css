@@ -14,7 +14,11 @@
 
 body {
     font-family: var(--font-body);
-    background-color: var(--bg-color);
+    background: linear-gradient(to top, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.5) 50%), url(assets/images/realbg.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
     color: var(--primary-color);
     line-height: 1.6;
     min-height: 100vh;
@@ -41,66 +45,139 @@ nav a:hover { color: var(--accent-color); }
 .page-hero-content p { font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-color); }
 
 /* ── FEED ── */
-.feed-main { max-width: 680px; margin: 0 auto; padding: 50px 20px 80px; }
+.feed-main { max-width: 470px; margin: 0 auto; padding: 120px 0 80px; }
 .loading-text { text-align: center; color: #555; font-style: italic; padding: 60px 0; }
 
 /* ── POST CARD ── */
-.post-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; margin-bottom: 30px; }
+.post-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
 
+/* ── POST HEADER ── */
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+}
+
+.post-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-color);
+    flex-shrink: 0;
+}
+
+.post-username {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    letter-spacing: 0.2px;
+}
+
+/* ── MEDIA ── */
 .post-media img,
 .post-media video { width: 100%; max-height: 520px; object-fit: cover; display: block; }
 
-.post-body { padding: 20px; }
-.post-date { font-size: 0.78rem; color: #555; margin-bottom: 10px; }
-.post-caption { font-size: 1rem; color: var(--primary-color); line-height: 1.7; white-space: pre-wrap; }
-
-/* ── REACTION FOOTER ── */
-.post-footer {
-    padding: 14px 20px;
-    border-top: 1px solid var(--card-border);
+/* ── ACTIONS ── */
+.post-actions {
     display: flex;
     align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-    position: relative;
+    padding: 8px 12px 4px;
+    gap: 10px;
+}
+
+.action-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
 }
 
 .react-btn {
     background: rgba(255,255,255,0.06);
     border: 1px solid #3a3a3a;
     border-radius: 20px;
-    padding: 7px 18px;
-    font-size: 0.88rem;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    font-family: var(--font-body);
     color: var(--primary-color);
     cursor: pointer;
     transition: all 0.2s;
     flex-shrink: 0;
 }
-.react-btn:hover    { background: rgba(255,255,255,0.12); border-color: #555; }
-.react-btn.reacted  { background: rgba(212,197,181,0.18); border-color: var(--accent-color); color: var(--accent-color); }
+.react-btn:hover   { background: rgba(255,255,255,0.12); border-color: #555; }
+.react-btn.reacted { background: rgba(212,197,181,0.18); border-color: var(--accent-color); color: var(--accent-color); }
 
-/* ── REACTION TALLY (shown next to button) ── */
+/* ── REACTION TALLY ── */
 .reaction-tally {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
 }
 
 .tally-item {
     display: flex;
     align-items: center;
-    gap: 4px;
-    background: rgba(255,255,255,0.04);
+    gap: 3px;
+    background: rgba(255,255,255,0.05);
     border: 1px solid #2e2e2e;
-    border-radius: 14px;
-    padding: 3px 10px;
-    font-size: 0.8rem;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 0.78rem;
     color: #aaa;
     cursor: default;
 }
-.tally-item img { width: 22px; height: 22px; object-fit: cover; border-radius: 4px; }
+.tally-item img { width: 18px; height: 18px; object-fit: cover; border-radius: 3px; }
 .tally-item.mine { border-color: var(--accent-color); color: var(--accent-color); }
+
+/* ── POST BODY ── */
+.post-body { padding: 4px 14px 14px; }
+
+.post-caption {
+    font-size: 0.88rem;
+    color: var(--primary-color);
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.post-caption.expanded {
+    display: block;
+    overflow: visible;
+}
+
+.post-username-inline { font-weight: 700; }
+
+.see-more-btn {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 0.82rem;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 3px;
+    display: block;
+    font-family: var(--font-body);
+}
+.see-more-btn:hover { color: var(--primary-color); }
+
+.post-date {
+    font-size: 0.72rem;
+    color: #555;
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
 /* ── REACTION PICKER (Facebook-style horizontal pill) ── */
 .reaction-picker {
@@ -156,15 +233,54 @@ footer { background: #000; padding: 50px 20px; text-align: center; border-top: 1
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-    header { padding: 15px 20px; }
-    .logo img { max-height: 60px; }
-    nav ul { display: none; flex-direction: column; position: absolute; top: 70px; left: 0; width: 100%; background: #121212; text-align: center; padding: 20px 0; border-bottom: 1px solid #333; }
-    nav ul.active { display: flex; }
-    nav ul li { margin: 10px 0; }
-    .btn-account { display: inline-block; margin-top: 10px; }
+    header {
+        padding: 12px 16px;
+        box-sizing: border-box;
+    }
+
+    .logo img { max-height: 55px; }
+
     .mobile-menu-btn { display: block; }
+
+    nav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(18, 18, 18, 0.98);
+        border-top: 1px solid #333;
+        box-sizing: border-box;
+        z-index: 999;
+    }
+
+    nav ul {
+        display: none;
+        flex-direction: column;
+        gap: 0;
+        padding: 8px 0;
+        width: 100%;
+        text-align: center;
+    }
+
+    nav ul.active {
+        display: flex;
+        flex-direction: column;
+    }
+
+    nav ul li { margin: 0; width: 100%; }
+
+    nav a {
+        display: block;
+        padding: 12px 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .btn-account { display: inline-block; margin: 8px 16px; }
+
     .page-hero { height: 32vh; margin-top: 70px; }
     .page-hero-content h1 { font-size: 2.2rem; }
     .picker-inner { max-width: 260px; }
     .picker-option { width: 38px; height: 38px; }
+    .feed-main { padding: 24px 12px 60px; }
+    .post-card { border-radius: 8px; }
 }

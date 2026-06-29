@@ -336,22 +336,31 @@ body {
 }
 
 @media (max-width: 768px) {
+    body {
+        padding: 16px;
+        align-items: flex-start;
+    }
+
     .container {
         height: auto;
-        min-height: 800px;
+        min-height: auto;
+        flex-direction: column;
+        display: flex;
     }
 
     .left-panel,
     .formbox {
         position: relative;
         width: 100%;
-        height: 50%;
+        height: auto;
         right: auto;
         left: auto;
     }
 
     .left-panel {
         border-radius: 20px 20px 0 0;
+        padding: 30px 20px;
+        min-height: 200px;
     }
 
     .left-panel::before {
@@ -360,19 +369,39 @@ body {
 
     .formbox {
         border-radius: 0 0 20px 20px;
+        padding: 30px 20px;
     }
 
     .left-content h2 {
-        font-size: 24px;
+        font-size: 22px;
+    }
+
+    .left-content p {
+        font-size: 13px;
+        margin-bottom: 20px;
     }
 
     .btn-cancel {
         top: 10px;
         right: 10px;
     }
-    
+
     .form-container {
-        padding: 0 20px;
+        padding: 0;
+        max-width: 100%;
+    }
+
+    .form-container h1 {
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 400px) {
+    .btn-register,
+    .btn-login,
+    .btn-submit {
+        font-size: 14px;
+        padding: 10px 20px;
     }
 }
 

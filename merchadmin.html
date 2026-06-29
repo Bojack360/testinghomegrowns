@@ -165,8 +165,16 @@
                 <input type="number" id="new-product-price" class="detail-input" placeholder="e.g., 1000">
             </div>
             <div class="detail-row">
-                <span class="detail-label">Image Path:</span>
-                <input type="text" id="new-product-img" class="detail-input" placeholder="assets/images/whitetee.png">
+                <span class="detail-label">Product Image:</span>
+                <div class="file-picker-group">
+                    <input type="file" id="new-product-img-file" accept="image/*" style="display:none;" onchange="previewProductImage(event)">
+                    <button type="button" class="btn-pick-file" onclick="document.getElementById('new-product-img-file').click()">Choose Image</button>
+                    <span id="file-name-display" class="file-name-display">No file chosen</span>
+                </div>
+            </div>
+            <div class="detail-row" id="img-preview-row" style="display:none;">
+                <span class="detail-label"></span>
+                <img id="product-img-preview" src="" alt="Preview" class="product-img-preview">
             </div>
             <div class="detail-row">
                 <span class="detail-label">Available Sizes:</span>
@@ -182,11 +190,6 @@
             </div>
         </div>
     </div>
-
-    <footer>
-        <a href="#"><img src="assets/images/fblogo.png" alt="Facebook" width="30" height="25"></a>
-        <a href="#"><img src="assets/images/iglogo.png" alt="Instagram" width="30" height="25"></a>
-    </footer>
 
     <script type="module" src="merchadmin.js"></script>
 </body>

@@ -30,6 +30,10 @@
                 <h2>Products</h2>
                 <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
             </div>
+            <div class="category-tabs">
+                <button class="cat-btn active" data-cat="merchandise">Merchandise</button>
+                <button class="cat-btn" data-cat="coffee">Coffee</button>
+            </div>
             <div class="products-grid" id="productsGrid">
                 <p class="loading-msg">Loading products...</p>
             </div>
@@ -47,6 +51,22 @@
             </div>
 
             <div class="cart-footer">
+                <div class="discount-section" id="discountSection" style="display:none;">
+                    <span class="discount-label">Discount</span>
+                    <div class="discount-controls">
+                        <button class="disc-type-btn active" id="discTypePct">%</button>
+                        <button class="disc-type-btn" id="discTypeFixed">&#8369;</button>
+                        <input type="number" id="discountInput" class="discount-input" min="0" placeholder="0">
+                    </div>
+                </div>
+                <div class="subtotal-row" id="subtotalRow" style="display:none;">
+                    <span>Subtotal</span>
+                    <span id="subtotalAmount">&#8369;0.00</span>
+                </div>
+                <div class="discount-amount-row" id="discountLine" style="display:none;">
+                    <span>Discount</span>
+                    <span id="discountAmount" class="discount-value">-&#8369;0.00</span>
+                </div>
                 <div class="cart-total-row">
                     <span>Total</span>
                     <span id="cartTotal">&#8369;0.00</span>

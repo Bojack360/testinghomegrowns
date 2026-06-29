@@ -38,6 +38,7 @@
     <div class="admin-header">
         <h1>Admin Booking Panel</h1>
         <div class="admin-links">
+            <button class="btn btn-create" onclick="openAdminBookingModal()">+ Create Booking</button>
             <a href="event.html" class="btn btn-user">View User Calendar</a>
         </div>
     </div>
@@ -66,6 +67,23 @@
     </div>
 
     
+    <!-- Admin Calendar Overview -->
+    <div class="admin-calendar-section">
+        <h2>Calendar Overview</h2>
+        <div class="admin-calendar-inner">
+            <div class="admin-cal-nav">
+                <button class="nav-btn" id="adminPrevMonth">&lt;</button>
+                <span id="adminMonthYearDisplay">Month Year</span>
+                <button class="nav-btn" id="adminNextMonth">&gt;</button>
+            </div>
+            <div class="admin-weekdays">
+                <div>Sun</div><div>Mon</div><div>Tue</div>
+                <div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+            </div>
+            <div class="admin-days" id="adminCalendarDays"></div>
+        </div>
+    </div>
+
     <div class="filter-section">
         <label for="statusFilter">Filter by Status:</label>
         <select id="statusFilter">
@@ -121,6 +139,81 @@
                 <button type="button" class="btn btn-approve" id="approveBtn">Approve</button>
                 <button type="button" class="btn btn-reject" id="rejectBtn">Reject</button>
                 <button type="button" class="btn btn-cancel" id="closeDetailsBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Create Booking Modal -->
+    <div class="modal-overlay" id="adminBookingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Booking</h2>
+            </div>
+            <form id="adminBookingForm">
+                <div class="detail-row">
+                    <label>Date</label>
+                    <input type="date" id="ab-date" class="form-input" required>
+                </div>
+                <div class="detail-row time-row">
+                    <div>
+                        <label>Start Time</label>
+                        <input type="time" id="ab-start" class="form-input" required>
+                    </div>
+                    <div>
+                        <label>End Time</label>
+                        <input type="time" id="ab-end" class="form-input" required>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <label>Event Type</label>
+                    <select id="ab-type" class="form-input" required>
+                        <option value="" disabled selected>Select Event Type</option>
+                        <option value="Conference">Conference</option>
+                        <option value="Birthday Party">Birthday Party</option>
+                        <option value="Wedding">Wedding</option>
+                        <option value="Corporate Meeting">Corporate Meeting</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="detail-row" id="ab-other-group" style="display:none;">
+                    <label>Specify Event Type</label>
+                    <input type="text" id="ab-other-type" class="form-input" placeholder="Enter event type">
+                </div>
+                <div class="detail-row">
+                    <label>Venue</label>
+                    <select id="ab-venue" class="form-input" required>
+                        <option value="" disabled selected>Select Venue</option>
+                        <option value="Veranda" data-capacity="100">Veranda (max 100 pax)</option>
+                        <option value="Pool" data-capacity="50">Pool (max 50 pax)</option>
+                        <option value="Coffee Shop" data-capacity="50">Coffee Shop (max 50 pax)</option>
+                    </select>
+                </div>
+                <div class="detail-row">
+                    <label>Number of Pax</label>
+                    <input type="number" id="ab-pax" class="form-input" min="1" placeholder="e.g. 50" required>
+                </div>
+                <div class="detail-row">
+                    <label>Requests / Notes</label>
+                    <textarea id="ab-desc" class="form-input" rows="3" placeholder="Any special requests..."></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-cancel" onclick="closeAdminBookingModal()">Cancel</button>
+                    <button type="submit" class="btn btn-approve">Create & Approve</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Day Bookings Modal -->
+    <div class="modal-overlay" id="adminDayModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Bookings</h2>
+            </div>
+            <div class="admin-day-modal-date" id="adminDayModalDate"></div>
+            <div id="adminDayBookingsList"></div>
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-cancel" onclick="closeAdminDayModal()">Close</button>
             </div>
         </div>
     </div>

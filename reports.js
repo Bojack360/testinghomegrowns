@@ -40,7 +40,7 @@ function renderStats(events, orders, pos) {
     document.getElementById('statEvents').textContent  = events.length;
     document.getElementById('statOrders').textContent  = orders.length;
     document.getElementById('statPos').textContent     = pos.length;
-    document.getElementById('statRevenue').textContent = '&#8369;' + (onlineRevenue + posRevenue).toFixed(2);
+    document.getElementById('statRevenue').textContent = '₱' + (onlineRevenue + posRevenue).toFixed(2);
 }
 
 // ── Events ──────────────────────────────────────────────────────────────────
@@ -87,7 +87,7 @@ function renderOrders(orders) {
                 <td>${fmtDateTime(o.created_at)}</td>
                 <td>${esc(o.email || o.customer_email || '-')}</td>
                 <td class="items-cell">${items}</td>
-                <td>&#8369;${parseFloat(o.total || 0).toFixed(2)}</td>
+                <td>₱${parseFloat(o.total || 0).toFixed(2)}</td>
                 <td><span class="status-badge ${statusClass}">${esc(o.status || '-')}</span></td>
             </tr>
         `;
@@ -113,7 +113,7 @@ function renderPos(transactions) {
             <tr>
                 <td>${fmtDateTime(t.created_at)}</td>
                 <td class="items-cell">${items}</td>
-                <td>&#8369;${parseFloat(t.total || 0).toFixed(2)}</td>
+                <td>₱${parseFloat(t.total || 0).toFixed(2)}</td>
                 <td>${esc(t.payment_method || '-')}</td>
             </tr>
         `;

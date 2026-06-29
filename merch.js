@@ -71,10 +71,7 @@ function renderProducts() {
 
     grid.innerHTML = '';
     products.forEach(product => {
-        let imgSrc = product.image_url;
-        if (!imgSrc.startsWith('assets/') && !imgSrc.startsWith('http')) {
-            imgSrc = 'assets/images/' + imgSrc;
-        }
+        const imgSrc = product.image_url || 'assets/images/whitetee.png';
 
         const isOutOfStock = !product.in_stock || product.stock_quantity <= 0;
         const btnText  = isOutOfStock ? 'OUT OF STOCK' : 'Add To Cart';
@@ -404,4 +401,7 @@ window.finalizeOrder     = finalizeOrder;
 window.removeFromCart    = removeFromCart;
 window.changeQty         = changeQty;
 window.closeSuccess      = closeSuccess;
+window.toggleMenu        = () => {
+    document.getElementById('nav-list').classList.toggle('active');
+};
 

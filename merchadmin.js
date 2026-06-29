@@ -120,9 +120,7 @@ function renderProductsGrid() {
     }
 
     products.forEach(product => {
-        const imgSrc = (product.image_url && product.image_url.startsWith('http'))
-            ? product.image_url
-            : (product.image_url || 'assets/images/whitetee.png');
+        const imgSrc = product.image_url || 'assets/images/whitetee.png';
 
         const card = document.createElement('div');
         card.className = 'product-card';
@@ -265,16 +263,42 @@ function openAddProductModal() {
 
 function closeAddProductModal() {
     document.getElementById('addProductModal').style.display = 'none';
-    ['new-product-name','new-product-price','new-product-img','new-product-sizes','new-product-desc']
+    ['new-product-name','new-product-price','new-product-sizes','new-product-desc']
         .forEach(id => { document.getElementById(id).value = ''; });
+    document.getElementById('new-product-img-file').value = '';
+    document.getElementById('file-name-display').textContent = 'No file chosen';
+    document.getElementById('product-img-preview').src = '';
+    document.getElementById('img-preview-row').style.display = 'none';
+}
+
+function previewProductImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    document.getElementById('file-name-display').textContent = file.name;
+    const reader = new FileReader();
+    reader.onload = e => {
+        document.getElementById('product-img-preview').src = e.target.result;
+        document.getElementById('img-preview-row').style.display = 'flex';
+    };
+    reader.readAsDataURL(file);
+}
+
+function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload  = e => resolve(e.target.result);
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsDataURL(file);
+    });
 }
 
 async function addNewProduct() {
     const name        = document.getElementById('new-product-name').value.trim();
     const price       = Number(document.getElementById('new-product-price').value);
-    const image_url   = document.getElementById('new-product-img').value.trim();
     const sizesStr    = document.getElementById('new-product-sizes').value.trim();
     const description = document.getElementById('new-product-desc').value.trim();
+    const fileInput   = document.getElementById('new-product-img-file');
+    const file        = fileInput.files[0];
 
     if (!name || !price) {
         alert('Please fill in at least the product name and price.');
@@ -285,11 +309,17 @@ async function addNewProduct() {
         ? sizesStr.split(',').map(s => s.trim()).filter(s => s)
         : ['S', 'M', 'L', 'XL'];
 
+    let image_url = 'assets/images/whitetee.png';
+
+    if (file) {
+        image_url = await readFileAsDataURL(file);
+    }
+
     try {
         const { error } = await supabase.from('products').insert({
             name,
             price,
-            image_url:      image_url || 'assets/images/whitetee.png',
+            image_url,
             sizes,
             description:    description || '',
             stock_quantity: 50,
@@ -349,9 +379,10 @@ window.updateOrderStatus   = updateOrderStatus;
 window.revertOrder         = revertOrder;
 window.closeModal          = closeModal;
 window.deleteProduct       = deleteProduct;
-window.openAddProductModal = openAddProductModal;
+window.openAddProductModal  = openAddProductModal;
 window.closeAddProductModal = closeAddProductModal;
-window.addNewProduct       = addNewProduct;
+window.addNewProduct        = addNewProduct;
+window.previewProductImage  = previewProductImage;
 window.clearFilters        = clearFilters;
 window.logout = () => { window.location.href = 'login.html'; };
 

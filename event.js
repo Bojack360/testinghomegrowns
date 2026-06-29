@@ -506,3 +506,4 @@ bookingForm.addEventListener('submit', async e => {
 });
 
 window.handleDayClick = handleDayClick;
+window.toggleMenu = () => { document.getElementById('nav-list').classList.toggle('active'); };

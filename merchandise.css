@@ -3,10 +3,13 @@ body {
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
+    background-attachment: fixed;
     min-height: 100vh;
     margin: 0;
-    padding-top: 120px;
+    padding-top: 100px;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 header {
@@ -14,13 +17,21 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 40px;
-    position: absolute;
-    width: 95.8%;
+    padding: 15px 30px;
+    position: fixed;
+    width: 100%;
     top: 0;
     z-index: 1000;
     border-bottom: 1px solid #333;
     font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+.mobile-menu-btn {
+    display: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #f0f0f0;
 }
 
 .logo {
@@ -35,18 +46,26 @@ header {
 nav ul {
     display: flex;
     list-style: none;
-    gap: 10px;
+    gap: 20px;
     align-items: center;
 }
 
+nav li {
+    font-size: inherit;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+
 nav a {
     text-decoration: none;
-    color: rgb(255, 255, 255);
+    color: #f0f0f0;
     font-size: 0.9rem;
+    font-family: 'Lato', sans-serif;
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: color 0.3s;
-    font-family: 'Playfair Display', serif;
 }
 
 nav a:hover {
@@ -54,7 +73,7 @@ nav a:hover {
 }
 
 .logo img {
-    max-height: 100px;
+    max-height: 70px;
     width: auto;
     display: block;
 }
@@ -125,11 +144,11 @@ button {
 }
 
 .butones {
-    background-color: transparent;
-    border-radius: 12px;
+    background: transparent;
     border: none;
-    padding: 15px 40px;
-    margin: 10px;
+    padding: 5px;
+    margin: 0;
+    cursor: pointer;
 }
 
 .section1 {
@@ -223,6 +242,7 @@ button {
     padding: 60px;
     max-width: 1200px;
     margin: 0 auto;
+    flex: 1;
 }
 
 .product-card-dynamic {
@@ -269,20 +289,18 @@ button {
 }
 
 footer {
-    background-color: #0a0a0a; 
+    background-color: #0a0a0a;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 30px 20px;
+    padding: 20px;
     display: flex;
-    justify-content: center; 
-    align-items: center;     
-    gap: 25px;               
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
     width: 100%;
     box-sizing: border-box;
     margin-top: auto;
-    position: relative;
 }
 
-/* Style the links/images inside the footer */
 footer a {
     display: inline-block;
     transition: transform 0.2s ease, opacity 0.2s ease;
@@ -290,14 +308,13 @@ footer a {
 }
 
 footer a:hover {
-    transform: scale(1.1);   /* Slight zoom on hover */
+    transform: scale(1.1);
     opacity: 1;
 }
 
 footer img {
-    display: block;          /* Removes extra space below images */
-    /* If your icons look too small/big, adjust width here */
-    width: 30px; 
+    display: block;
+    width: 30px;
     height: auto;
 }
 
@@ -527,4 +544,102 @@ footer img {
     pointer-events: auto !important;
     position: relative !important;
     z-index: 3001 !important; /* Highest layer */
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+@media (max-width: 768px) {
+    body {
+        padding-top: 75px;
+        overflow-x: hidden;
+    }
+
+    header {
+        padding: 10px 16px;
+    }
+
+    .logo img {
+        max-height: 55px;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    nav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(18, 18, 18, 0.98);
+        border-top: 1px solid #333;
+        box-sizing: border-box;
+    }
+
+    nav ul {
+        display: none;
+        flex-direction: column;
+        gap: 0;
+        padding: 8px 0;
+        width: 100%;
+    }
+
+    nav ul.active {
+        display: flex;
+        flex-direction: column;
+    }
+
+    nav li {
+        width: 100%;
+        display: block;
+        margin: 0;
+        font-size: inherit;
+    }
+
+    nav a {
+        display: block;
+        padding: 12px 20px;
+        font-size: 0.9rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .btn-account {
+        margin: 8px 16px;
+        display: inline-block;
+    }
+
+    .butones {
+        display: block !important;
+        width: 100%;
+        text-align: left;
+        padding: 12px 20px !important;
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .apatkabayo {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .product-card-dynamic img {
+        height: 150px;
+    }
+
+    .product-card-dynamic h2 {
+        font-size: 1rem;
+    }
+
+    .cartclass {
+        margin: 2% auto;
+        width: 95%;
+        padding: 16px;
+    }
+}
+
+@media (max-width: 400px) {
+    .apatkabayo {
+        grid-template-columns: 1fr;
+    }
 }
