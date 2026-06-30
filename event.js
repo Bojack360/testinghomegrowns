@@ -1,6 +1,6 @@
 ﻿import { supabase } from './supabaseConfig.js';
 import { initReveal } from './animations.js';
-import { requireAuth, initNavAuth } from './auth.js';
+import { requireAuth, initNavAuth, getUser } from './auth.js';
 
 // ==========================================
 // GLOBAL STATE & DOM ELEMENTS
@@ -487,6 +487,7 @@ bookingForm.addEventListener('submit', async e => {
 
     // Submit booking
     try {
+        const user = await getUser();
         const { error } = await supabase.from('event_bookings').insert({
             date:           selectedDate,
             start:          startTime,
@@ -496,6 +497,7 @@ bookingForm.addEventListener('submit', async e => {
             venue:          venue,
             venue_capacity: venueCapacity,
             description:    document.getElementById('description').value,
+            customer_email: user?.email || '',
             status:         'pending',
             submitted_at:   new Date().toISOString()
         });
