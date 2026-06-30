@@ -265,9 +265,8 @@ async function processSale() {
         }
 
         const { error } = await supabase.from('pos_transactions').insert({
-            items:    txnItems,
+            items:      txnItems,
             total,
-            discount: disc > 0 ? { type: discountType, value: discountValue, amount: disc } : null,
             created_at: new Date().toISOString()
         });
         if (error) throw error;
