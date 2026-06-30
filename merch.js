@@ -1,13 +1,15 @@
 ﻿import { supabase } from './supabaseConfig.js';
 import { initReveal } from './animations.js';
+import { requireAuth, initNavAuth, getUser } from './auth.js';
 
 // ==========================================
 // GLOBAL STATE
 // ==========================================
-let cart        = [];
-let currentItem = null;
-let currentSize = null;
-let products    = [];
+let cart             = [];
+let currentItem      = null;
+let currentSize      = null;
+let products         = [];
+let currentUserEmail = '';
 
 const SIZES = {
     'Mandog Shirt':       ['S', 'M', 'L', 'XL', '2XL'],
@@ -29,6 +31,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderProducts();
     renderCartItems();
     updateCartCounter();
+    initNavAuth();
+    const user = await getUser();
+    if (user) currentUserEmail = user.email || '';
 });
 
 // ==========================================
@@ -105,8 +110,10 @@ function renderProducts() {
 
 function attachAddToCartListeners() {
     document.querySelectorAll('.balhin').forEach(btn => {
-        btn.addEventListener('click', e => {
+        btn.addEventListener('click', async e => {
             e.stopPropagation();
+            const user = await requireAuth();
+            if (!user) return;
             openSizeModal(btn.dataset.name, btn.dataset.price, btn.dataset.img);
         });
     });
@@ -235,7 +242,7 @@ function showConfirmation() {
     if (cart.length === 0) { alert('Your cart is empty!'); return; }
 
     const phone = document.getElementById('custPhone').value.trim();
-    const email = document.getElementById('custEmail').value.trim();
+    const email = currentUserEmail;
     const desc  = document.getElementById('custDesc').value.trim();
 
     if (!phone) { alert('Please enter your phone number.'); return; }
@@ -290,7 +297,7 @@ async function finalizeOrder() {
 
         // Save order
         const { error } = await supabase.from('orders').insert({
-            customer_email: document.getElementById('custEmail').value.trim(),
+            customer_email: currentUserEmail,
             customer_phone: document.getElementById('custPhone').value.trim(),
             pickup_desc:    document.getElementById('custDesc').value.trim(),
             items:          cart.map(i => ({ name: i.name, size: i.size, qty: i.qty, price: i.price })),
@@ -306,7 +313,7 @@ async function finalizeOrder() {
         cart = [];
         updateCartCounter();
         renderCartItems();
-        ['custEmail', 'custPhone', 'custDesc'].forEach(id => {
+        ['custPhone', 'custDesc'].forEach(id => {
             document.getElementById(id).value = '';
         });
 

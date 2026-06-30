@@ -1,5 +1,6 @@
 ﻿import { supabase } from './supabaseConfig.js';
 import { initReveal } from './animations.js';
+import { initNavAuth } from './auth.js';
 
 // ── State ─────────────────────────────────────────────────────────────────
 let posts           = [];
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadAll();
     setupDelegation();
     setupPickerDismiss();
+    initNavAuth();
 });
 
 // ── Load ──────────────────────────────────────────────────────────────────

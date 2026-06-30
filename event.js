@@ -1,5 +1,6 @@
 ﻿import { supabase } from './supabaseConfig.js';
 import { initReveal } from './animations.js';
+import { requireAuth, initNavAuth } from './auth.js';
 
 // ==========================================
 // GLOBAL STATE & DOM ELEMENTS
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadBookings();
     renderCalendar();
     initReveal();
+    initNavAuth();
 });
 
 // ==========================================
@@ -184,7 +186,10 @@ nextMonthBtn.addEventListener('click', async () => {
 // ==========================================
 // DAY CLICK HANDLER
 // ==========================================
-function handleDayClick(dateString) {
+async function handleDayClick(dateString) {
+    const user = await requireAuth();
+    if (!user) return;
+
     selectedDate = dateString;
     const dateBookings = bookingsData[dateString] || [];
 

@@ -28,38 +28,33 @@
                 
                 <form action="#" method="POST">
                     <div class="form-group">
-                        <input type="text" placeholder="Full Name" required>
+                        <input type="text" id="fullname" placeholder="Full Name" required>
                         <i class="fas fa-user"></i>
                     </div>
-                    
+
                     <div class="form-group">
-                        <input type="email" placeholder="Email Address" required>
+                        <input type="email" id="reg-email" placeholder="Email Address" required>
                         <i class="fas fa-envelope"></i>
                     </div>
-                    
+
                     <div class="form-group">
-                        <input type="text" placeholder="Username" required>
-                        <i class="fas fa-user-circle"></i>
-                    </div>
-                    
-                    <div class="form-group">
-                        <input type="password" placeholder="Password" required>
+                        <input type="password" id="reg-password" placeholder="Password" required>
                         <i class="fas fa-lock"></i>
                     </div>
-                    
+
                     <div class="form-group">
-                        <input type="password" placeholder="Confirm Password" required>
+                        <input type="password" id="reg-confirm" placeholder="Confirm Password" required>
                         <i class="fas fa-lock"></i>
                     </div>
-                    
+
                     <div class="terms">
                         <input type="checkbox" id="terms" required>
                         <label for="terms">
-                            I agree to the <a href="terms.html" target="_blank">Terms & Conditions</a> 
+                            I agree to the <a href="terms.html" target="_blank">Terms & Conditions</a>
                             and <a href="privacy.html" target="_blank">Privacy Policy</a>
                         </label>
                     </div>
-                    
+
                     <button type="submit" class="btn-submit">Register</button>
                 </form>
                 
@@ -69,5 +64,6 @@
             </div>
         </div>
     </div>
+    <script type="module" src="register.js"></script>
 </body>
 </html>
