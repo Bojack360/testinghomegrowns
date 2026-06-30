@@ -112,11 +112,10 @@ nav a:hover {
     background: #1a1a1a74;
     width: 90%;
     max-width: 900px;
-    margin: 50px auto;
+    margin: auto;
     border-radius: var(--border-radius);
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     overflow: hidden;
-    margin-bottom: 50px;
     border: 1px solid #333;
 }
 
@@ -855,7 +854,8 @@ footer {
     gap: 25px;
     width: 100%;
     box-sizing: border-box;
-    margin-top: auto;
+    margin-top: 0;
+    flex-shrink: 0;
 }
 
 footer a {
