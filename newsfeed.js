@@ -1,4 +1,5 @@
 ﻿import { supabase } from './supabaseConfig.js';
+import { initReveal } from './animations.js';
 
 // ── State ─────────────────────────────────────────────────────────────────
 let posts           = [];
@@ -45,7 +46,7 @@ function renderFeed() {
         return;
     }
 
-    feedList.innerHTML = posts.map(post => {
+    feedList.innerHTML = posts.map((post, i) => {
         const mediaHtml = buildMedia(post);
         const tallyHtml = buildTally(post.id);
         const myOption  = localStorage.getItem(`reacted_${post.id}`);
@@ -55,7 +56,7 @@ function renderFeed() {
         const caption   = escHtml(post.caption || '');
 
         return `
-            <div class="post-card" id="post-${post.id}">
+            <div class="post-card reveal" id="post-${post.id}" style="transition-delay:${i * 0.09}s">
                 <div class="post-header">
                     <img class="post-avatar" src="assets/images/Logo.png" alt="The Homegrowns">
                     <span class="post-username">thehomegrowns</span>
@@ -77,6 +78,7 @@ function renderFeed() {
         `;
     }).join('');
 
+    initReveal();
     setupSeeMore();
 }
 

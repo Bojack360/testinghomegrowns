@@ -1,0 +1,55 @@
+/* ── PAGE FADE-IN ── */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+body {
+    animation: fadeIn 0.45s ease both;
+}
+
+/* ── HERO ENTRANCE ── */
+.hero-anim {
+    animation: fadeInUp 0.7s 0.1s ease both;
+}
+
+/* ── NAV LINK UNDERLINE ── */
+nav a:not(.btn-account) {
+    position: relative;
+}
+nav a:not(.btn-account)::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 0;
+    height: 1.5px;
+    background: currentColor;
+    opacity: 0.5;
+    transition: width 0.25s ease;
+}
+nav a:not(.btn-account):hover::after {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    nav a:not(.btn-account)::after {
+        display: none;
+    }
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.reveal.visible {
+    opacity: 1;
+    transform: none;
+}

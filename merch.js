@@ -1,4 +1,5 @@
 ﻿import { supabase } from './supabaseConfig.js';
+import { initReveal } from './animations.js';
 
 // ==========================================
 // GLOBAL STATE
@@ -70,7 +71,7 @@ function renderProducts() {
     if (!grid) return;
 
     grid.innerHTML = '';
-    products.forEach(product => {
+    products.forEach((product, i) => {
         const imgSrc = product.image_url || 'assets/images/whitetee.png';
 
         const isOutOfStock = !product.in_stock || product.stock_quantity <= 0;
@@ -79,7 +80,8 @@ function renderProducts() {
         const disabled = isOutOfStock ? 'disabled' : '';
 
         const card = document.createElement('div');
-        card.className = 'bayo-item';
+        card.className = 'bayo-item reveal';
+        card.style.transitionDelay = `${i * 0.07}s`;
         card.innerHTML = `
             <div class="product-card-dynamic">
                 <img src="${imgSrc}" alt="${product.name}" onerror="this.src='assets/images/whitetee.png'">
@@ -98,6 +100,7 @@ function renderProducts() {
     });
 
     attachAddToCartListeners();
+    initReveal();
 }
 
 function attachAddToCartListeners() {

@@ -1,4 +1,5 @@
 ﻿import { supabase } from './supabaseConfig.js';
+import { initReveal } from './animations.js';
 
 // ==========================================
 // GLOBAL STATE & DOM ELEMENTS
@@ -33,6 +34,7 @@ const closePendingBtn   = document.getElementById('closePendingBtn');
 document.addEventListener('DOMContentLoaded', async () => {
     await loadBookings();
     renderCalendar();
+    initReveal();
 });
 
 // ==========================================
