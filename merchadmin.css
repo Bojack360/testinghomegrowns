@@ -227,6 +227,8 @@ td:last-child .action-btn {
 }
 
 .status-badge {
+    display: inline-block;
+    width: fit-content;
     padding: 4px 10px;
     border-radius: 20px;
     font-size: 0.75rem;
@@ -234,9 +236,14 @@ td:last-child .action-btn {
     text-transform: uppercase;
 }
 
-.status-badge.pending { background: rgba(243,156,18,0.2); color: var(--accent-gold); }
+.status-badge.pending  { background: rgba(243,156,18,0.2); color: var(--accent-gold); }
 .status-badge.approved { background: rgba(46,204,113,0.2); color: var(--success); }
 .status-badge.declined { background: rgba(231,76,60,0.2); color: var(--danger); }
+
+.detail-value.status-badge {
+    flex: unset;
+    margin-left: auto;
+}
 
 .action-btn.btn-delete {
     all: unset !important;

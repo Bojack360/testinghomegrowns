@@ -93,7 +93,7 @@ function renderFilteredOrders(filteredOrders) {
             <td>${firstItem.size || '-'}</td>
             <td>${firstItem.qty  || '-'}</td>
             <td>₱${Number(order.total).toLocaleString()}</td>
-            <td><span class="status-badge ${statusClass}">${order.status}</span></td>
+            <td><span class="status-badge ${statusClass}">${order.status === 'Approved' ? 'SOLD' : order.status}</span></td>
             <td>
                 <button class="action-btn btn-view" onclick="viewOrder('${order.id}')">View</button>
                 ${order.status === 'Pending' ? `
@@ -151,7 +151,7 @@ function viewOrder(orderId) {
     document.getElementById('modal-phone').textContent          = order.customer_phone || 'N/A';
     document.getElementById('modal-desc').textContent           = order.pickup_desc    || 'N/A';
     document.getElementById('modal-total').textContent          = `₱${Number(order.total).toLocaleString()}`;
-    document.getElementById('modal-status').textContent         = order.status;
+    document.getElementById('modal-status').textContent         = order.status === 'Approved' ? 'SOLD' : order.status;
     document.getElementById('modal-status').className           = `detail-value status-badge ${order.status.toLowerCase()}`;
     document.getElementById('modal-date-claim').textContent     = order.date_to_claim  || 'Not set';
 

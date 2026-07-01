@@ -58,7 +58,7 @@ function renderEvents(events) {
         <tr>
             <td>${fmtDate(e.date)}</td>
             <td>${esc(e.start)} - ${esc(e.end || '')}</td>
-            <td>${esc(e.event_type || e.eventtype || '-')}</td>
+            <td>${esc(e.type || e.event_type || e.eventtype || '-')}</td>
             <td>${esc(e.pax || '-')}</td>
             <td>${fmtDateTime(e.submitted_at)}</td>
             <td>${fmtDateTime(e.approved_at)}</td>
@@ -81,14 +81,16 @@ function renderOrders(orders) {
         const items = Array.isArray(o.items)
             ? o.items.map(i => `${esc(i.name)} &times;${i.qty || i.quantity || 1}`).join(', ')
             : '-';
-        const statusClass = (o.status || '').toLowerCase();
+        const statusRaw   = (o.status || '').toLowerCase();
+        const statusLabel = statusRaw === 'approved' ? 'SOLD' : esc(o.status || '-');
+        const statusClass = statusRaw === 'approved' ? 'approved' : statusRaw;
         return `
             <tr>
                 <td>${fmtDateTime(o.created_at)}</td>
                 <td>${esc(o.email || o.customer_email || '-')}</td>
                 <td class="items-cell">${items}</td>
                 <td>₱${parseFloat(o.total || 0).toFixed(2)}</td>
-                <td><span class="status-badge ${statusClass}">${esc(o.status || '-')}</span></td>
+                <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
             </tr>
         `;
     }).join('');
