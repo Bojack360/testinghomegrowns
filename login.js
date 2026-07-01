@@ -13,18 +13,18 @@ form.addEventListener('submit', async e => {
     btn.textContent = 'Logging in…';
     btn.disabled = true;
 
-    // Preserved hardcoded admin access
-    if (emailVal === 'admin@gmail.com' && password === 'admin123') {
-        window.location.href = 'merchadmin.html';
-        return;
-    }
-
-    const { error } = await supabase.auth.signInWithPassword({ email: emailVal, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email: emailVal, password });
 
     if (error) {
         showError(error.message);
         btn.textContent = 'Login';
         btn.disabled = false;
+        return;
+    }
+
+    // Admin gets a real Supabase session AND goes to the admin panel
+    if (data.user?.email === 'admin@gmail.com') {
+        window.location.href = 'merchadmin.html';
         return;
     }
 

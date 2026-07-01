@@ -56,7 +56,7 @@
                 </div>
                 <div class="form">
                     <h3>Pickup Details</h3>
-                    <input type="tel" id="custPhone" placeholder="Phone Number" required>
+                    <input type="tel" id="custPhone" placeholder="Phone Number (11 digits)" required maxlength="11" pattern="[0-9]{11}" inputmode="numeric">
                     <textarea id="custDesc" rows="3"
                         placeholder="Pickup Description"></textarea>
                 </div>

@@ -43,6 +43,52 @@ nav a:not(.btn-account):hover::after {
     }
 }
 
+/* ── TOAST NOTIFICATIONS ── */
+#toast-container {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast {
+    background: rgba(14, 14, 14, 0.93);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 13px 22px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.88rem;
+    color: #f0f0f0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+    max-width: 380px;
+    min-width: 220px;
+    text-align: center;
+    line-height: 1.5;
+    border-left: 3px solid #d4c5b5;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+    pointer-events: auto;
+}
+
+.toast.toast-show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast.toast-success { border-left-color: #6ee8a0; }
+.toast.toast-error   { border-left-color: #e74c3c; }
+.toast.toast-warning { border-left-color: #f39c12; }
+.toast.toast-info    { border-left-color: #d4c5b5; }
+
 /* ── SCROLL REVEAL ── */
 .reveal {
     opacity: 0;

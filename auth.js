@@ -22,10 +22,29 @@ export async function initNavAuth() {
 
     if (user) {
         const meta = user.user_metadata || {};
-        const name = (meta.full_name || user.email || '').split('@')[0];
-        loginLink.textContent = name;
+        const fullName = meta.full_name || user.email || '';
+        const initial = fullName.charAt(0).toUpperCase();
+
+        // Turn the login link into a circular avatar
+        loginLink.textContent = initial;
         loginLink.removeAttribute('href');
-        loginLink.style.cursor = 'default';
+        Object.assign(loginLink.style, {
+            width:          '38px',
+            height:         '38px',
+            borderRadius:   '50%',
+            padding:        '0',
+            display:        'flex',
+            alignItems:     'center',
+            justifyContent: 'center',
+            fontWeight:     '700',
+            fontSize:       '1rem',
+            cursor:         'default',
+            background:     'rgba(212,197,181,0.15)',
+            border:         '2px solid #d4c5b5',
+            color:          '#d4c5b5',
+            letterSpacing:  '0',
+            textTransform:  'uppercase',
+        });
 
         const li = loginLink.closest('li');
         if (li && !document.getElementById('nav-logout')) {

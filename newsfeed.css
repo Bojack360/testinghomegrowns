@@ -47,7 +47,7 @@ nav a:hover { color: var(--accent-color); }
 .page-hero-content p { font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-color); }
 
 /* ── FEED ── */
-.feed-main { max-width: 470px; margin: 0 auto; padding: 100px 0 60px; flex: 1; }
+.feed-main { max-width: 470px; margin: 0 auto; padding: 160px 0 60px; flex: 1; }
 .loading-text { text-align: center; color: #555; font-style: italic; padding: 60px 0; }
 
 /* ── POST CARD ── */

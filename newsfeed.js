@@ -1,6 +1,6 @@
 ﻿import { supabase } from './supabaseConfig.js';
 import { initReveal } from './animations.js';
-import { initNavAuth } from './auth.js';
+import { initNavAuth, getUser } from './auth.js';
 
 // ── State ─────────────────────────────────────────────────────────────────
 let posts           = [];
@@ -129,10 +129,15 @@ function escHtml(str) {
 // ── Event delegation (replaces inline onclick) ────────────────────────────
 function setupDelegation() {
     // React button clicks
-    document.getElementById('feedList').addEventListener('click', e => {
+    document.getElementById('feedList').addEventListener('click', async e => {
         const btn = e.target.closest('.react-btn');
         if (btn) {
             e.stopPropagation();
+            const user = await getUser();
+            if (!user) {
+                window.location.href = 'login.html?redirect=newsfeed.html';
+                return;
+            }
             togglePicker(btn.dataset.postId, btn);
             return;
         }

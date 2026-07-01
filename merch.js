@@ -1,6 +1,7 @@
 ﻿import { supabase } from './supabaseConfig.js';
 import { initReveal } from './animations.js';
 import { requireAuth, initNavAuth, getUser } from './auth.js';
+import { showToast } from './toast.js';
 
 // ==========================================
 // GLOBAL STATE
@@ -34,6 +35,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     initNavAuth();
     const user = await getUser();
     if (user) currentUserEmail = user.email || '';
+
+    // Phone input: numbers only, max 11 digits
+    const phoneInput = document.getElementById('custPhone');
+    phoneInput.addEventListener('input', () => {
+        phoneInput.value = phoneInput.value.replace(/\D/g, '').slice(0, 11);
+    });
+    phoneInput.addEventListener('keydown', e => {
+        if (e.key.length === 1 && !/[0-9]/.test(e.key) && !e.ctrlKey && !e.metaKey) {
+            e.preventDefault();
+        }
+    });
 });
 
 // ==========================================
@@ -64,7 +76,7 @@ async function loadProducts() {
         console.log(`Loaded ${products.length} products`);
     } catch (error) {
         console.error('Failed to load products:', error);
-        alert('Could not load products. Please check your internet connection.');
+        showToast('Could not load products. Please check your internet connection.', 'error');
     }
 }
 
@@ -239,13 +251,14 @@ function shoppingCart() {
 // CHECKOUT
 // ==========================================
 function showConfirmation() {
-    if (cart.length === 0) { alert('Your cart is empty!'); return; }
+    if (cart.length === 0) { showToast('Your cart is empty!', 'warning'); return; }
 
     const phone = document.getElementById('custPhone').value.trim();
     const email = currentUserEmail;
     const desc  = document.getElementById('custDesc').value.trim();
 
-    if (!phone) { alert('Please enter your phone number.'); return; }
+    if (!phone) { showToast('Please enter your phone number.', 'warning'); return; }
+    if (!/^\d{11}$/.test(phone)) { showToast('Phone number must be exactly 11 digits.', 'warning'); return; }
 
     const itemLines = cart.map(item => `
         <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
@@ -321,7 +334,7 @@ async function finalizeOrder() {
         renderProducts();
     } catch (error) {
         console.error('Order failed:', error);
-        alert('Something went wrong. Please try again.');
+        showToast('Something went wrong. Please try again.', 'error');
         document.getElementById('confirmModal').style.display = 'block';
     }
 }

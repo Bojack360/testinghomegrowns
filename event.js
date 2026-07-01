@@ -1,6 +1,7 @@
 ﻿import { supabase } from './supabaseConfig.js';
 import { initReveal } from './animations.js';
 import { requireAuth, initNavAuth, getUser } from './auth.js';
+import { showToast } from './toast.js';
 
 // ==========================================
 // GLOBAL STATE & DOM ELEMENTS
@@ -64,7 +65,7 @@ async function loadBookings() {
         console.log(`Loaded bookings for ${Object.keys(bookingsData).length} dates`);
     } catch (error) {
         console.error('Failed to load bookings:', error);
-        alert('Could not load calendar data. Please check your connection.');
+        showToast('Could not load calendar data. Please check your connection.', 'error');
     }
 }
 
@@ -424,12 +425,8 @@ bookingForm.addEventListener('submit', async e => {
     const endTime   = document.getElementById('endTime').value;
 
     // Time validation
-    if (startTime === endTime) {
-        alert('End time must be later than start time.');
-        return;
-    }
-    if (startTime >= endTime) {
-        alert('End time must be later than start time.');
+    if (startTime === endTime || startTime >= endTime) {
+        showToast('End time must be later than start time.', 'warning');
         return;
     }
 
@@ -439,23 +436,23 @@ bookingForm.addEventListener('submit', async e => {
     const openTime     = isWeekendDay ? '12:00' : '10:00';
     const closeTime    = '20:00';
     if (startTime < openTime) {
-        alert(`Operating hours: ${isWeekendDay ? 'Weekends open at 12:00 PM' : 'Weekdays open at 10:00 AM'}.\nPlease choose a start time at or after ${openTime}.`);
+        showToast(`Opens at ${isWeekendDay ? '12:00 PM (weekends)' : '10:00 AM (weekdays)'}. Please pick a later start time.`, 'warning');
         return;
     }
     if (endTime > closeTime) {
-        alert('Operating hours end at 8:00 PM.\nPlease choose an end time at or before 8:00 PM.');
+        showToast('Operating hours end at 8:00 PM. Please choose an earlier end time.', 'warning');
         return;
     }
 
     let finalEventType = eventTypeSelect.value;
     if (finalEventType === 'Other') {
         finalEventType = otherEventTypeInput.value.trim();
-        if (!finalEventType) { alert('Please specify the event type!'); return; }
+        if (!finalEventType) { showToast('Please specify the event type.', 'warning'); return; }
     }
 
     // Venue capacity validation
     if (!venueSelect.value) {
-        alert('Please select a venue.');
+        showToast('Please select a venue.', 'warning');
         venueSelect.focus();
         return;
     }
@@ -478,7 +475,7 @@ bookingForm.addEventListener('submit', async e => {
         const overlapping = existing.filter(b => isTimeOverlap(startTime, endTime, b.start, b.end));
         if (overlapping.length > 0) {
             const taken = overlapping.map(b => `${b.start} – ${b.end}`).join(', ');
-            alert(`${venue} is already booked from ${taken}.\nPlease choose a different time or venue.`);
+            showToast(`${venue} is already booked (${taken}). Please choose a different time or venue.`, 'error', 4500);
             return;
         }
     } catch (error) {
@@ -504,13 +501,13 @@ bookingForm.addEventListener('submit', async e => {
 
         if (error) throw error;
 
-        alert(`Booking Request Submitted!\n\nDate: ${selectedDate}\nTime: ${startTime} – ${endTime}\nVenue: ${venue} (${venueCapacity} pax)\n\nYour booking is pending admin approval.`);
         closeBookingModal();
+        showToast(`Booking submitted for ${selectedDate}, ${startTime}–${endTime} at ${venue}. Pending admin approval.`, 'success', 5000);
         await loadBookings();
         renderCalendar();
     } catch (error) {
         console.error('Failed to submit booking:', error);
-        alert('Failed to submit booking. Please try again.');
+        showToast('Failed to submit booking. Please try again.', 'error');
     }
 });
 
