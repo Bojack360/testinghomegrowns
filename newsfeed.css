@@ -41,7 +41,7 @@ nav a:hover { color: var(--accent-color); }
     height: 40vh;
     background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url("assets/images/realbg.jpg") center/cover fixed;
     display: flex; justify-content: center; align-items: center; text-align: center;
-    margin-top: 80px;
+    margin-top: 130px;
 }
 .page-hero-content h1 { font-family: var(--font-heading); font-size: 3.2rem; font-style: italic; color: #fff; margin-bottom: 10px; }
 .page-hero-content p { font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-color); }
@@ -239,17 +239,120 @@ nav a:hover { color: var(--accent-color); }
 footer {
     background-color: #0a0a0a;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 25px;
+    padding-top: 32px;
     width: 100%;
     box-sizing: border-box;
 }
-footer a { display: inline-block; transition: transform 0.2s ease, opacity 0.2s ease; opacity: 0.8; }
-footer a:hover { transform: scale(1.1); opacity: 1; }
-footer img { display: block; width: 30px; height: auto; }
+
+.footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 60px 24px;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+.footer-col { flex: 1 1 200px; }
+.footer-brand { flex: 1 1 260px; }
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.footer-logo img { height: 42px; width: auto; }
+
+.footer-logo span {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.footer-tagline {
+    font-family: var(--font-heading);
+    font-style: italic;
+    color: var(--accent-color);
+    font-size: 1.05rem;
+    margin-bottom: 12px;
+}
+
+.footer-socials { display: flex; gap: 10px; }
+
+.footer-socials a {
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    opacity: 1;
+}
+
+.footer-socials a:hover {
+    border-color: var(--accent-color);
+    background: rgba(212, 197, 181, 0.1);
+    transform: translateY(-2px);
+}
+
+.footer-socials img {
+    display: block;
+    width: 18px;
+    height: 18px;
+}
+
+.footer-col h4 {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent-color);
+    margin-bottom: 10px;
+}
+
+.footer-col p {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: #cccccc;
+    line-height: 1.7;
+}
+
+.footer-col p strong { color: var(--primary-color); font-weight: 700; }
+
+.footer-link {
+    display: inline-block;
+    color: var(--primary-color);
+    font-size: 0.88rem;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.2s ease;
+    margin-top: 4px;
+}
+
+.footer-link:hover { color: var(--accent-color); border-color: var(--accent-color); }
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 60px;
+    box-sizing: border-box;
+    border-top: 1px dashed rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.78rem;
+    color: #777;
+}
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
@@ -297,10 +400,23 @@ footer img { display: block; width: 30px; height: auto; }
 
     .btn-account { display: inline-block; margin: 8px 16px; }
 
-    .page-hero { height: 32vh; margin-top: 70px; }
+    .page-hero { height: 32vh; margin-top: 90px; }
     .page-hero-content h1 { font-size: 2.2rem; }
     .picker-inner { max-width: 260px; }
     .picker-option { width: 38px; height: 38px; }
-    .feed-main { padding: 24px 12px 60px; }
+    .feed-main { padding: 100px 12px 60px; }
     .post-card { border-radius: 8px; }
+
+    footer { padding-top: 30px; }
+
+    .footer-inner {
+        padding: 0 24px 30px;
+        gap: 28px;
+    }
+
+    .footer-bottom {
+        padding: 16px 24px;
+        justify-content: center;
+        text-align: center;
+    }
 }

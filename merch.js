@@ -28,6 +28,7 @@ const SIZES = {
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
     buildSizeModal();
+    buildProductModal();
     await loadProducts();
     renderProducts();
     renderCartItems();
@@ -101,18 +102,28 @@ function renderProducts() {
         card.style.transitionDelay = `${i * 0.07}s`;
         card.innerHTML = `
             <div class="product-card-dynamic">
-                <img src="${imgSrc}" alt="${product.name}" onerror="this.src='assets/images/whitetee.png'">
-                <h2>${product.name}</h2>
-                <h3>${product.description}</h3>
-                <h4>₱${product.price.toLocaleString()}
-                    <button class="${btnClass}"
-                            data-name="${product.name}"
-                            data-price="${product.price}"
-                            data-img="${imgSrc}"
-                            ${disabled}>${btnText}</button>
-                </h4>
+                <div class="pc-image-wrap">
+                    <img src="${imgSrc}" alt="${product.name}" onerror="this.src='assets/images/whitetee.png'">
+                    ${isOutOfStock ? '<span class="pc-badge">Out of Stock</span>' : ''}
+                </div>
+                <div class="pc-body">
+                    <h2>${product.name}</h2>
+                    <h3>${product.description}</h3>
+                    <h4>
+                        <span class="pc-price">₱${product.price.toLocaleString()}</span>
+                        <button class="${btnClass}"
+                                data-name="${product.name}"
+                                data-price="${product.price}"
+                                data-img="${imgSrc}"
+                                ${disabled}>${btnText}</button>
+                    </h4>
+                </div>
             </div>
         `;
+        card.querySelector('.product-card-dynamic').addEventListener('click', e => {
+            if (e.target.closest('.balhin, .balhin1')) return;
+            openProductModal(product);
+        });
         grid.appendChild(card);
     });
 
@@ -139,16 +150,11 @@ function openSizeModal(name, price, img) {
     const sizes = SIZES[name] || ['S', 'M', 'L', 'XL'];
     currentSize = sizes[0];
 
-    document.getElementById('sm-img').src             = img;
-    document.getElementById('sm-name').textContent    = name;
-    document.getElementById('sm-price').textContent   = formatPrice(price);
-    document.getElementById('sm-chips').innerHTML     = sizes.map((size, i) => `
-        <div onclick="selectSize('${size}', this)" style="
-            background: ${i === 0 ? 'rgba(243,156,18,0.15)' : 'rgba(255,255,255,0.06)'};
-            border: 1.5px solid ${i === 0 ? '#f39c12' : 'rgba(255,255,255,0.18)'};
-            border-radius: 7px; padding: 7px 16px;
-            font-size: 0.82rem; font-weight: 700; cursor: pointer;
-            color: ${i === 0 ? '#f39c12' : '#aaa'};">${size}</div>
+    document.getElementById('sm-img').src           = img;
+    document.getElementById('sm-name').textContent  = name;
+    document.getElementById('sm-price').textContent = formatPrice(price);
+    document.getElementById('sm-chips').innerHTML   = sizes.map((size, i) => `
+        <div class="size-chip${i === 0 ? ' active' : ''}" onclick="selectSize('${size}', this)">${size}</div>
     `).join('');
 
     document.getElementById('sizeModal').style.display = 'block';
@@ -156,10 +162,8 @@ function openSizeModal(name, price, img) {
 
 function selectSize(size, el) {
     currentSize = size;
-    document.querySelectorAll('#sm-chips div').forEach(btn => {
-        Object.assign(btn.style, { borderColor: 'rgba(255,255,255,0.18)', color: '#aaa', background: 'rgba(255,255,255,0.06)' });
-    });
-    Object.assign(el.style, { borderColor: '#f39c12', color: '#f39c12', background: 'rgba(243,156,18,0.15)' });
+    document.querySelectorAll('#sm-chips .size-chip').forEach(chip => chip.classList.remove('active'));
+    el.classList.add('active');
 }
 
 function closeSizeModal() {
@@ -176,11 +180,11 @@ function confirmSize() {
 // ==========================================
 // CART LOGIC
 // ==========================================
-function addToCart(name, price, img, size) {
+function addToCart(name, price, img, size, qty = 1) {
     const key      = `${name}__${size}`;
     const existing = cart.find(item => item.key === key);
-    if (existing) existing.qty++;
-    else cart.push({ key, name, price, img, size, qty: 1 });
+    if (existing) existing.qty += qty;
+    else cart.push({ key, name, price, img, size, qty });
     updateCartCounter();
     renderCartItems();
 }
@@ -216,7 +220,12 @@ function renderCartItems() {
     if (totalEl) totalEl.textContent = '₱' + getTotalPrice().toLocaleString('en-PH', { minimumFractionDigits: 2 });
 
     if (cart.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#ccc; padding:18px 0;">Your cart is empty.</p>';
+        container.innerHTML = `
+            <div class="cart-empty">
+                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                <p>Your cart is empty.</p>
+            </div>
+        `;
         return;
     }
 
@@ -225,19 +234,19 @@ function renderCartItems() {
             <img src="${item.img}" alt="${item.name}">
             <div class="item-details">
                 <h4>${item.name}</h4>
-                <p style="color:#aaa; font-size:0.75rem; margin:2px 0 4px;">Size: <strong style="color:#f39c12;">${item.size}</strong></p>
-                <p>₱${(item.price * item.qty).toLocaleString('en-PH', { minimumFractionDigits: 2 })}</p>
+                <span class="item-size-badge">Size: ${item.size}</span>
+                <p class="item-price">₱${(item.price * item.qty).toLocaleString('en-PH', { minimumFractionDigits: 2 })}</p>
             </div>
-            <div style="display:flex; flex-direction:column; align-items:center; gap:6px; margin:0 10px;">
-                <div style="display:flex; align-items:center; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:8px; overflow:hidden; height:40px;">
-                    <button onclick="changeQty('${item.key}', -1)" style="width:44px; height:100%; background:transparent; border:none; color:rgba(255,255,255,0.8); font-size:1.3rem; cursor:pointer;">&#8722;</button>
-                    <div style="width:1px; height:20px; background:rgba(255,255,255,0.15);"></div>
-                    <span style="min-width:40px; text-align:center; font-weight:600; color:white;">${item.qty}</span>
-                    <div style="width:1px; height:20px; background:rgba(255,255,255,0.15);"></div>
-                    <button onclick="changeQty('${item.key}', 1)" style="width:44px; height:100%; background:transparent; border:none; color:rgba(255,255,255,0.8); font-size:1.3rem; cursor:pointer;">+</button>
-                </div>
+            <div class="qty-stepper">
+                <button onclick="changeQty('${item.key}', -1)">&#8722;</button>
+                <div class="qty-divider"></div>
+                <span>${item.qty}</span>
+                <div class="qty-divider"></div>
+                <button onclick="changeQty('${item.key}', 1)">+</button>
             </div>
-            <button class="remove-btn" onclick="removeFromCart('${item.key}')">Remove</button>
+            <button class="cart-item-remove" onclick="removeFromCart('${item.key}')" title="Remove">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
         </div>
     `).join('');
 }
@@ -261,24 +270,24 @@ function showConfirmation() {
     if (!/^\d{11}$/.test(phone)) { showToast('Phone number must be exactly 11 digits.', 'warning'); return; }
 
     const itemLines = cart.map(item => `
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-            <span>${item.name} <span style="color:#aaa; font-size:0.8rem;">(${item.size}) &times; ${item.qty}</span></span>
-            <span style="color:#f39c12; font-weight:700;">₱${(item.price * item.qty).toLocaleString()}</span>
+        <div class="summary-item-row">
+            <span class="item-name">${item.name} <span class="item-meta">(${item.size}) &times; ${item.qty}</span></span>
+            <span class="item-amount">₱${(item.price * item.qty).toLocaleString()}</span>
         </div>
     `).join('');
 
     document.getElementById('summary').innerHTML = `
-        ${phone ? `<div style="margin-bottom:4px;"><strong>Phone:</strong> ${phone}</div>` : ''}
-        ${email ? `<div style="margin-bottom:4px;"><strong>Email:</strong> ${email}</div>` : ''}
-        ${desc  ? `<div style="margin-bottom:10px;"><strong>Pickup Info:</strong> ${desc}</div>` : ''}
-        <hr style="border:none; border-top:1px solid #444; margin:10px 0;">
+        ${phone ? `<div class="summary-row"><span class="summary-label">Phone</span><span class="summary-value">${phone}</span></div>` : ''}
+        ${email ? `<div class="summary-row"><span class="summary-label">Email</span><span class="summary-value">${email}</span></div>` : ''}
+        ${desc  ? `<div class="summary-row"><span class="summary-label">Pickup Info</span><span class="summary-value">${desc}</span></div>` : ''}
+        <hr class="summary-divider">
         ${itemLines}
-        <hr style="border:none; border-top:1px solid #444; margin:10px 0;">
-        <div style="display:flex; justify-content:space-between; font-weight:700;">
+        <hr class="summary-divider">
+        <div class="summary-total-row">
             <span>Total Payment at Pickup</span>
-            <span style="color:#f39c12;">₱${getTotalPrice().toLocaleString()}</span>
+            <span class="summary-total-amount">₱${getTotalPrice().toLocaleString()}</span>
         </div>
-        <p style="margin-top:12px; font-size:0.78rem; color:#6ee8a0;">Pay cash when you pick up at the cafe.</p>
+        <p class="summary-note">Pay cash when you pick up at the cafe.</p>
     `;
 
     document.getElementById('cartcart').style.display    = 'none';
@@ -348,28 +357,28 @@ function showSuccessPopup() {
     popup.style.cssText = 'display:block; z-index:4000;';
 
     const itemRows = snapshot.map(item => `
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:0.82rem;">
-            <span style="color:#ccc;">${item.name} (${item.size}) &times; ${item.qty}</span>
-            <span style="color:white; font-weight:700;">₱${(item.price * item.qty).toLocaleString()}</span>
+        <div class="summary-item-row">
+            <span class="item-name">${item.name} <span class="item-meta">&times; ${item.qty}</span></span>
+            <span class="item-amount">₱${(item.price * item.qty).toLocaleString()}</span>
         </div>
     `).join('');
 
     popup.innerHTML = `
-        <div class="cartclass" style="max-width:440px; margin:5% auto; text-align:center;">
-            <div style="width:70px; height:70px; border-radius:50%; background:rgba(46,204,113,0.12); border:2px solid #2ecc71; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
-                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <div class="cartclass success-card">
+            <div class="success-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6ee8a0" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
-            <h2 style="color:#f39c12; letter-spacing:2px; margin:0 0 8px;">Order Confirmed!</h2>
-            <p style="color:#aaa; font-size:0.85rem; margin:0 0 16px;">Your pre-order is reserved.<br>CASH ONLY.</p>
-            <div style="text-align:left; background:rgba(255,255,255,0.05); padding:15px; border-radius:8px; margin-bottom:20px;">
+            <h2 class="success-title">Order Confirmed!</h2>
+            <p class="success-sub">Your pre-order is reserved.<br>CASH ONLY.</p>
+            <div class="success-summary">
                 ${itemRows}
-                <hr style="border:none; border-top:1px solid #444; margin:8px 0;">
-                <div style="display:flex; justify-content:space-between; font-weight:700;">
+                <hr class="summary-divider">
+                <div class="summary-total-row">
                     <span>Total Payment at Pickup</span>
-                    <span style="color:#f39c12;">₱${total.toLocaleString()}</span>
+                    <span class="summary-total-amount">₱${total.toLocaleString()}</span>
                 </div>
             </div>
-            <button class="confirm" onclick="closeSuccess()" style="width:100%; padding:13px; font-size:1rem;">Done</button>
+            <button class="confirm" onclick="closeSuccess()" style="width:100%;">Done</button>
         </div>
     `;
     document.body.appendChild(popup);
@@ -389,26 +398,72 @@ function buildSizeModal() {
     modal.style.cssText = 'z-index:3000; pointer-events:none;';
 
     modal.innerHTML = `
-        <div class="cartclass" style="max-width:360px; margin:8% auto; padding:28px; animation:slideDown 0.28s ease-out; pointer-events:auto;">
+        <div class="cartclass size-modal-card">
             <div class="cartheader">
-                <h2 style="margin:0; font-size:1.15rem;">Select Size</h2>
-                <span class="close" onclick="closeSizeModal()" style="cursor:pointer;">&times;</span>
+                <h2 style="font-size:1.15rem;">Select Size</h2>
+                <span class="close" onclick="closeSizeModal()">&times;</span>
             </div>
-            <div style="text-align:center; padding:12px 0;">
-                <img id="sm-img" src="" alt="" style="width:100px; height:100px; object-fit:contain; background:rgba(255,255,255,0.06); border-radius:10px; padding:8px; display:block; margin:0 auto 10px;">
-                <div id="sm-name"  style="font-weight:800; font-size:1rem; color:white; margin-bottom:4px;"></div>
-                <div id="sm-price" style="color:#f39c12; font-weight:900; font-size:1rem; margin-bottom:18px;"></div>
-                <div id="sm-chips" style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:22px;"></div>
-            </div>
-            <div class="cartfooter" style="margin-top:0; display:flex; justify-content:center; gap:10px;">
-                <button class="cancel"  onclick="closeSizeModal()" style="padding:8px 16px !important; font-size:13px !important; min-width:80px;">Cancel</button>
-                <button class="confirm" onclick="confirmSize()"    style="padding:8px 16px !important; font-size:13px !important; min-width:100px;">Add To Cart</button>
+            <img id="sm-img" class="size-modal-img" src="" alt="">
+            <div id="sm-name"  class="size-modal-name"></div>
+            <div id="sm-price" class="size-modal-price"></div>
+            <div class="size-modal-label">Select a Size</div>
+            <div id="sm-chips" class="size-chips"></div>
+            <div class="cartfooter" style="justify-content:center; margin-top:24px;">
+                <button class="cancel"  onclick="closeSizeModal()">Cancel</button>
+                <button class="confirm" onclick="confirmSize()">Add To Cart</button>
             </div>
         </div>
     `;
 
     document.body.appendChild(modal);
     modal.addEventListener('click', e => { if (e.target === modal) closeSizeModal(); });
+}
+
+// ==========================================
+// PRODUCT DETAIL MODAL
+// ==========================================
+function buildProductModal() {
+    const overlay = document.createElement('div');
+    overlay.id        = 'productModal';
+    overlay.className = 'product-modal-overlay';
+
+    overlay.innerHTML = `
+        <div class="product-modal">
+            <span class="product-modal-close" onclick="closeProductModal()">&times;</span>
+            <div class="product-modal-image">
+                <img id="pm-img" src="" alt="">
+            </div>
+            <div class="product-modal-info">
+                <div class="pm-category">Merchandise</div>
+                <h2 class="pm-name" id="pm-name"></h2>
+                <div class="pm-price" id="pm-price"></div>
+                <div class="pm-stock-badge" id="pm-stock"></div>
+                <p class="pm-desc" id="pm-desc"></p>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeProductModal(); });
+}
+
+function openProductModal(product) {
+    const isOutOfStock = !product.in_stock || product.stock_quantity <= 0;
+
+    document.getElementById('pm-img').src          = product.image_url || 'assets/images/whitetee.png';
+    document.getElementById('pm-name').textContent  = product.name;
+    document.getElementById('pm-price').textContent = formatPrice(product.price);
+    document.getElementById('pm-desc').textContent  = product.description || '';
+
+    const stockBadge = document.getElementById('pm-stock');
+    stockBadge.textContent = isOutOfStock ? 'Out of Stock' : 'In Stock';
+    stockBadge.className   = `pm-stock-badge ${isOutOfStock ? 'out-of-stock' : 'in-stock'}`;
+
+    document.getElementById('productModal').classList.add('active');
+}
+
+function closeProductModal() {
+    document.getElementById('productModal').classList.remove('active');
 }
 
 // ==========================================
@@ -424,6 +479,7 @@ window.finalizeOrder     = finalizeOrder;
 window.removeFromCart    = removeFromCart;
 window.changeQty         = changeQty;
 window.closeSuccess      = closeSuccess;
+window.closeProductModal = closeProductModal;
 window.toggleMenu        = () => {
     document.getElementById('nav-list').classList.toggle('active');
 };

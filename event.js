@@ -9,6 +9,7 @@ import { showToast } from './toast.js';
 let currentDate = new Date();
 let selectedDate = null;
 let bookingsData = {};
+let currentUser  = null;
 
 const calendarDays      = document.getElementById('calendarDays');
 const monthYearDisplay  = document.getElementById('monthYearDisplay');
@@ -34,6 +35,7 @@ const closePendingBtn   = document.getElementById('closePendingBtn');
 // INITIALIZATION
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
+    currentUser = await getUser();
     await loadBookings();
     renderCalendar();
     initReveal();
@@ -153,7 +155,7 @@ function renderCalendar() {
                     .map(b => `<div class="cal-slot"><span class="cal-slot-time">${b.start}–${b.end}</span><span class="cal-slot-venue">${b.venue || ''}</span></div>`)
                     .join('');
                 dayContent += `<div class="cal-slot-list">${slots}</div>`;
-            } else if (pending.length > 0) {
+            } else if (pending.length > 0 && currentUser) {
                 bookedClass = 'pending';
                 dayContent += `<div class="pending-icon">&#9203;</div>`;
                 dayContent += `<div class="pending-time">${pending[0].start}</div>`;
