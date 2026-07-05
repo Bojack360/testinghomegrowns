@@ -1037,6 +1037,68 @@ footer {
     line-height: 1.65;
 }
 
+/* ── Preview modal: size / qty / add-to-cart ── */
+.pm-buy {
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pm-section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+.pm-sizes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 26px;
+}
+
+.pm-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pm-qty {
+    height: 46px;
+}
+
+.pm-qty button {
+    width: 42px;
+    font-size: 1.2rem;
+}
+
+.pm-qty span {
+    min-width: 34px;
+    font-size: 0.95rem;
+}
+
+.pm-add-btn {
+    flex: 1;
+    background: var(--accent-color);
+    color: #121212;
+    border: none;
+    border-radius: 24px;
+    padding: 0 24px;
+    height: 46px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.pm-add-btn:hover { background: #c4b5a5; transform: translateY(-1px); }
+
 /* ==========================================
    RESPONSIVE
    ========================================== */

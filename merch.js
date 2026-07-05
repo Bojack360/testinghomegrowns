@@ -7,11 +7,14 @@ import { showToast } from './toast.js';
 // GLOBAL STATE
 // ==========================================
 let cart             = [];
-let currentItem      = null;
-let currentSize      = null;
 let products         = [];
 let currentUserEmail = '';
 let currentUserPhone = '';
+
+// Preview-modal state
+let pmProduct = null;
+let pmSize    = null;
+let pmQty     = 1;
 
 const SIZES = {
     'Mandog Shirt':       ['S', 'M', 'L', 'XL', '2XL'],
@@ -28,7 +31,6 @@ const SIZES = {
 // INITIALIZATION
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
-    buildSizeModal();
     buildProductModal();
     await loadProducts();
     renderProducts();
@@ -86,9 +88,6 @@ function renderProducts() {
         const imgSrc = product.image_url || 'assets/images/whitetee.png';
 
         const isOutOfStock = !product.in_stock || product.stock_quantity <= 0;
-        const btnText  = isOutOfStock ? 'OUT OF STOCK' : 'Add To Cart';
-        const btnClass = isOutOfStock ? 'balhin1' : 'balhin';
-        const disabled = isOutOfStock ? 'disabled' : '';
 
         const card = document.createElement('div');
         card.className = 'bayo-item reveal';
@@ -104,70 +103,17 @@ function renderProducts() {
                     <h3>${product.description}</h3>
                     <h4>
                         <span class="pc-price">₱${product.price.toLocaleString()}</span>
-                        <button class="${btnClass}"
-                                data-name="${product.name}"
-                                data-price="${product.price}"
-                                data-img="${imgSrc}"
-                                ${disabled}>${btnText}</button>
                     </h4>
                 </div>
             </div>
         `;
-        card.querySelector('.product-card-dynamic').addEventListener('click', e => {
-            if (e.target.closest('.balhin, .balhin1')) return;
+        card.querySelector('.product-card-dynamic').addEventListener('click', () => {
             openProductModal(product);
         });
         grid.appendChild(card);
     });
 
-    attachAddToCartListeners();
     initReveal();
-}
-
-function attachAddToCartListeners() {
-    document.querySelectorAll('.balhin').forEach(btn => {
-        btn.addEventListener('click', async e => {
-            e.stopPropagation();
-            const user = await requireAuth();
-            if (!user) return;
-            openSizeModal(btn.dataset.name, btn.dataset.price, btn.dataset.img);
-        });
-    });
-}
-
-// ==========================================
-// SIZE MODAL
-// ==========================================
-function openSizeModal(name, price, img) {
-    currentItem = { name, price: Number(price), img };
-    const sizes = SIZES[name] || ['S', 'M', 'L', 'XL'];
-    currentSize = sizes[0];
-
-    document.getElementById('sm-img').src           = img;
-    document.getElementById('sm-name').textContent  = name;
-    document.getElementById('sm-price').textContent = formatPrice(price);
-    document.getElementById('sm-chips').innerHTML   = sizes.map((size, i) => `
-        <div class="size-chip${i === 0 ? ' active' : ''}" onclick="selectSize('${size}', this)">${size}</div>
-    `).join('');
-
-    document.getElementById('sizeModal').style.display = 'block';
-}
-
-function selectSize(size, el) {
-    currentSize = size;
-    document.querySelectorAll('#sm-chips .size-chip').forEach(chip => chip.classList.remove('active'));
-    el.classList.add('active');
-}
-
-function closeSizeModal() {
-    document.getElementById('sizeModal').style.display = 'none';
-    currentItem = null;
-}
-
-function confirmSize() {
-    if (!currentItem) return;
-    addToCart(currentItem.name, currentItem.price, currentItem.img, currentSize);
-    closeSizeModal();
 }
 
 // ==========================================
@@ -379,38 +325,7 @@ function closeSuccess() {
 }
 
 // ==========================================
-// SIZE MODAL BUILDER
-// ==========================================
-function buildSizeModal() {
-    const modal = document.createElement('div');
-    modal.id        = 'sizeModal';
-    modal.className = 'shoppingcart';
-    modal.style.cssText = 'z-index:3000; pointer-events:none;';
-
-    modal.innerHTML = `
-        <div class="cartclass size-modal-card">
-            <div class="cartheader">
-                <h2 style="font-size:1.15rem;">Select Size</h2>
-                <span class="close" onclick="closeSizeModal()">&times;</span>
-            </div>
-            <img id="sm-img" class="size-modal-img" src="" alt="">
-            <div id="sm-name"  class="size-modal-name"></div>
-            <div id="sm-price" class="size-modal-price"></div>
-            <div class="size-modal-label">Select a Size</div>
-            <div id="sm-chips" class="size-chips"></div>
-            <div class="cartfooter" style="justify-content:center; margin-top:24px;">
-                <button class="cancel"  onclick="closeSizeModal()">Cancel</button>
-                <button class="confirm" onclick="confirmSize()">Add To Cart</button>
-            </div>
-        </div>
-    `;
-
-    document.body.appendChild(modal);
-    modal.addEventListener('click', e => { if (e.target === modal) closeSizeModal(); });
-}
-
-// ==========================================
-// PRODUCT DETAIL MODAL
+// PRODUCT DETAIL MODAL (with size / qty / add-to-cart)
 // ==========================================
 function buildProductModal() {
     const overlay = document.createElement('div');
@@ -429,6 +344,21 @@ function buildProductModal() {
                 <div class="pm-price" id="pm-price"></div>
                 <div class="pm-stock-badge" id="pm-stock"></div>
                 <p class="pm-desc" id="pm-desc"></p>
+
+                <div class="pm-buy" id="pm-buy">
+                    <div class="pm-section-label">Select a Size</div>
+                    <div class="pm-sizes" id="pm-sizes"></div>
+                    <div class="pm-actions">
+                        <div class="qty-stepper pm-qty">
+                            <button type="button" onclick="pmChangeQty(-1)">&#8722;</button>
+                            <div class="qty-divider"></div>
+                            <span id="pm-qty">1</span>
+                            <div class="qty-divider"></div>
+                            <button type="button" onclick="pmChangeQty(1)">+</button>
+                        </div>
+                        <button class="pm-add-btn" id="pm-add-btn" onclick="pmAddToCart()">Add to Cart</button>
+                    </div>
+                </div>
             </div>
         </div>
     `;
@@ -440,16 +370,55 @@ function buildProductModal() {
 function openProductModal(product) {
     const isOutOfStock = !product.in_stock || product.stock_quantity <= 0;
 
-    document.getElementById('pm-img').src          = product.image_url || 'assets/images/whitetee.png';
+    pmProduct = product;
+    pmQty     = 1;
+
+    document.getElementById('pm-img').src           = product.image_url || 'assets/images/whitetee.png';
     document.getElementById('pm-name').textContent  = product.name;
     document.getElementById('pm-price').textContent = formatPrice(product.price);
     document.getElementById('pm-desc').textContent  = product.description || '';
+    document.getElementById('pm-qty').textContent   = '1';
 
     const stockBadge = document.getElementById('pm-stock');
     stockBadge.textContent = isOutOfStock ? 'Out of Stock' : 'In Stock';
     stockBadge.className   = `pm-stock-badge ${isOutOfStock ? 'out-of-stock' : 'in-stock'}`;
 
+    const buySection = document.getElementById('pm-buy');
+    const sizes = (Array.isArray(product.sizes) && product.sizes.length)
+        ? product.sizes
+        : (SIZES[product.name] || ['S', 'M', 'L', 'XL']);
+    pmSize = sizes[0];
+
+    document.getElementById('pm-sizes').innerHTML = sizes.map((size, i) =>
+        `<div class="size-chip${i === 0 ? ' active' : ''}" onclick="pmSelectSize('${size}', this)">${size}</div>`
+    ).join('');
+
+    // Hide the buy controls entirely when the item is out of stock
+    buySection.style.display = isOutOfStock ? 'none' : 'block';
+
     document.getElementById('productModal').classList.add('active');
+}
+
+function pmSelectSize(size, el) {
+    pmSize = size;
+    document.querySelectorAll('#pm-sizes .size-chip').forEach(chip => chip.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function pmChangeQty(change) {
+    pmQty = Math.max(1, pmQty + change);
+    document.getElementById('pm-qty').textContent = pmQty;
+}
+
+async function pmAddToCart() {
+    if (!pmProduct) return;
+    const user = await requireAuth();
+    if (!user) return;
+
+    const img = pmProduct.image_url || 'assets/images/whitetee.png';
+    addToCart(pmProduct.name, pmProduct.price, img, pmSize, pmQty);
+    closeProductModal();
+    showToast(`Added ${pmQty} × ${pmProduct.name} (${pmSize}) to cart.`, 'success');
 }
 
 function closeProductModal() {
@@ -459,9 +428,9 @@ function closeProductModal() {
 // ==========================================
 // EXPOSE TO GLOBAL SCOPE
 // ==========================================
-window.closeSizeModal    = closeSizeModal;
-window.confirmSize       = confirmSize;
-window.selectSize        = selectSize;
+window.pmSelectSize      = pmSelectSize;
+window.pmChangeQty       = pmChangeQty;
+window.pmAddToCart       = pmAddToCart;
 window.shoppingCart      = shoppingCart;
 window.showConfirmation  = showConfirmation;
 window.closeConfirmation = closeConfirmation;
