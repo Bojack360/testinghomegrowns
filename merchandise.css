@@ -602,6 +602,27 @@ footer {
     font-size: 0.85rem;
 }
 
+.qty-stepper .qty-input {
+    width: 46px;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    text-align: center;
+    font-family: var(--font-body);
+    font-weight: 700;
+    color: white;
+    font-size: 0.95rem;
+    padding: 0;
+    -moz-appearance: textfield;
+}
+
+.qty-stepper .qty-input::-webkit-outer-spin-button,
+.qty-stepper .qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .cart-item-remove {
     width: 34px;
     height: 34px;

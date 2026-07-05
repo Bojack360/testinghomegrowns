@@ -356,7 +356,7 @@ function buildProductModal() {
                         <div class="qty-stepper pm-qty">
                             <button type="button" onclick="pmChangeQty(-1)">&#8722;</button>
                             <div class="qty-divider"></div>
-                            <span id="pm-qty">1</span>
+                            <input type="text" id="pm-qty" class="qty-input" value="1" inputmode="numeric" oninput="pmQtyInput()" onblur="pmQtyBlur()">
                             <div class="qty-divider"></div>
                             <button type="button" onclick="pmChangeQty(1)">+</button>
                         </div>
@@ -381,7 +381,7 @@ function openProductModal(product) {
     document.getElementById('pm-name').textContent  = product.name;
     document.getElementById('pm-price').textContent = formatPrice(product.price);
     document.getElementById('pm-desc').textContent  = product.description || '';
-    document.getElementById('pm-qty').textContent   = '1';
+    document.getElementById('pm-qty').value         = '1';
 
     const stockBadge = document.getElementById('pm-stock');
     stockBadge.textContent = isOutOfStock ? 'Out of Stock' : 'In Stock';
@@ -409,13 +409,41 @@ function pmSelectSize(size, el) {
     el.classList.add('active');
 }
 
+// Keep quantity within 1..available stock
+function pmClampQty(n) {
+    const max = pmProduct && pmProduct.stock_quantity > 0 ? pmProduct.stock_quantity : 1;
+    if (!Number.isFinite(n) || n < 1) return 1;
+    return Math.min(n, max);
+}
+
+// Write a normalized quantity to state + the input box
+function pmSetQty(n) {
+    pmQty = pmClampQty(n);
+    document.getElementById('pm-qty').value = pmQty;
+}
+
+// Stepper buttons
 function pmChangeQty(change) {
-    pmQty = Math.max(1, pmQty + change);
-    document.getElementById('pm-qty').textContent = pmQty;
+    pmSetQty(pmQty + change);
+}
+
+// As the customer types: keep digits only, sync state without snapping the field
+function pmQtyInput() {
+    const el = document.getElementById('pm-qty');
+    el.value = el.value.replace(/\D/g, '');
+    if (el.value !== '') pmQty = pmClampQty(parseInt(el.value, 10));
+}
+
+// When they leave the field: normalize the display (e.g. empty -> 1, over-stock -> max)
+function pmQtyBlur() {
+    pmSetQty(parseInt(document.getElementById('pm-qty').value, 10));
 }
 
 async function pmAddToCart() {
     if (!pmProduct) return;
+    // Normalize whatever is currently typed before adding
+    pmSetQty(parseInt(document.getElementById('pm-qty').value, 10));
+
     const user = await requireAuth();
     if (!user) return;
 
@@ -434,6 +462,8 @@ function closeProductModal() {
 // ==========================================
 window.pmSelectSize      = pmSelectSize;
 window.pmChangeQty       = pmChangeQty;
+window.pmQtyInput        = pmQtyInput;
+window.pmQtyBlur         = pmQtyBlur;
 window.pmAddToCart       = pmAddToCart;
 window.shoppingCart      = shoppingCart;
 window.showConfirmation  = showConfirmation;
