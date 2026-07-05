@@ -855,8 +855,12 @@ nav a:hover {
         font-size: 0.55rem;
     }
 }
-.field-error { color: #e74c3c; font-size: 0.8rem; margin-top: 6px; }
-.venue-capacity-info { color: #d4c5b5; font-size: 0.8rem; margin-top: 6px; font-style: italic; }
+.field-error {
+     color: #e74c3c; font-size: 0.8rem; margin-top: 6px; 
+    }
+.venue-capacity-info {
+     color: #d4c5b5; font-size: 0.8rem; margin-top: 6px; font-style: italic; 
+    }
 
 footer {
     background-color: #0a0a0a;
@@ -950,7 +954,9 @@ footer {
     line-height: 1.7;
 }
 
-.footer-col p strong { color: var(--primary-color); font-weight: 700; }
+.footer-col p strong {
+     color: var(--primary-color); font-weight: 700; 
+    }
 
 .footer-link {
     display: inline-block;
@@ -962,7 +968,9 @@ footer {
     margin-top: 4px;
 }
 
-.footer-link:hover { color: var(--accent-color); border-color: var(--accent-color); }
+.footer-link:hover {
+     color: var(--accent-color); border-color: var(--accent-color); 
+    }
 
 .footer-bottom {
     max-width: 1200px;

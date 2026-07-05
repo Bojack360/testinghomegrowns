@@ -188,7 +188,6 @@ nav a:hover { color: var(--accent-color); }
     letter-spacing: 0.5px;
 }
 
-/* ── REACTION PICKER (Facebook-style horizontal pill) ── */
 .reaction-picker {
     position: fixed;
     z-index: 3000;
@@ -230,12 +229,19 @@ nav a:hover { color: var(--accent-color); }
     border-color: var(--accent-color);
     z-index: 1;
 }
-.picker-option.active { border-color: var(--accent-color); box-shadow: 0 0 0 2px var(--accent-color); }
-.picker-option img    { width: 100%; height: 100%; object-fit: cover; display: block; }
+.picker-option.active {
+     border-color: var(--accent-color); 
+     box-shadow: 0 0 0 2px var(--accent-color); 
+    }
+.picker-option img    {
+     width: 100%; 
+     height: 100%; 
+     object-fit: cover; 
+     display: block; 
+    }
 
 .picker-empty { color: #555; font-size: 0.82rem; font-style: italic; padding: 4px 8px; white-space: nowrap; }
 
-/* ── FOOTER ── */
 footer {
     background-color: #0a0a0a;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -255,8 +261,12 @@ footer {
     text-align: left;
 }
 
-.footer-col { flex: 1 1 200px; }
-.footer-brand { flex: 1 1 260px; }
+.footer-col {
+     flex: 1 1 200px; 
+    }
+.footer-brand {
+     flex: 1 1 260px; 
+    }
 
 .footer-logo {
     display: flex;
@@ -265,7 +275,9 @@ footer {
     margin-bottom: 10px;
 }
 
-.footer-logo img { height: 42px; width: auto; }
+.footer-logo img {
+     height: 42px; width: auto; 
+    }
 
 .footer-logo span {
     font-family: var(--font-heading);
@@ -398,16 +410,34 @@ footer {
         border-bottom: 1px solid rgba(255,255,255,0.05);
     }
 
-    .btn-account { display: inline-block; margin: 8px 16px; }
+    .btn-account {
+         display: inline-block; 
+         margin: 8px 16px; 
+        }
 
-    .page-hero { height: 32vh; margin-top: 90px; }
-    .page-hero-content h1 { font-size: 2.2rem; }
-    .picker-inner { max-width: 260px; }
-    .picker-option { width: 38px; height: 38px; }
-    .feed-main { padding: 100px 12px 60px; }
-    .post-card { border-radius: 8px; }
+    .page-hero {
+         height: 32vh; 
+         margin-top: 90px; 
+        }
+    .page-hero-content h1 {
+         font-size: 2.2rem; 
+        }
+    .picker-inner {
+         max-width: 260px; 
+        }
+    .picker-option {
+         width: 38px; height: 38px; 
+        }
+    .feed-main {
+         padding: 100px 12px 60px; 
+        }
+    .post-card {
+         border-radius: 8px; 
+        }
 
-    footer { padding-top: 30px; }
+    footer {
+         padding-top: 30px; 
+        }
 
     .footer-inner {
         padding: 0 24px 30px;

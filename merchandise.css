@@ -71,7 +71,10 @@ header {
     display: block;
 }
 
-.navdiv { display: flex; align-items: center; }
+.navdiv {
+     display: flex; 
+     align-items: center; 
+    }
 
 nav ul {
     display: flex;
@@ -87,7 +90,9 @@ nav li {
     align-items: center;
 }
 
-nav ul.active { display: flex; }
+nav ul.active {
+     display: flex; 
+    }
 
 nav a {
     text-decoration: none;
@@ -99,7 +104,9 @@ nav a {
     transition: color 0.3s;
 }
 
-nav a:hover { color: var(--accent-color); }
+nav a:hover {
+     color: var(--accent-color); 
+    }
 
 .btn-account {
     background-color: transparent;
@@ -153,9 +160,6 @@ li {
     box-shadow: 0 0 0 2px var(--header-bg);
 }
 
-/* ==========================================
-   PRODUCT GRID
-   ========================================== */
 .apatkabayo {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
@@ -271,7 +275,6 @@ li {
     white-space: nowrap;
 }
 
-/* Add-to-cart button (grid card) */
 .balhin,
 .balhin1 {
     background: var(--accent-color);
@@ -346,7 +349,10 @@ footer {
     margin-bottom: 12px;
 }
 
-.footer-socials { display: flex; gap: 10px; }
+.footer-socials {
+     display: flex; 
+     gap: 10px; 
+    }
 
 .footer-socials a {
     width: 38px;
@@ -417,9 +423,6 @@ footer {
     color: #777;
 }
 
-/* ==========================================
-   MODAL OVERLAY (cart / confirm / size / success)
-   ========================================== */
 .shoppingcart {
     display: none;
     position: fixed;
@@ -492,7 +495,6 @@ footer {
 
 .close:hover { color: #fff; background: rgba(255, 255, 255, 0.12); }
 
-/* ── EMPTY CART STATE ── */
 .cart-empty {
     text-align: center;
     padding: 40px 10px;
@@ -503,7 +505,6 @@ footer {
 
 .cart-empty p { font-size: 0.9rem; margin: 0; }
 
-/* ── CART ITEM ROW ── */
 .cart-item {
     display: flex;
     align-items: center;
@@ -582,9 +583,16 @@ footer {
     padding: 0;
 }
 
-.qty-stepper button:hover { background: rgba(255, 255, 255, 0.1); color: var(--accent-color); }
+.qty-stepper button:hover {
+     background: rgba(255, 255, 255, 0.1); 
+     color: var(--accent-color); 
+    }
 
-.qty-stepper .qty-divider { width: 1px; height: 18px; background: rgba(255, 255, 255, 0.14); }
+.qty-stepper .qty-divider {
+     width: 1px; 
+     height: 18px; 
+     background: rgba(255, 255, 255, 0.14); 
+    }
 
 .qty-stepper span {
     min-width: 30px;
@@ -609,9 +617,11 @@ footer {
     transition: all 0.2s ease;
 }
 
-.cart-item-remove:hover { background: rgba(231, 76, 60, 0.22); border-color: rgba(231, 76, 60, 0.5); }
+.cart-item-remove:hover {
+     background: rgba(231, 76, 60, 0.22); 
+     border-color: rgba(231, 76, 60, 0.5); 
+    }
 
-/* ── TOTAL ── */
 .total {
     display: flex;
     justify-content: space-between;
@@ -632,7 +642,6 @@ footer {
     letter-spacing: normal;
 }
 
-/* ── PICKUP FORM ── */
 .form { margin-top: 6px; }
 
 .form h3 {
@@ -669,7 +678,10 @@ footer {
     box-shadow: 0 0 0 3px rgba(212, 197, 181, 0.15);
 }
 
-.form textarea { resize: vertical; min-height: 70px; }
+.form textarea {
+     resize: vertical; 
+     min-height: 70px; 
+    }
 
 .cartfooter {
     display: flex;
@@ -694,7 +706,10 @@ footer {
 }
 
 .checkout:hover,
-.confirm:hover { background-color: #c4b5a5; transform: translateY(-1px); }
+.confirm:hover {
+     background-color: #c4b5a5; 
+     transform: translateY(-1px); 
+    }
 
 .cancel {
     background: transparent;
@@ -710,9 +725,14 @@ footer {
     transition: all 0.2s ease;
 }
 
-.cancel:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.4); }
+.cancel:hover {
+     background: rgba(255, 255, 255, 0.08); 
+     border-color: rgba(255, 255, 255, 0.4); 
+    }
 
-.content { text-align: center; }
+.content {
+     text-align: center; 
+    }
 
 .content h2 {
     font-family: var(--font-heading);
@@ -727,7 +747,6 @@ footer {
     margin-top: 22px;
 }
 
-/* ── ORDER SUMMARY ── */
 #summary {
     text-align: left;
     background: rgba(255, 255, 255, 0.04);
@@ -746,8 +765,14 @@ footer {
     gap: 10px;
 }
 
-.summary-row .summary-label { color: #999; }
-.summary-row .summary-value { color: #fff; font-weight: 600; text-align: right; }
+.summary-row .summary-label {
+     color: #999; 
+    }
+.summary-row .summary-value {
+     color: #fff; 
+     font-weight: 600; 
+     text-align: right; 
+    }
 
 .summary-divider {
     border: none;
@@ -763,9 +788,18 @@ footer {
     gap: 12px;
 }
 
-.summary-item-row .item-name { color: #eee; }
-.summary-item-row .item-meta { color: #888; font-size: 0.78rem; }
-.summary-item-row .item-amount { color: var(--accent-color); font-weight: 700; white-space: nowrap; }
+.summary-item-row .item-name {
+     color: #eee; 
+    }
+.summary-item-row .item-meta {
+     color: #888; 
+     font-size: 0.78rem; 
+    }
+.summary-item-row .item-amount {
+     color: var(--accent-color); 
+     font-weight: 700; 
+     white-space: nowrap; 
+    }
 
 .summary-total-row {
     display: flex;
@@ -775,7 +809,9 @@ footer {
     color: #fff;
 }
 
-.summary-total-row .summary-total-amount { color: var(--accent-color); }
+.summary-total-row .summary-total-amount {
+     color: var(--accent-color); 
+    }
 
 .summary-note {
     margin-top: 14px;
@@ -783,9 +819,6 @@ footer {
     color: #6ee8a0;
 }
 
-/* ==========================================
-   SIZE-SELECT MODAL
-   ========================================== */
 .size-modal-card {
     max-width: 380px;
     margin: 8% auto;
@@ -859,9 +892,6 @@ footer {
     color: var(--accent-color);
 }
 
-/* ==========================================
-   SUCCESS POPUP
-   ========================================== */
 .success-card {
     max-width: 440px;
     margin: 6% auto;
@@ -904,9 +934,6 @@ footer {
     margin-bottom: 22px;
 }
 
-/* ==========================================
-   PRODUCT DETAIL MODAL (preview)
-   ========================================== */
 .product-modal-overlay {
     display: none;
     position: fixed;
@@ -920,7 +947,9 @@ footer {
     padding: 24px;
 }
 
-.product-modal-overlay.active { display: flex; }
+.product-modal-overlay.active {
+     display: flex; 
+    }
 
 .product-modal {
     display: flex;
@@ -955,7 +984,10 @@ footer {
     transition: all 0.2s ease;
 }
 
-.product-modal-close:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.product-modal-close:hover {
+     background: rgba(255, 255, 255, 0.12); 
+     color: #fff; 
+    }
 
 .product-modal-image {
     flex: 1;
@@ -1099,9 +1131,6 @@ footer {
 
 .pm-add-btn:hover { background: #c4b5a5; transform: translateY(-1px); }
 
-/* ==========================================
-   RESPONSIVE
-   ========================================== */
 @media (max-width: 768px) {
     body { padding-top: 75px; overflow-x: hidden; }
 
@@ -1129,9 +1158,17 @@ footer {
         width: 100%;
     }
 
-    nav ul.active { display: flex; flex-direction: column; }
+    nav ul.active {
+         display: flex; 
+         flex-direction: column; 
+        }
 
-    nav li { width: 100%; display: block; margin: 0; font-size: inherit; }
+    nav li {
+         width: 100%; 
+         display: block; 
+         margin: 0; 
+         font-size: inherit; 
+        }
 
     nav a {
         display: block;
@@ -1140,7 +1177,10 @@ footer {
         border-bottom: 1px solid rgba(255,255,255,0.05);
     }
 
-    .btn-account { margin: 8px 16px; display: inline-block; }
+    .btn-account {
+         margin: 8px 16px; 
+         display: inline-block; 
+        }
 
     .butones {
         display: block !important;
@@ -1156,25 +1196,49 @@ footer {
         gap: 14px;
     }
 
-    .pc-image-wrap { height: 150px; }
+    .pc-image-wrap {
+         height: 150px; 
+        }
 
-    .product-card-dynamic h2 { font-size: 1rem; }
+    .product-card-dynamic h2 {
+         font-size: 1rem; 
+        }
 
-    .pc-price { font-size: 0.92rem; }
+    .pc-price {
+         font-size: 0.92rem; 
+        }
 
-    .balhin, .balhin1 { padding: 8px 14px; font-size: 0.66rem; }
+    .balhin, .balhin1 {
+         padding: 8px 14px; 
+         font-size: 0.66rem; 
+        }
 
-    .cartclass { margin: 2% auto; width: 95%; padding: 18px; }
+    .cartclass {
+         margin: 2% auto; 
+         width: 95%; 
+         padding: 18px; 
+        }
 
-    .product-modal { flex-direction: column; max-height: 92vh; }
+    .product-modal {
+         flex-direction: column; 
+         max-height: 92vh; 
+        }
 
-    .product-modal-image { padding: 28px; }
+    .product-modal-image {
+         padding: 28px; 
+        }
 
-    .product-modal-image img { max-height: 220px; }
+    .product-modal-image img {
+         max-height: 220px; 
+        }
 
-    .product-modal-info { padding: 28px 24px 32px; }
+    .product-modal-info {
+         padding: 28px 24px 32px; 
+        }
 
-    .pm-name { font-size: 1.6rem; }
+    .pm-name {
+         font-size: 1.6rem; 
+        }
 
     footer {
         padding-top: 30px;
