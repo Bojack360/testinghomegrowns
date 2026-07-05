@@ -168,10 +168,16 @@ h2 {
 
 .menu-item img {
     width: 100%;
+    max-width: 200px;
     height: auto;
     object-fit: cover;
-    margin-bottom: 15px;
+    display: block;
+    margin: 0 auto 15px;
     opacity: 0.9;
+}
+
+#munchies .menu-item img {
+    border-radius: 10px;
 }
 
 .menu-item h3 {

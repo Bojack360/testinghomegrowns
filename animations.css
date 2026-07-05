@@ -98,15 +98,31 @@ nav a:not(.btn-account):hover::after {
 
 .toast-msg { flex: 1; }
 
-.toast.toast-success { border-left-color: #6ee8a0; }
-.toast.toast-error   { border-left-color: #e74c3c; }
-.toast.toast-warning { border-left-color: #f39c12; }
-.toast.toast-info    { border-left-color: #d4c5b5; }
+.toast.toast-success {
+     border-left-color: #6ee8a0; 
+    }
+.toast.toast-error   {
+     border-left-color: #e74c3c; 
+    }
+.toast.toast-warning {
+     border-left-color: #f39c12; 
+    }
+.toast.toast-info    {
+     border-left-color: #d4c5b5; 
+    }
 
-.toast-success .toast-icon { color: #6ee8a0; }
-.toast-error   .toast-icon { color: #e74c3c; }
-.toast-warning .toast-icon { color: #f39c12; }
-.toast-info    .toast-icon { color: #d4c5b5; }
+.toast-success .toast-icon {
+     color: #6ee8a0; 
+    }
+.toast-error   .toast-icon {
+     color: #e74c3c; 
+    }
+.toast-warning .toast-icon {
+     color: #f39c12; 
+    }
+.toast-info    .toast-icon {
+     color: #d4c5b5; 
+    }
 
 /* ── SCROLL REVEAL ── */
 .reveal {

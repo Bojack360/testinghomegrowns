@@ -88,6 +88,8 @@ function renderProducts() {
         const imgSrc = product.image_url || 'assets/images/whitetee.png';
 
         const isOutOfStock = !product.in_stock || product.stock_quantity <= 0;
+        const btnText  = isOutOfStock ? 'Out of Stock' : 'Add To Cart';
+        const btnClass = isOutOfStock ? 'balhin1' : 'balhin';
 
         const card = document.createElement('div');
         card.className = 'bayo-item reveal';
@@ -103,10 +105,12 @@ function renderProducts() {
                     <h3>${product.description}</h3>
                     <h4>
                         <span class="pc-price">₱${product.price.toLocaleString()}</span>
+                        <button class="${btnClass}" ${isOutOfStock ? 'disabled' : ''}>${btnText}</button>
                     </h4>
                 </div>
             </div>
         `;
+        // Clicking anywhere on the card (including the Add To Cart button) opens the preview
         card.querySelector('.product-card-dynamic').addEventListener('click', () => {
             openProductModal(product);
         });
