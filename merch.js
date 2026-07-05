@@ -11,6 +11,7 @@ let currentItem      = null;
 let currentSize      = null;
 let products         = [];
 let currentUserEmail = '';
+let currentUserPhone = '';
 
 const SIZES = {
     'Mandog Shirt':       ['S', 'M', 'L', 'XL', '2XL'],
@@ -35,18 +36,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateCartCounter();
     initNavAuth();
     const user = await getUser();
-    if (user) currentUserEmail = user.email || '';
-
-    // Phone input: numbers only, max 11 digits
-    const phoneInput = document.getElementById('custPhone');
-    phoneInput.addEventListener('input', () => {
-        phoneInput.value = phoneInput.value.replace(/\D/g, '').slice(0, 11);
-    });
-    phoneInput.addEventListener('keydown', e => {
-        if (e.key.length === 1 && !/[0-9]/.test(e.key) && !e.ctrlKey && !e.metaKey) {
-            e.preventDefault();
-        }
-    });
+    if (user) {
+        currentUserEmail = user.email || '';
+        currentUserPhone = user.user_metadata?.phone || '';
+    }
 });
 
 // ==========================================
@@ -262,12 +255,11 @@ function shoppingCart() {
 function showConfirmation() {
     if (cart.length === 0) { showToast('Your cart is empty!', 'warning'); return; }
 
-    const phone = document.getElementById('custPhone').value.trim();
+    const phone = currentUserPhone;
     const email = currentUserEmail;
     const desc  = document.getElementById('custDesc').value.trim();
 
-    if (!phone) { showToast('Please enter your phone number.', 'warning'); return; }
-    if (!/^\d{11}$/.test(phone)) { showToast('Phone number must be exactly 11 digits.', 'warning'); return; }
+    if (!phone) { showToast('No phone number on your account. Please update your profile.', 'warning'); return; }
 
     const itemLines = cart.map(item => `
         <div class="summary-item-row">
@@ -320,7 +312,7 @@ async function finalizeOrder() {
         // Save order
         const { error } = await supabase.from('orders').insert({
             customer_email: currentUserEmail,
-            customer_phone: document.getElementById('custPhone').value.trim(),
+            customer_phone: currentUserPhone,
             pickup_desc:    document.getElementById('custDesc').value.trim(),
             items:          cart.map(i => ({ name: i.name, size: i.size, qty: i.qty, price: i.price })),
             total:          getTotalPrice(),
@@ -335,9 +327,7 @@ async function finalizeOrder() {
         cart = [];
         updateCartCounter();
         renderCartItems();
-        ['custPhone', 'custDesc'].forEach(id => {
-            document.getElementById(id).value = '';
-        });
+        document.getElementById('custDesc').value = '';
 
         await loadProducts();
         renderProducts();

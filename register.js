@@ -3,15 +3,28 @@ import { supabase } from './supabaseConfig.js';
 const form = document.querySelector('form');
 const btn  = form.querySelector('.btn-submit');
 
+// Phone input: numbers only, max 11 digits
+const phoneInput = document.getElementById('reg-phone');
+phoneInput.addEventListener('input', () => {
+    phoneInput.value = phoneInput.value.replace(/\D/g, '').slice(0, 11);
+});
+phoneInput.addEventListener('keydown', e => {
+    if (e.key.length === 1 && !/[0-9]/.test(e.key) && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+    }
+});
+
 form.addEventListener('submit', async e => {
     e.preventDefault();
     clearError();
 
     const fullName = document.getElementById('fullname').value.trim();
     const email    = document.getElementById('reg-email').value.trim();
+    const phone    = document.getElementById('reg-phone').value.trim();
     const password = document.getElementById('reg-password').value;
     const confirm  = document.getElementById('reg-confirm').value;
 
+    if (!/^\d{11}$/.test(phone)) { showError('Phone number must be exactly 11 digits.'); return; }
     if (password !== confirm) { showError('Passwords do not match.'); return; }
     if (password.length < 6)  { showError('Password must be at least 6 characters.'); return; }
 
@@ -21,7 +34,7 @@ form.addEventListener('submit', async e => {
     const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: fullName } }
+        options: { data: { full_name: fullName, phone } }
     });
 
     if (error) {
