@@ -296,6 +296,7 @@ function closePendingModal() {
 }
 
 cancelBtn.addEventListener('click', closeBookingModal);
+document.getElementById('closeBookingBtn').addEventListener('click', closeBookingModal);
 closeDetailsBtn.addEventListener('click', closeDetailsModal);
 closePendingBtn.addEventListener('click', closePendingModal);
 
