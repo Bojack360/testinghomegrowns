@@ -1,4 +1,4 @@
-﻿@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap");
+﻿@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@600&display=swap");
 
 :root {
     --card-bg: rgba(255,255,255,0.05);
@@ -16,7 +16,7 @@ body {
     background: linear-gradient(rgba(0,0,0,0.82),rgba(0,0,0,0.82)), url("assets/images/realbg.jpg") center/cover fixed;
     min-height: 100vh;
     color: var(--white);
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: 'Lato', sans-serif;
     padding-bottom: 60px;
 }
 

@@ -1,4 +1,5 @@
 ﻿import { supabase } from './supabaseConfig.js';
+import { requireAdmin, adminLogout } from './auth.js';
 
 // ==========================================
 // GLOBAL STATE
@@ -11,6 +12,7 @@ let selectedOrder = null;
 // INITIALIZATION
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
+    if (!(await requireAdmin())) return;   // block non-admins before loading data
     await loadProducts();
     await loadOrders();
     renderOrdersTable();
@@ -121,6 +123,8 @@ function renderProductsGrid() {
 
     products.forEach(product => {
         const imgSrc = product.image_url || 'assets/images/whitetee.png';
+        const stock  = Number(product.stock_quantity) || 0;
+        const stockClass = stock <= 0 ? 'stock-out' : (stock <= 5 ? 'stock-low' : '');
 
         const card = document.createElement('div');
         card.className = 'product-card';
@@ -128,13 +132,60 @@ function renderProductsGrid() {
             <img src="${imgSrc}" alt="${product.name}" onerror="this.src='assets/images/whitetee.png'">
             <h3>${product.name}</h3>
             <p class="price">₱${Number(product.price).toLocaleString()}</p>
-            <p class="stock">Stock: ${product.stock_quantity}</p>
+            <div class="stock-control">
+                <span class="stock-label ${stockClass}">Stock: ${stock}${stock <= 0 ? ' (Out)' : ''}</span>
+                <div class="stock-stepper">
+                    <button type="button" title="Remove one" onclick="adjustStock('${product.id}', -1)">&#8722;</button>
+                    <input type="text" inputmode="numeric" value="${stock}"
+                           onchange="setStock('${product.id}', this.value)"
+                           onkeydown="if(event.key==='Enter') this.blur()">
+                    <button type="button" title="Add one" onclick="adjustStock('${product.id}', 1)">+</button>
+                </div>
+            </div>
             <div class="product-actions">
                 <button class="btn-delete" onclick="deleteProduct('${product.id}')">Delete</button>
             </div>
         `;
         grid.appendChild(card);
     });
+}
+
+// ==========================================
+// STOCK MANAGEMENT
+// ==========================================
+async function updateStock(productId, newStock) {
+    newStock = Math.max(0, Math.floor(Number(newStock) || 0));
+
+    // Optimistic update: reflect the change locally + in the UI right away
+    // so rapid +/- clicks accumulate correctly instead of racing.
+    const p = products.find(pr => String(pr.id) === String(productId));
+    if (p) { p.stock_quantity = newStock; p.in_stock = newStock > 0; }
+    renderProductsGrid();
+
+    try {
+        const { error } = await supabase
+            .from('products')
+            .update({ stock_quantity: newStock, in_stock: newStock > 0 })
+            .eq('id', productId);
+        if (error) throw error;
+    } catch (error) {
+        console.error('Failed to update stock:', error);
+        alert('Failed to update stock. Reloading current stock.');
+        await loadProducts();   // pull the real value back on failure
+        renderProductsGrid();
+    }
+}
+
+function adjustStock(productId, delta) {
+    const p = products.find(pr => String(pr.id) === String(productId));
+    if (!p) return;
+    updateStock(productId, (Number(p.stock_quantity) || 0) + delta);
+}
+
+function setStock(productId, value) {
+    const n = parseInt(value, 10);
+    if (isNaN(n) || n < 0) { renderProductsGrid(); return; }
+    updateStock(productId, n);
 }
 
 // ==========================================
@@ -263,7 +314,7 @@ function openAddProductModal() {
 
 function closeAddProductModal() {
     document.getElementById('addProductModal').style.display = 'none';
-    ['new-product-name','new-product-price','new-product-sizes','new-product-desc']
+    ['new-product-name','new-product-price','new-product-stock','new-product-sizes','new-product-desc']
         .forEach(id => { document.getElementById(id).value = ''; });
     document.getElementById('new-product-img-file').value = '';
     document.getElementById('file-name-display').textContent = 'No file chosen';
@@ -295,6 +346,7 @@ function readFileAsDataURL(file) {
 async function addNewProduct() {
     const name        = document.getElementById('new-product-name').value.trim();
     const price       = Number(document.getElementById('new-product-price').value);
+    const stockInput  = document.getElementById('new-product-stock').value.trim();
     const sizesStr    = document.getElementById('new-product-sizes').value.trim();
     const description = document.getElementById('new-product-desc').value.trim();
     const fileInput   = document.getElementById('new-product-img-file');
@@ -304,6 +356,8 @@ async function addNewProduct() {
         alert('Please fill in at least the product name and price.');
         return;
     }
+
+    const stock = stockInput === '' ? 50 : Math.max(0, Math.floor(Number(stockInput) || 0));
 
     const sizes = sizesStr
         ? sizesStr.split(',').map(s => s.trim()).filter(s => s)
@@ -322,8 +376,8 @@ async function addNewProduct() {
             image_url,
             sizes,
             description:    description || '',
-            stock_quantity: 50,
-            in_stock:       true,
+            stock_quantity: stock,
+            in_stock:       stock > 0,
             created_at:     new Date().toISOString()
         });
         if (error) throw error;
@@ -379,10 +433,12 @@ window.updateOrderStatus   = updateOrderStatus;
 window.revertOrder         = revertOrder;
 window.closeModal          = closeModal;
 window.deleteProduct       = deleteProduct;
+window.adjustStock         = adjustStock;
+window.setStock            = setStock;
 window.openAddProductModal  = openAddProductModal;
 window.closeAddProductModal = closeAddProductModal;
 window.addNewProduct        = addNewProduct;
 window.previewProductImage  = previewProductImage;
 window.clearFilters        = clearFilters;
-window.logout = () => { window.location.href = 'login.html'; };
+window.logout = adminLogout;
 

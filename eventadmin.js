@@ -1,4 +1,5 @@
 ﻿import { supabase } from './supabaseConfig.js';
+import { requireAdmin, adminLogout } from './auth.js';
 
 // ==========================================
 // GLOBAL STATE
@@ -29,6 +30,7 @@ const closeDetailsBtn       = document.getElementById('closeDetailsBtn');
 // INITIALIZATION
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
+    if (!(await requireAdmin())) return;   // block non-admins before loading data
     await loadBookings();
     renderBookings();
     updateStats();
@@ -529,4 +531,4 @@ window.handleAdminDayClick   = handleAdminDayClick;
 window.closeAdminDayModal    = closeAdminDayModal;
 window.openAdminBookingModal  = openAdminBookingModal;
 window.closeAdminBookingModal = closeAdminBookingModal;
-window.logout = () => { window.location.href = 'login.html'; };
+window.logout = adminLogout;

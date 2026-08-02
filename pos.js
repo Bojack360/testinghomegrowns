@@ -1,4 +1,5 @@
 ﻿import { supabase } from './supabaseConfig.js';
+import { requireAdmin, adminLogout } from './auth.js';
 
 let products       = [];
 let cart           = {};
@@ -70,6 +71,7 @@ COFFEE_MENU.forEach(section =>
 
 // ── Init ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
+    if (!(await requireAdmin())) return;   // block non-admins before loading data
     await loadProducts();
     setupEvents();
 });
@@ -398,4 +400,4 @@ function esc(s) {
     return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-window.logout = () => { window.location.href = 'index.html'; };
+window.logout = adminLogout;

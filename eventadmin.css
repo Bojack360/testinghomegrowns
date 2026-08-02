@@ -1,5 +1,5 @@
 /* eventadmin.css - Matching Homegrowns Dark Theme */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=system-ui&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@600&display=swap');
 
 :root {
     --bg-dark: #121212;
@@ -24,7 +24,7 @@ body {
     background-attachment: fixed;
     min-height: 100vh;
     color: var(--text-white);
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: 'Lato', sans-serif;
     padding-bottom: 50px;
 }
 

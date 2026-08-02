@@ -1,8 +1,37 @@
 import { supabase } from './supabaseConfig.js';
 
+// The account allowed into the admin dashboard (matches login.js).
+const ADMIN_EMAIL = 'admin@gmail.com';
+
 export async function getUser() {
     const { data: { session } } = await supabase.auth.getSession();
     return session?.user ?? null;
+}
+
+// ── ADMIN SESSION GUARD ──────────────────────────────────────────────────────
+// Call at the top of every admin page. Confirms a valid Supabase session exists
+// AND that it belongs to the admin account. If not, redirect to the login page
+// (using replace() so the protected page is not left in browser history).
+// Returns the admin user object when valid, or null after redirecting.
+export async function requireAdmin() {
+    const user = await getUser();
+    if (!user || user.email !== ADMIN_EMAIL) {
+        window.location.replace('login.html');
+        return null;
+    }
+    return user;
+}
+
+// ── ADMIN LOGOUT ─────────────────────────────────────────────────────────────
+// Ends the Supabase session (clears the persisted auth token), then redirects
+// to the login page.
+export async function adminLogout() {
+    try {
+        await supabase.auth.signOut();
+    } catch (err) {
+        console.error('Logout failed:', err);
+    }
+    window.location.replace('login.html');
 }
 
 export async function requireAuth() {

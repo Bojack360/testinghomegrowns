@@ -1,5 +1,5 @@
 /* merchadmin.css - Matching Homegrowns Theme */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=system-ui&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@600&display=swap');
 
 :root {
     --bg-dark: #121212;
@@ -23,7 +23,7 @@ body {
     background-attachment: fixed;
     min-height: 100vh;
     color: var(--text-white);
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: 'Lato', sans-serif;
     padding-bottom: 50px;
 }
 
@@ -253,7 +253,7 @@ td:last-child .action-btn {
     border-radius: 12px !important;
     padding: 15px 40px !important;
     margin: 10px !important;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+    font-family: 'Lato', sans-serif !important;
     font-size: 10px !important;
     width: 145px !important;
     height: 40px !important;
@@ -350,6 +350,76 @@ td:last-child .action-btn {
 .product-card .price { color: var(--accent-gold); font-weight: bold; margin-bottom: 5px; }
 .product-card .stock { color: var(--text-gray); font-size: 0.8rem; margin-bottom: 15px; }
 
+/* --- STOCK CONTROL --- */
+.stock-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.stock-label {
+    color: var(--text-gray);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.stock-label.stock-low { color: var(--accent-gold); }
+.stock-label.stock-out { color: var(--danger); }
+
+.stock-stepper {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    height: 34px;
+}
+
+.stock-stepper button {
+    width: 34px;
+    height: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-white);
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.stock-stepper button:hover { background: rgba(255, 255, 255, 0.1); color: var(--accent-gold); }
+
+.stock-stepper input {
+    width: 52px;
+    height: 100%;
+    background: transparent;
+    border: none;
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    outline: none;
+    text-align: center;
+    color: var(--text-white);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 0;
+    -moz-appearance: textfield;
+}
+
+.stock-stepper input:focus { background: rgba(243, 156, 18, 0.1); }
+
+.stock-stepper input::-webkit-outer-spin-button,
+.stock-stepper input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .product-actions { display: flex; gap: 10px; justify-content: center; }
 .btn-edit { border-color: var(--accent-gold); color: var(--accent-gold); }
 .btn-delete {
@@ -359,7 +429,7 @@ td:last-child .action-btn {
     border-radius: 12px !important;
     padding: 15px 40px !important;
     margin: 10px !important;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+    font-family: 'Lato', sans-serif !important;
     font-size: 10px !important;
     width: 145px !important;
     height: 40px !important;

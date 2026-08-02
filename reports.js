@@ -1,6 +1,8 @@
 ﻿import { supabase } from './supabaseConfig.js';
+import { requireAdmin, adminLogout } from './auth.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    if (!(await requireAdmin())) return;   // block non-admins before loading data
     loadReports();
     document.getElementById('applyFilter').addEventListener('click', loadReports);
     document.getElementById('clearFilter').addEventListener('click', () => {
@@ -135,4 +137,4 @@ function esc(s) {
     return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-window.logout = () => { window.location.href = 'index.html'; };
+window.logout = adminLogout;

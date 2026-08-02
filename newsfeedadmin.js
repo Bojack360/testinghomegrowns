@@ -1,4 +1,5 @@
 ﻿import { supabase } from './supabaseConfig.js';
+import { requireAdmin, adminLogout } from './auth.js';
 
 // ── State ─────────────────────────────────────────────────────────────────
 let posts           = [];
@@ -8,6 +9,7 @@ let viewingPostId   = null;
 
 // ── Init ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
+    if (!(await requireAdmin())) return;   // block non-admins before loading data
     await loadAll();
     setupPreviewListeners();
 });
@@ -293,8 +295,7 @@ async function confirmDeletePost(postId) {
 window.confirmDeletePost = confirmDeletePost;
 
 // ── Auth ──────────────────────────────────────────────────────────────────
-function logout() { window.location.href = 'index.html'; }
-window.logout = logout;
+window.logout = adminLogout;
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 function showOverlay(id) {
