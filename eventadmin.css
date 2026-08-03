@@ -424,8 +424,58 @@ tr:hover { background: rgba(255,255,255,0.02); }
 }
 
 .modal-buttons button:hover {
-     opacity: 0.8; 
+     opacity: 0.8;
     }
+
+/* ============================================================
+   BOOKING DETAILS MODAL — enlarged, two-column layout.
+   Scoped to #detailsModal so the Create-Booking and Day modals
+   (which share .modal-content) are left untouched.
+   ============================================================ */
+#detailsModal .modal-content {
+    width: 82%;
+    max-width: 1000px;
+    height: 85vh;
+    max-height: 85vh;
+    overflow: hidden;              /* the inner details area scrolls, not the whole box */
+    display: flex;
+    flex-direction: column;
+}
+
+#detailsModal .modal-header {
+    flex-shrink: 0;
+}
+
+#detailsModal #bookingDetailsContent {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    align-content: start;
+    padding-right: 6px;           /* keeps text off the scrollbar */
+}
+
+/* grid gap handles spacing; drop the per-row bottom margin to keep it even */
+#detailsModal #bookingDetailsContent .detail-row {
+    margin-bottom: 0;
+}
+
+#detailsModal .modal-buttons {
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    #detailsModal .modal-content {
+        width: 92%;
+        height: 88vh;
+        max-height: 88vh;
+    }
+
+    #detailsModal #bookingDetailsContent {
+        grid-template-columns: 1fr;   /* single column on smaller screens */
+    }
+}
 
 .btn-approve  {
      background: var(--success);           color: #fff;              
