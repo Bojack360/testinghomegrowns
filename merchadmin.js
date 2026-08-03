@@ -125,6 +125,7 @@ function renderProductsGrid() {
         const imgSrc = product.image_url || 'assets/images/whitetee.png';
         const stock  = Number(product.stock_quantity) || 0;
         const stockClass = stock <= 0 ? 'stock-out' : (stock <= 5 ? 'stock-low' : '');
+        const category = (product.category || 'shirt').toLowerCase();
 
         const card = document.createElement('div');
         card.className = 'product-card';
@@ -132,6 +133,13 @@ function renderProductsGrid() {
             <img src="${imgSrc}" alt="${product.name}" onerror="this.src='assets/images/whitetee.png'">
             <h3>${product.name}</h3>
             <p class="price">₱${Number(product.price).toLocaleString()}</p>
+            <div class="cat-control">
+                <span class="cat-label">Category:</span>
+                <select class="cat-select" onchange="setCategory('${product.id}', this.value)">
+                    <option value="shirt"${category === 'shirt' ? ' selected' : ''}>Shirt</option>
+                    <option value="accessory"${category === 'accessory' ? ' selected' : ''}>Accessory</option>
+                </select>
+            </div>
             <div class="stock-control">
                 <span class="stock-label ${stockClass}">Stock: ${stock}${stock <= 0 ? ' (Out)' : ''}</span>
                 <div class="stock-stepper">
@@ -148,6 +156,27 @@ function renderProductsGrid() {
         `;
         grid.appendChild(card);
     });
+}
+
+// ==========================================
+// CATEGORY MANAGEMENT
+// ==========================================
+async function setCategory(productId, category) {
+    const p = products.find(pr => String(pr.id) === String(productId));
+    if (p) p.category = category;   // optimistic
+
+    try {
+        const { error } = await supabase
+            .from('products')
+            .update({ category })
+            .eq('id', productId);
+        if (error) throw error;
+    } catch (error) {
+        console.error('Failed to update category:', error);
+        alert('Failed to update category. Reloading.');
+        await loadProducts();
+        renderProductsGrid();
+    }
 }
 
 // ==========================================
@@ -316,10 +345,19 @@ function closeAddProductModal() {
     document.getElementById('addProductModal').style.display = 'none';
     ['new-product-name','new-product-price','new-product-stock','new-product-sizes','new-product-desc']
         .forEach(id => { document.getElementById(id).value = ''; });
+    document.getElementById('new-product-category').value = 'shirt';
+    document.getElementById('sizes-input-row').style.display = '';   // restore sizes field
     document.getElementById('new-product-img-file').value = '';
     document.getElementById('file-name-display').textContent = 'No file chosen';
     document.getElementById('product-img-preview').src = '';
     document.getElementById('img-preview-row').style.display = 'none';
+}
+
+// When the admin picks a category in the Add-Product form, hide the "Available
+// Sizes" field for accessories (they don't use sizes).
+function onCategoryChange() {
+    const isAccessory = document.getElementById('new-product-category').value === 'accessory';
+    document.getElementById('sizes-input-row').style.display = isAccessory ? 'none' : '';
 }
 
 function previewProductImage(event) {
@@ -346,6 +384,7 @@ function readFileAsDataURL(file) {
 async function addNewProduct() {
     const name        = document.getElementById('new-product-name').value.trim();
     const price       = Number(document.getElementById('new-product-price').value);
+    const category    = document.getElementById('new-product-category').value;
     const stockInput  = document.getElementById('new-product-stock').value.trim();
     const sizesStr    = document.getElementById('new-product-sizes').value.trim();
     const description = document.getElementById('new-product-desc').value.trim();
@@ -359,9 +398,10 @@ async function addNewProduct() {
 
     const stock = stockInput === '' ? 50 : Math.max(0, Math.floor(Number(stockInput) || 0));
 
-    const sizes = sizesStr
-        ? sizesStr.split(',').map(s => s.trim()).filter(s => s)
-        : ['S', 'M', 'L', 'XL'];
+    // Accessories have no sizes; shirts use the entered sizes (default S–XL).
+    const sizes = category === 'accessory'
+        ? []
+        : (sizesStr ? sizesStr.split(',').map(s => s.trim()).filter(s => s) : ['S', 'M', 'L', 'XL']);
 
     let image_url = 'assets/images/whitetee.png';
 
@@ -373,6 +413,7 @@ async function addNewProduct() {
         const { error } = await supabase.from('products').insert({
             name,
             price,
+            category,
             image_url,
             sizes,
             description:    description || '',
@@ -435,6 +476,8 @@ window.closeModal          = closeModal;
 window.deleteProduct       = deleteProduct;
 window.adjustStock         = adjustStock;
 window.setStock            = setStock;
+window.setCategory         = setCategory;
+window.onCategoryChange    = onCategoryChange;
 window.openAddProductModal  = openAddProductModal;
 window.closeAddProductModal = closeAddProductModal;
 window.addNewProduct        = addNewProduct;

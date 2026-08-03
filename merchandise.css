@@ -913,6 +913,17 @@ footer {
     color: var(--accent-color);
 }
 
+/* Unavailable / out-of-stock size — shown but not selectable */
+.size-chip.disabled {
+    opacity: 0.4;
+    color: #666;
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.08);
+    text-decoration: line-through;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .success-card {
     max-width: 440px;
     margin: 6% auto;

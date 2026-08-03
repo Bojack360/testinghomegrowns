@@ -66,7 +66,9 @@ async function loadProducts() {
             image_url:      row.image_url || 'assets/images/whitetee.png',
             sizes:          Array.isArray(row.sizes) ? row.sizes : ['S', 'M', 'L', 'XL'],
             stock_quantity: Number(row.stock_quantity) || 0,
-            in_stock:       row.in_stock !== false
+            in_stock:       row.in_stock !== false,
+            // Missing/null category defaults to 'shirt' so existing products keep sizes.
+            category:       (row.category || 'shirt')
         }));
 
         console.log(`Loaded ${products.length} products`);
@@ -350,7 +352,7 @@ function buildProductModal() {
                 <p class="pm-desc" id="pm-desc"></p>
 
                 <div class="pm-buy" id="pm-buy">
-                    <div class="pm-section-label">Select a Size</div>
+                    <div class="pm-section-label" id="pm-size-label">Select a Size</div>
                     <div class="pm-sizes" id="pm-sizes"></div>
                     <div class="pm-actions">
                         <div class="qty-stepper pm-qty">
@@ -388,14 +390,47 @@ function openProductModal(product) {
     stockBadge.className   = `pm-stock-badge ${isOutOfStock ? 'out-of-stock' : 'in-stock'}`;
 
     const buySection = document.getElementById('pm-buy');
-    const sizes = (Array.isArray(product.sizes) && product.sizes.length)
-        ? product.sizes
-        : (SIZES[product.name] || ['S', 'M', 'L', 'XL']);
-    pmSize = sizes[0];
+    const sizeLabel  = document.getElementById('pm-size-label');
+    const sizesWrap  = document.getElementById('pm-sizes');
 
-    document.getElementById('pm-sizes').innerHTML = sizes.map((size, i) =>
-        `<div class="size-chip${i === 0 ? ' active' : ''}" onclick="pmSelectSize('${size}', this)">${size}</div>`
-    ).join('');
+    // Category-based size behavior. Missing category defaults to a shirt.
+    // A product with no sizes listed is also treated as an accessory.
+    const isAccessory = String(product.category || 'shirt').toLowerCase() === 'accessory'
+        || (Array.isArray(product.sizes) && product.sizes.length === 0);
+
+    if (isAccessory) {
+        // Accessories have no sizes: hide the size selector entirely.
+        sizeLabel.style.display = 'none';
+        sizesWrap.style.display = 'none';
+        sizesWrap.innerHTML = '';
+        pmSize = 'One Size';
+    } else {
+        // Clothing: show sizes. Sizes present in product.sizes are available;
+        // any other standard size is shown DISABLED (unavailable / out of stock).
+        sizeLabel.style.display = '';
+        sizesWrap.style.display = '';
+
+        const CANONICAL = ['S', 'M', 'L', 'XL', '2XL'];
+        const available = (Array.isArray(product.sizes) ? product.sizes : []).map(s => String(s).toUpperCase());
+        const availSet  = new Set(available);
+        // Show the canonical range plus any non-standard available sizes.
+        const extras    = available.filter(s => !CANONICAL.includes(s));
+        const display   = [...CANONICAL, ...extras];
+        // If a clothing item somehow has no sizes listed, treat all as available so it stays usable.
+        const noneListed = availSet.size === 0;
+
+        const firstAvailable = display.find(s => noneListed || availSet.has(s));
+        pmSize = firstAvailable;
+
+        sizesWrap.innerHTML = display.map(size => {
+            const isAvail  = noneListed || availSet.has(size);
+            const active   = size === firstAvailable ? ' active' : '';
+            const disabled = isAvail ? '' : ' disabled';
+            const handler  = isAvail ? ` onclick="pmSelectSize('${size}', this)"` : '';
+            const title    = isAvail ? '' : ' title="Unavailable"';
+            return `<div class="size-chip${active}${disabled}"${handler}${title}>${size}</div>`;
+        }).join('');
+    }
 
     // Hide the buy controls entirely when the item is out of stock
     buySection.style.display = isOutOfStock ? 'none' : 'block';
@@ -404,6 +439,7 @@ function openProductModal(product) {
 }
 
 function pmSelectSize(size, el) {
+    if (el.classList.contains('disabled')) return;   // unavailable sizes can't be selected
     pmSize = size;
     document.querySelectorAll('#pm-sizes .size-chip').forEach(chip => chip.classList.remove('active'));
     el.classList.add('active');

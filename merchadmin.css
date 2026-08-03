@@ -350,6 +350,35 @@ td:last-child .action-btn {
 .product-card .price { color: var(--accent-gold); font-weight: bold; margin-bottom: 5px; }
 .product-card .stock { color: var(--text-gray); font-size: 0.8rem; margin-bottom: 15px; }
 
+/* --- CATEGORY CONTROL --- */
+.cat-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.cat-label {
+    color: var(--text-gray);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.cat-select {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    color: var(--text-white);
+    font-family: inherit;
+    font-size: 0.82rem;
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    outline: none;
+}
+
+.cat-select:focus { border-color: var(--accent-gold); }
+
 /* --- STOCK CONTROL --- */
 .stock-control {
     display: flex;
