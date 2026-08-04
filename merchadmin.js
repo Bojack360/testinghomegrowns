@@ -66,23 +66,84 @@ function updateStats() {
 }
 
 // ==========================================
-// ORDERS TABLE
+// ORDERS TABLE (paginated)
 // ==========================================
+const ORDERS_PAGE_SIZE = 10;
+let ordersPage = 1;
+
 function renderOrdersTable() {
-    renderFilteredOrders(orders);
+    renderOrders();
 }
 
-function renderFilteredOrders(filteredOrders) {
+// ── Filter helpers ──────────────────────────────────────────────────────────
+function orderMatchesStatus(order, status) {
+    if (status === 'all') return true;
+    const s = String(order.status || '');
+    // "Approved" orders are shown as SOLD, so the Sold filter also matches them.
+    if (status === 'Sold') return s === 'Approved' || s === 'Sold';
+    return s === status;
+}
+
+function orderMatchesCategory(order, cat) {
+    if (cat === 'all') return true;
+    const items = order.items || [];
+    return items.some(it => {
+        const prod = products.find(p => p.name === it.name);
+        if (cat === 'others') return !prod;                       // unknown product -> Others
+        const c = prod ? String(prod.category || 'shirt').toLowerCase() : null;
+        return c === cat;                                          // 'shirt' or 'accessory'
+    });
+}
+
+function orderMatchesSearch(order, q) {
+    if (!q) return true;
+    const idShort   = ('#' + order.id.toString().slice(-6)).toLowerCase();
+    const itemNames = (order.items || []).map(i => i.name).join(' ');
+    const hay = [idShort, order.id, order.customer_email, itemNames]
+        .map(x => String(x || '').toLowerCase()).join(' ');
+    return hay.includes(q);
+}
+
+function getFilteredOrders() {
+    const status = document.getElementById('status-filter').value;
+    const cat    = document.getElementById('category-filter').value;
+    const from   = document.getElementById('date-from').value;
+    const to     = document.getElementById('date-to').value;
+    const q      = document.getElementById('order-search').value.trim().toLowerCase();
+
+    // `orders` is already loaded newest-first.
+    return orders.filter(o => {
+        if (!orderMatchesStatus(o, status)) return false;
+        if (!orderMatchesCategory(o, cat))  return false;
+        if (from && new Date(o.created_at) < new Date(from)) return false;
+        if (to   && new Date(o.created_at) > new Date(to + 'T23:59:59')) return false;
+        if (!orderMatchesSearch(o, q)) return false;
+        return true;
+    });
+}
+
+function renderOrders() {
     const tbody = document.getElementById('orders-table-body');
     if (!tbody) return;
+
+    const filtered = getFilteredOrders();
+    const total    = filtered.length;
+    const pages    = Math.max(1, Math.ceil(total / ORDERS_PAGE_SIZE));
+    if (ordersPage > pages) ordersPage = pages;
+    if (ordersPage < 1) ordersPage = 1;
+
+    const startIdx = (ordersPage - 1) * ORDERS_PAGE_SIZE;
+    const pageRows = filtered.slice(startIdx, startIdx + ORDERS_PAGE_SIZE);
+
     tbody.innerHTML = '';
 
-    if (filteredOrders.length === 0) {
+    if (total === 0) {
         tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px;">No orders found</td></tr>';
+        renderOrdersPagination(0, 1, 0, 0);
         return;
     }
 
-    filteredOrders.forEach(order => {
+    pageRows.forEach(order => {
         const statusClass = order.status.toLowerCase();
         const firstItem   = (order.items && order.items[0]) || {};
         const row         = document.createElement('tr');
@@ -106,7 +167,69 @@ function renderFilteredOrders(filteredOrders) {
         `;
         tbody.appendChild(row);
     });
+
+    renderOrdersPagination(total, pages, startIdx, pageRows.length);
 }
+
+function renderOrdersPagination(total, pages, startIdx, shown) {
+    const info = document.getElementById('ordersInfo');
+    const pag  = document.getElementById('ordersPagination');
+    if (!info || !pag) return;
+
+    info.textContent = total === 0
+        ? 'Showing 0 records'
+        : `Showing ${startIdx + 1}–${startIdx + shown} of ${total} records`;
+
+    pag.innerHTML = '';
+    if (pages <= 1) return;
+
+    const btn = (label, page, { disabled = false, active = false } = {}) => {
+        const b = document.createElement('button');
+        b.className = 'page-btn' + (active ? ' active' : '');
+        b.innerHTML = label;
+        b.disabled = disabled;
+        if (!disabled && !active) b.addEventListener('click', () => { ordersPage = page; renderOrders(); });
+        return b;
+    };
+
+    pag.appendChild(btn('&laquo;', 1, { disabled: ordersPage === 1 }));
+    pag.appendChild(btn('&lsaquo;', ordersPage - 1, { disabled: ordersPage === 1 }));
+
+    let start = Math.max(1, ordersPage - 2);
+    let end   = Math.min(pages, start + 4);
+    start = Math.max(1, end - 4);
+    for (let p = start; p <= end; p++) {
+        pag.appendChild(btn(String(p), p, { active: p === ordersPage }));
+    }
+
+    pag.appendChild(btn('&rsaquo;', ordersPage + 1, { disabled: ordersPage === pages }));
+    pag.appendChild(btn('&raquo;', pages, { disabled: ordersPage === pages }));
+}
+
+// New filter selection resets to page 1.
+function applyOrderFilters() {
+    ordersPage = 1;
+    renderOrders();
+}
+
+function clearFilters() {
+    document.getElementById('status-filter').value   = 'all';
+    document.getElementById('category-filter').value = 'all';
+    document.getElementById('date-from').value       = '';
+    document.getElementById('date-to').value         = '';
+    document.getElementById('order-search').value    = '';
+    applyOrderFilters();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const ids = ['status-filter', 'category-filter', 'date-from', 'date-to'];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', applyOrderFilters);
+    });
+    const search = document.getElementById('order-search');
+    if (search) search.addEventListener('input', applyOrderFilters);
+});
 
 // ==========================================
 // PRODUCTS GRID
@@ -433,36 +556,6 @@ async function addNewProduct() {
 }
 
 // ==========================================
-// FILTERS
-// ==========================================
-function clearFilters() {
-    document.getElementById('status-filter').value = 'all';
-    document.getElementById('date-filter').value   = '';
-    renderOrdersTable();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const statusFilter = document.getElementById('status-filter');
-    const dateFilter   = document.getElementById('date-filter');
-
-    if (statusFilter) {
-        statusFilter.addEventListener('change', () => {
-            const status   = statusFilter.value;
-            const filtered = status === 'all' ? orders : orders.filter(o => o.status === status);
-            renderFilteredOrders(filtered);
-        });
-    }
-
-    if (dateFilter) {
-        dateFilter.addEventListener('change', () => {
-            if (!dateFilter.value) { renderOrdersTable(); return; }
-            const filtered = orders.filter(o => o.createdAt.startsWith(dateFilter.value));
-            renderFilteredOrders(filtered);
-        });
-    }
-});
-
-// ==========================================
 // EXPOSE TO GLOBAL SCOPE
 // ==========================================
 window.viewOrder           = viewOrder;
@@ -482,6 +575,6 @@ window.openAddProductModal  = openAddProductModal;
 window.closeAddProductModal = closeAddProductModal;
 window.addNewProduct        = addNewProduct;
 window.previewProductImage  = previewProductImage;
-window.clearFilters        = clearFilters;
+window.clearFilters         = clearFilters;
 window.logout = adminLogout;
 

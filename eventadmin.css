@@ -244,9 +244,115 @@ body {
     transition: all 0.3s;
 }
 
-.btn-clear:hover { 
-    border-color: var(--text-white); 
-    color: var(--text-white); 
+.btn-clear:hover {
+    border-color: var(--text-white);
+    color: var(--text-white);
+}
+
+/* --- ADVANCED FILTER TOOLBAR --- */
+.filter-toolbar {
+    max-width: 1400px;
+    margin: 0 auto 25px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-search {
+    flex: 1 1 240px;
+    min-width: 170px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+    color: var(--text-white);
+    padding: 10px 14px;
+    border-radius: 8px;
+    outline: none;
+    font-size: 0.9rem;
+}
+.filter-search::placeholder { color: #777; }
+.filter-search:focus { border-color: var(--accent-gold); }
+
+.filter-select {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+    color: var(--text-white);
+    padding: 10px 12px;
+    border-radius: 8px;
+    outline: none;
+    font-size: 0.88rem;
+    cursor: pointer;
+}
+.filter-select:focus { border-color: var(--accent-gold); }
+
+.filter-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-gray);
+    font-size: 0.82rem;
+}
+.filter-date input {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+    color: var(--text-white);
+    padding: 8px 10px;
+    border-radius: 8px;
+    outline: none;
+    color-scheme: dark;
+}
+.filter-date input:focus { border-color: var(--accent-gold); }
+
+/* --- PAGINATION --- */
+.pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.pagination-info {
+    color: var(--text-gray);
+    font-size: 0.85rem;
+}
+.pagination {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.page-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+    color: var(--text-white);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+.page-btn:hover:not(:disabled):not(.active) {
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+}
+.page-btn.active {
+    background: var(--accent-gold);
+    border-color: var(--accent-gold);
+    color: #000;
+    font-weight: 700;
+    cursor: default;
+}
+.page-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .filter-toolbar { gap: 10px; }
+    .filter-search { flex: 1 1 100%; }
+    .filter-select { flex: 1 1 calc(50% - 6px); }
 }
 
 /* --- BOOKINGS TABLE --- */

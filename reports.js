@@ -45,83 +45,135 @@ function renderStats(events, orders, pos) {
     document.getElementById('statRevenue').textContent = '₱' + (onlineRevenue + posRevenue).toFixed(2);
 }
 
+// ── Pagination (10 records per page, shared across the report tables) ─────────
+const PAGE_SIZE = 10;
+let eventsData = [], ordersData = [], posData = [];
+let eventsPage = 1, ordersPage = 1, posPage = 1;
+
+function buildPager(infoId, pagId, total, page, onPageChange) {
+    const info = document.getElementById(infoId);
+    const pag  = document.getElementById(pagId);
+    const pages    = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    const startIdx = (page - 1) * PAGE_SIZE;
+    const shown    = Math.max(0, Math.min(PAGE_SIZE, total - startIdx));
+
+    if (info) info.textContent = total === 0
+        ? 'Showing 0 records'
+        : `Showing ${startIdx + 1}–${startIdx + shown} of ${total} records`;
+
+    if (!pag) return;
+    pag.innerHTML = '';
+    if (pages <= 1) return;
+
+    const mk = (label, p, opts = {}) => {
+        const b = document.createElement('button');
+        b.className = 'page-btn' + (opts.active ? ' active' : '');
+        b.innerHTML = label;
+        b.disabled = !!opts.disabled;
+        if (!opts.disabled && !opts.active) b.addEventListener('click', () => onPageChange(p));
+        return b;
+    };
+
+    pag.appendChild(mk('&laquo;', 1, { disabled: page === 1 }));
+    pag.appendChild(mk('&lsaquo;', page - 1, { disabled: page === 1 }));
+    let s = Math.max(1, page - 2), e = Math.min(pages, s + 4); s = Math.max(1, e - 4);
+    for (let p = s; p <= e; p++) pag.appendChild(mk(String(p), p, { active: p === page }));
+    pag.appendChild(mk('&rsaquo;', page + 1, { disabled: page === pages }));
+    pag.appendChild(mk('&raquo;', pages, { disabled: page === pages }));
+}
+
 // ── Events ──────────────────────────────────────────────────────────────────
-function renderEvents(events) {
+function renderEvents(data) {
+    if (data !== undefined) { eventsData = data; eventsPage = 1; }   // fresh load resets to page 1
+    const total    = eventsData.length;
+    const pages    = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (eventsPage > pages) eventsPage = pages;
+    if (eventsPage < 1) eventsPage = 1;
+    const rows = eventsData.slice((eventsPage - 1) * PAGE_SIZE, (eventsPage - 1) * PAGE_SIZE + PAGE_SIZE);
+
     const tbody = document.getElementById('eventsBody');
     const noMsg = document.getElementById('noEvents');
-
-    if (events.length === 0) {
-        tbody.innerHTML  = '';
-        noMsg.style.display = 'block';
-        return;
+    if (total === 0) { tbody.innerHTML = ''; noMsg.style.display = 'block'; }
+    else {
+        noMsg.style.display = 'none';
+        tbody.innerHTML = rows.map(e => `
+            <tr>
+                <td>${fmtDate(e.date)}</td>
+                <td>${esc(e.start)} - ${esc(e.end || '')}</td>
+                <td>${esc(e.type || e.event_type || e.eventtype || '-')}</td>
+                <td>${esc(e.pax || '-')}</td>
+                <td>${fmtDateTime(e.submitted_at)}</td>
+                <td>${fmtDateTime(e.approved_at)}</td>
+            </tr>
+        `).join('');
     }
-    noMsg.style.display = 'none';
-    tbody.innerHTML = events.map(e => `
-        <tr>
-            <td>${fmtDate(e.date)}</td>
-            <td>${esc(e.start)} - ${esc(e.end || '')}</td>
-            <td>${esc(e.type || e.event_type || e.eventtype || '-')}</td>
-            <td>${esc(e.pax || '-')}</td>
-            <td>${fmtDateTime(e.submitted_at)}</td>
-            <td>${fmtDateTime(e.approved_at)}</td>
-        </tr>
-    `).join('');
+    buildPager('eventsInfo', 'eventsPagination', total, eventsPage, p => { eventsPage = p; renderEvents(); });
 }
 
 // ── Online Orders ──────────────────────────────────────────────────────────
-function renderOrders(orders) {
+function renderOrders(data) {
+    if (data !== undefined) { ordersData = data; ordersPage = 1; }
+    const total = ordersData.length;
+    const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (ordersPage > pages) ordersPage = pages;
+    if (ordersPage < 1) ordersPage = 1;
+    const rows = ordersData.slice((ordersPage - 1) * PAGE_SIZE, (ordersPage - 1) * PAGE_SIZE + PAGE_SIZE);
+
     const tbody = document.getElementById('ordersBody');
     const noMsg = document.getElementById('noOrders');
-
-    if (orders.length === 0) {
-        tbody.innerHTML = '';
-        noMsg.style.display = 'block';
-        return;
+    if (total === 0) { tbody.innerHTML = ''; noMsg.style.display = 'block'; }
+    else {
+        noMsg.style.display = 'none';
+        tbody.innerHTML = rows.map(o => {
+            const items = Array.isArray(o.items)
+                ? o.items.map(i => `${esc(i.name)} &times;${i.qty || i.quantity || 1}`).join(', ')
+                : '-';
+            const statusRaw   = (o.status || '').toLowerCase();
+            const statusLabel = statusRaw === 'approved' ? 'SOLD' : esc(o.status || '-');
+            const statusClass = statusRaw === 'approved' ? 'approved' : statusRaw;
+            return `
+                <tr>
+                    <td>${fmtDateTime(o.created_at)}</td>
+                    <td>${esc(o.email || o.customer_email || '-')}</td>
+                    <td class="items-cell">${items}</td>
+                    <td>₱${parseFloat(o.total || 0).toFixed(2)}</td>
+                    <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+                </tr>
+            `;
+        }).join('');
     }
-    noMsg.style.display = 'none';
-    tbody.innerHTML = orders.map(o => {
-        const items = Array.isArray(o.items)
-            ? o.items.map(i => `${esc(i.name)} &times;${i.qty || i.quantity || 1}`).join(', ')
-            : '-';
-        const statusRaw   = (o.status || '').toLowerCase();
-        const statusLabel = statusRaw === 'approved' ? 'SOLD' : esc(o.status || '-');
-        const statusClass = statusRaw === 'approved' ? 'approved' : statusRaw;
-        return `
-            <tr>
-                <td>${fmtDateTime(o.created_at)}</td>
-                <td>${esc(o.email || o.customer_email || '-')}</td>
-                <td class="items-cell">${items}</td>
-                <td>₱${parseFloat(o.total || 0).toFixed(2)}</td>
-                <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
-            </tr>
-        `;
-    }).join('');
+    buildPager('ordersInfo', 'ordersPagination', total, ordersPage, p => { ordersPage = p; renderOrders(); });
 }
 
 // ── POS Transactions ───────────────────────────────────────────────────────
-function renderPos(transactions) {
+function renderPos(data) {
+    if (data !== undefined) { posData = data; posPage = 1; }
+    const total = posData.length;
+    const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (posPage > pages) posPage = pages;
+    if (posPage < 1) posPage = 1;
+    const rows = posData.slice((posPage - 1) * PAGE_SIZE, (posPage - 1) * PAGE_SIZE + PAGE_SIZE);
+
     const tbody = document.getElementById('posBody');
     const noMsg = document.getElementById('noPos');
-
-    if (transactions.length === 0) {
-        tbody.innerHTML = '';
-        noMsg.style.display = 'block';
-        return;
+    if (total === 0) { tbody.innerHTML = ''; noMsg.style.display = 'block'; }
+    else {
+        noMsg.style.display = 'none';
+        tbody.innerHTML = rows.map(t => {
+            const items = Array.isArray(t.items)
+                ? t.items.map(i => `${esc(i.name)} &times;${i.qty}`).join(', ')
+                : '-';
+            return `
+                <tr>
+                    <td>${fmtDateTime(t.created_at)}</td>
+                    <td class="items-cell">${items}</td>
+                    <td>₱${parseFloat(t.total || 0).toFixed(2)}</td>
+                    <td>${esc(t.payment_method || '-')}</td>
+                </tr>
+            `;
+        }).join('');
     }
-    noMsg.style.display = 'none';
-    tbody.innerHTML = transactions.map(t => {
-        const items = Array.isArray(t.items)
-            ? t.items.map(i => `${esc(i.name)} &times;${i.qty}`).join(', ')
-            : '-';
-        return `
-            <tr>
-                <td>${fmtDateTime(t.created_at)}</td>
-                <td class="items-cell">${items}</td>
-                <td>₱${parseFloat(t.total || 0).toFixed(2)}</td>
-                <td>${esc(t.payment_method || '-')}</td>
-            </tr>
-        `;
-    }).join('');
+    buildPager('posInfo', 'posPagination', total, posPage, p => { posPage = p; renderPos(); });
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────

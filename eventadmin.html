@@ -84,25 +84,39 @@
         </div>
     </div>
 
-    <div class="filter-section">
-        <label for="statusFilter">Filter by Status:</label>
-        <select id="statusFilter">
-            <option value="all">All Bookings</option>
+    <div class="filter-toolbar">
+        <input type="search" id="searchInput" class="filter-search" placeholder="Search by ID, email, or event type…">
+        <select id="statusFilter" class="filter-select">
+            <option value="all">All Status</option>
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>
             <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
         </select>
-        
-        <label for="dateFilter">Filter by Date:</label>
-        <input type="date" id="dateFilter">
-        
+        <select id="typeFilter" class="filter-select">
+            <option value="all">All Event Types</option>
+        </select>
+        <select id="venueFilter" class="filter-select">
+            <option value="all">All Venues</option>
+        </select>
+        <select id="sortSelect" class="filter-select">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="eventDate">Event Date</option>
+            <option value="submittedDate">Submitted Date</option>
+        </select>
+        <label class="filter-date">From <input type="date" id="dateFrom"></label>
+        <label class="filter-date">To <input type="date" id="dateTo"></label>
         <button class="btn btn-clear" id="clearFilters">Clear Filters</button>
     </div>
 
-   
     <div class="bookings-container">
         <h2>Booking Requests</h2>
+        <div class="pagination-bar">
+            <span class="pagination-info" id="bookingsInfo">Showing 0 records</span>
+            <div class="pagination" id="bookingsPagination"></div>
+        </div>
         <div class="table-responsive">
             <table id="bookingsTable">
                 <thead>

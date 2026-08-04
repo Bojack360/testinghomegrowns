@@ -189,12 +189,58 @@ body {
      backdrop-filter: blur(5px); 
     }
 .section-card h2 {
-     font-family: "Playfair Display", serif; 
-     font-size: 1.3rem; 
-     margin-bottom: 18px; 
-     padding-bottom: 12px; 
-     border-bottom: 1px solid var(--border); 
+     font-family: "Playfair Display", serif;
+     font-size: 1.3rem;
+     margin-bottom: 18px;
+     padding-bottom: 12px;
+     border-bottom: 1px solid var(--border);
     }
+
+/* PAGINATION */
+.pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.pagination-info {
+    color: var(--gray);
+    font-size: 0.85rem;
+}
+.pagination {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.page-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    color: var(--white);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+.page-btn:hover:not(:disabled):not(.active) {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+.page-btn.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #000;
+    font-weight: 700;
+    cursor: default;
+}
+.page-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
 
 .table-responsive {
      overflow-x: auto; 

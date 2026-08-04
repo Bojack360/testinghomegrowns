@@ -62,21 +62,31 @@
             </div>
         </div>
 
-        <div class="filters">
-            <div class="filter-group">
-                <label for="status-filter">Filter By Status</label>
-                <select id="status-filter">
-                    <option value="all">All</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Declined">Declined</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="date-filter">Filter By Date</label>
-                <input type="date" id="date-filter">
-            </div>
+        <div class="filter-toolbar">
+            <input type="search" id="order-search" class="filter-search" placeholder="Search by Order ID, email, or item…">
+            <select id="status-filter" class="filter-select">
+                <option value="all">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Claimed">Claimed</option>
+                <option value="Sold">Sold</option>
+                <option value="Declined">Declined</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+            <select id="category-filter" class="filter-select">
+                <option value="all">All Categories</option>
+                <option value="shirt">Shirts</option>
+                <option value="accessory">Accessories</option>
+                <option value="others">Others</option>
+            </select>
+            <label class="filter-date">From <input type="date" id="date-from"></label>
+            <label class="filter-date">To <input type="date" id="date-to"></label>
             <button class="clear-filters" onclick="clearFilters()">Clear Filters</button>
+        </div>
+
+        <div class="pagination-bar">
+            <span class="pagination-info" id="ordersInfo">Showing 0 records</span>
+            <div class="pagination" id="ordersPagination"></div>
         </div>
 
         <div class="table-container">

@@ -7,11 +7,22 @@ import { requireAdmin, adminLogout } from './auth.js';
 let bookings        = [];
 let selectedBooking = null;
 
+// Pagination state
+const PAGE_SIZE   = 10;
+let currentPage   = 1;
+
 const bookingsTableBody = document.getElementById('bookingsTableBody');
 const noBookings        = document.getElementById('noBookings');
 const statusFilter      = document.getElementById('statusFilter');
-const dateFilter        = document.getElementById('dateFilter');
+const typeFilter        = document.getElementById('typeFilter');
+const venueFilter       = document.getElementById('venueFilter');
+const sortSelect        = document.getElementById('sortSelect');
+const searchInput       = document.getElementById('searchInput');
+const dateFromInput     = document.getElementById('dateFrom');
+const dateToInput       = document.getElementById('dateTo');
 const clearFiltersBtn   = document.getElementById('clearFilters');
+const bookingsInfo      = document.getElementById('bookingsInfo');
+const bookingsPagination = document.getElementById('bookingsPagination');
 
 const pendingCountEl    = document.getElementById('pendingCount');
 const approvedCountEl   = document.getElementById('approvedCount');
@@ -32,6 +43,7 @@ const closeDetailsBtn       = document.getElementById('closeDetailsBtn');
 document.addEventListener('DOMContentLoaded', async () => {
     if (!(await requireAdmin())) return;   // block non-admins before loading data
     await loadBookings();
+    populateFilterOptions();
     renderBookings();
     updateStats();
     renderAdminCalendar();
@@ -75,25 +87,84 @@ function updateStats() {
 }
 
 // ==========================================
-// TABLE RENDERING
+// FILTER OPTIONS (populated from actual data)
+// ==========================================
+function populateFilterOptions() {
+    const types  = [...new Set(bookings.map(b => b.type).filter(Boolean))].sort();
+    const venues = [...new Set(bookings.map(b => b.venue).filter(Boolean))].sort();
+
+    typeFilter.innerHTML = '<option value="all">All Event Types</option>' +
+        types.map(t => `<option value="${t}">${t}</option>`).join('');
+    venueFilter.innerHTML = '<option value="all">All Venues</option>' +
+        venues.map(v => `<option value="${v}">${v}</option>`).join('');
+}
+
+// ==========================================
+// FILTER + SORT
+// ==========================================
+function toTime(v) { const t = v ? new Date(v).getTime() : NaN; return Number.isFinite(t) ? t : 0; }
+
+function getFilteredSorted() {
+    const status = statusFilter.value;
+    const type   = typeFilter.value;
+    const venue  = venueFilter.value;
+    const from   = dateFromInput.value;
+    const to     = dateToInput.value;
+    const q      = searchInput.value.trim().toLowerCase();
+    const sort   = sortSelect.value;
+
+    let list = bookings.filter(b => {
+        if (status !== 'all' && b.status !== status) return false;
+        if (type   !== 'all' && b.type  !== type)   return false;
+        if (venue  !== 'all' && b.venue !== venue)  return false;
+
+        // Date range is applied against the event date
+        if (from || to) {
+            const d = b.date ? new Date(b.date) : null;
+            if (!d || isNaN(d)) return false;
+            if (from && d < new Date(from)) return false;
+            if (to   && d > new Date(to + 'T23:59:59')) return false;
+        }
+
+        if (q) {
+            const idShort = ('#' + b.id.toString().slice(-6)).toLowerCase();
+            const hay = [idShort, b.id, b.customer_email, b.type, b.venue]
+                .map(x => String(x || '').toLowerCase()).join(' ');
+            if (!hay.includes(q)) return false;
+        }
+        return true;
+    });
+
+    list.sort((a, b) => {
+        switch (sort) {
+            case 'oldest':        return toTime(a.submitted_at) - toTime(b.submitted_at);
+            case 'eventDate':     return toTime(b.date) - toTime(a.date);
+            case 'submittedDate': return toTime(b.submitted_at) - toTime(a.submitted_at);
+            case 'newest':
+            default:              return toTime(b.submitted_at) - toTime(a.submitted_at);
+        }
+    });
+
+    return list;
+}
+
+// ==========================================
+// TABLE RENDERING (paginated)
 // ==========================================
 function renderBookings() {
-    const statusValue = statusFilter.value;
-    const dateValue   = dateFilter.value;
+    const filtered = getFilteredSorted();
+    const total    = filtered.length;
+    const pages    = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (currentPage > pages) currentPage = pages;
+    if (currentPage < 1) currentPage = 1;
 
-    let filtered = [...bookings];
-    if (statusValue !== 'all') filtered = filtered.filter(b => b.status === statusValue);
-    if (dateValue)             filtered = filtered.filter(b => (b.date || '').startsWith(dateValue));
+    const startIdx = (currentPage - 1) * PAGE_SIZE;
+    const pageRows = filtered.slice(startIdx, startIdx + PAGE_SIZE);
 
     bookingsTableBody.innerHTML = '';
+    noBookings.style.display = total === 0 ? 'block' : 'none';
 
-    if (filtered.length === 0) {
-        noBookings.style.display = 'block';
-        return;
-    }
-    noBookings.style.display = 'none';
-
-    filtered.forEach(booking => {
+    pageRows.forEach(booking => {
         const statusText = booking.status.charAt(0).toUpperCase() + booking.status.slice(1);
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -119,7 +190,70 @@ function renderBookings() {
         `;
         bookingsTableBody.appendChild(row);
     });
+
+    renderPagination(total, pages, startIdx, pageRows.length);
 }
+
+// ==========================================
+// PAGINATION CONTROLS
+// ==========================================
+function renderPagination(total, pages, startIdx, shown) {
+    // "Showing X–Y of Z records"
+    if (total === 0) {
+        bookingsInfo.textContent = 'Showing 0 records';
+    } else {
+        bookingsInfo.textContent = `Showing ${startIdx + 1}–${startIdx + shown} of ${total} records`;
+    }
+
+    bookingsPagination.innerHTML = '';
+    if (pages <= 1) return;
+
+    const btn = (label, page, { disabled = false, active = false } = {}) => {
+        const b = document.createElement('button');
+        b.className = 'page-btn' + (active ? ' active' : '');
+        b.innerHTML = label;
+        b.disabled = disabled;
+        if (!disabled && !active) b.addEventListener('click', () => { currentPage = page; renderBookings(); });
+        return b;
+    };
+
+    // First / Prev
+    bookingsPagination.appendChild(btn('&laquo;', 1, { disabled: currentPage === 1 }));
+    bookingsPagination.appendChild(btn('&lsaquo;', currentPage - 1, { disabled: currentPage === 1 }));
+
+    // Windowed page numbers (max 5)
+    let start = Math.max(1, currentPage - 2);
+    let end   = Math.min(pages, start + 4);
+    start = Math.max(1, end - 4);
+    for (let p = start; p <= end; p++) {
+        bookingsPagination.appendChild(btn(String(p), p, { active: p === currentPage }));
+    }
+
+    // Next / Last
+    bookingsPagination.appendChild(btn('&rsaquo;', currentPage + 1, { disabled: currentPage === pages }));
+    bookingsPagination.appendChild(btn('&raquo;', pages, { disabled: currentPage === pages }));
+}
+
+// Any filter/sort/search change resets to page 1 and re-renders.
+function applyFiltersAndRender() {
+    currentPage = 1;
+    renderBookings();
+}
+
+[statusFilter, typeFilter, venueFilter, sortSelect, dateFromInput, dateToInput].forEach(el =>
+    el.addEventListener('change', applyFiltersAndRender)
+);
+searchInput.addEventListener('input', applyFiltersAndRender);
+clearFiltersBtn.addEventListener('click', () => {
+    statusFilter.value = 'all';
+    typeFilter.value   = 'all';
+    venueFilter.value  = 'all';
+    sortSelect.value   = 'newest';
+    dateFromInput.value = '';
+    dateToInput.value   = '';
+    searchInput.value  = '';
+    applyFiltersAndRender();
+});
 
 // ==========================================
 // VIEW DETAILS
@@ -275,13 +409,6 @@ function closeDetailsModal() {
     selectedBooking = null;
 }
 
-statusFilter.addEventListener('change', renderBookings);
-dateFilter.addEventListener('change', renderBookings);
-clearFiltersBtn.addEventListener('click', () => {
-    statusFilter.value = 'all';
-    dateFilter.value   = '';
-    renderBookings();
-});
 closeDetailsBtn.addEventListener('click', closeDetailsModal);
 window.addEventListener('click', e => { if (e.target === detailsModal) closeDetailsModal(); });
 approveBtn.addEventListener('click', () => { if (selectedBooking) approveBooking(selectedBooking.id); });
