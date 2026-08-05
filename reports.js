@@ -10,6 +10,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('dateTo').value   = '';
         loadReports();
     });
+    document.getElementById('printReport').addEventListener('click', () => {
+        // Fill the print-only header, then open the browser print dialog.
+        const from = document.getElementById('dateFrom').value;
+        const to   = document.getElementById('dateTo').value;
+        const fmt  = d => new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        let range;
+        if (from && to)      range = `${fmt(from)} to ${fmt(to)}`;
+        else if (from)       range = `From ${fmt(from)}`;
+        else if (to)         range = `Up to ${fmt(to)}`;
+        else                 range = 'All dates';
+        document.getElementById('printDateRange').textContent = 'Date range: ' + range;
+        document.getElementById('printGeneratedAt').textContent =
+            'Generated: ' + new Date().toLocaleString('en-US',
+                { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        window.print();
+    });
 });
 
 async function loadReports() {

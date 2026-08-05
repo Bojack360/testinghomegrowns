@@ -31,7 +31,15 @@
                 <label>To <input type="date" id="dateTo"></label>
                 <button class="btn-filter" id="applyFilter">Apply</button>
                 <button class="btn-clear-filter" id="clearFilter">Clear</button>
+                <button class="btn-print" id="printReport">&#128424; Print Report</button>
             </div>
+        </div>
+
+        <!-- Print-only report header (hidden on screen, shown when printing) -->
+        <div class="print-header" id="printHeader">
+            <h1>The Homegrowns &mdash; Sales &amp; Events Report</h1>
+            <p id="printDateRange">Date range: All dates</p>
+            <p id="printGeneratedAt">Generated: &mdash;</p>
         </div>
 
         <!-- Summary Stats -->
