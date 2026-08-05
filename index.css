@@ -1,8 +1,17 @@
 :root {
-    --primary-color: #f0f0f0;
-    --accent-color: #d4c5b5;
-    --bg-color: #121212;
-    --header-bg: rgba(18, 18, 18, 0.95);
+    --primary-green: #2E6637;
+    --accent-yellow: #EDEF67;
+    --accent-yellow-dark: #dfe14a;
+    --bg-cream: #FFFCEE;
+    --secondary-green: #5D8B61;
+    --dark-text: #2B2B2B;
+    --white: #FFFFFF;
+
+    /* legacy names remapped to the new palette so existing rules follow the brand */
+    --primary-color: #2B2B2B;
+    --accent-color: #2E6637;
+    --bg-color: #FFFCEE;
+    --header-bg: rgba(255, 252, 238, 0.95);
     --font-heading: 'Playfair Display', serif;
     --font-body: 'Lato', sans-serif;
 }
@@ -15,8 +24,8 @@
 
 body {
     font-family: var(--font-body);
-    color: var(--primary-color);
-    background-color: var(--bg-color);
+    color: var(--dark-text);
+    background-color: var(--bg-cream);
     line-height: 1.6;
 }
 
@@ -29,8 +38,9 @@ header {
     width: 100%;
     top: 0;
     background: var(--header-bg);
+    backdrop-filter: blur(8px);
     z-index: 1000;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid rgba(46, 102, 55, 0.15);
 }
 
 .logo {
@@ -58,38 +68,59 @@ nav ul {
 
 nav a {
     text-decoration: none;
-    color: var(--primary-color);
+    color: var(--primary-green);
     font-size: 0.9rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: color 0.3s;
+    position: relative;
 }
 
 nav a:hover {
-    color: var(--accent-color);
+    color: var(--secondary-green);
+}
+
+/* Active page — accent yellow underline */
+nav a.active {
+    color: var(--primary-green);
+}
+
+nav a.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--accent-yellow);
 }
 
 .mobile-menu-btn {
     display: none;
     cursor: pointer;
     font-size: 1.5rem;
-    color: var(--primary-color);
+    color: var(--primary-green);
     background: none;
     border: none;
 }
 
+/* Secondary button — white bg, green border, green text */
 .btn-account {
-    background-color: transparent;
-    color: var(--primary-color);
-    border: 1px solid var(--primary-color);
+    background-color: var(--white);
+    color: var(--primary-green);
+    border: 1.5px solid var(--primary-green);
     padding: 10px 25px;
-    border-radius: 2px;
+    border-radius: 12px;
+    font-weight: 600;
     transition: all 0.3s ease;
 }
 
 .btn-account:hover {
-    background-color: var(--primary-color);
-    color: black;
+    background-color: var(--primary-green);
+    color: var(--white);
+    transform: translateY(-2px);
 }
 
 
@@ -110,7 +141,7 @@ nav a:hover {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.5);
+    background: linear-gradient(rgba(46, 102, 55, 0.45), rgba(43, 43, 43, 0.5));
 }
 
 .hero-content {
@@ -142,21 +173,21 @@ h2 {
     font-family: var(--font-heading);
     font-size: 2.5rem;
     margin-bottom: 30px;
-    color: var(--accent-color);
+    color: var(--primary-green);
 }
 
 .text-block {
     font-size: 1.1rem;
     max-width: 700px;
     margin: 0 auto 50px auto;
-    color: #cccccc;
+    color: var(--dark-text);
 }
 
 .about-image {
     width: 100%;
     max-width: 600px;
     height: auto;
-    opacity: 0.9;
+    border-radius: 16px;
 }
 
 .menu-grid {
@@ -173,7 +204,6 @@ h2 {
     object-fit: cover;
     display: block;
     margin: 0 auto 15px;
-    opacity: 0.9;
 }
 
 #munchies .menu-item img {
@@ -183,16 +213,17 @@ h2 {
 .menu-item h3 {
     font-family: var(--font-heading);
     margin-bottom: 10px;
-    color: var(--primary-color);
+    color: var(--primary-green);
 }
 
 .menu-item p {
-    color: #cccccc;
+    color: #555555;
 }
 
 footer {
-    background-color: #000000;
-    border-top: 1px solid #333;
+    background-color: var(--primary-green);
+    color: var(--white);
+    border-top: 4px solid var(--accent-yellow);
     padding-top: 32px;
 }
 
@@ -222,7 +253,7 @@ footer {
 .footer-logo span {
     font-family: var(--font-heading);
     font-size: 1.2rem;
-    color: var(--primary-color);
+    color: var(--white);
     letter-spacing: 0.5px;
     text-transform: uppercase;
 }
@@ -230,7 +261,7 @@ footer {
 .footer-tagline {
     font-family: var(--font-heading);
     font-style: italic;
-    color: var(--accent-color);
+    color: var(--accent-yellow);
     font-size: 1.05rem;
     margin-bottom: 12px !important;
 }
@@ -240,7 +271,7 @@ footer {
 .footer-socials a {
     width: 38px;
     height: 38px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -249,8 +280,8 @@ footer {
 }
 
 .footer-socials a:hover {
-    border-color: var(--accent-color);
-    background: rgba(212, 197, 181, 0.1);
+    border-color: var(--accent-yellow);
+    background: rgba(237, 239, 103, 0.15);
     transform: translateY(-2px);
 }
 
@@ -262,43 +293,43 @@ footer {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    color: var(--accent-color);
+    color: var(--accent-yellow);
     margin-bottom: 10px;
 }
 
 .footer-col p {
     margin-bottom: 8px;
     font-size: 0.9rem;
-    color: #cccccc;
+    color: rgba(255, 255, 255, 0.85);
     line-height: 1.7;
 }
 
-.footer-col p strong { color: var(--primary-color); font-weight: 700; }
+.footer-col p strong { color: var(--white); font-weight: 700; }
 
 .footer-link {
     display: inline-block;
-    color: var(--primary-color);
+    color: var(--white);
     font-size: 0.88rem;
     text-decoration: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
     transition: all 0.2s ease;
     margin-top: 4px;
 }
 
-.footer-link:hover { color: var(--accent-color); border-color: var(--accent-color); }
+.footer-link:hover { color: var(--accent-yellow); border-color: var(--accent-yellow); }
 
 .footer-bottom {
     max-width: 1200px;
     margin: 0 auto;
     padding: 14px 60px;
     box-sizing: border-box;
-    border-top: 1px dashed rgba(255, 255, 255, 0.15);
+    border-top: 1px dashed rgba(255, 255, 255, 0.25);
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 10px;
     font-size: 0.78rem;
-    color: #777;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 @media (max-width: 768px) {
@@ -319,7 +350,7 @@ footer {
         display: block;
         cursor: pointer;
         font-size: 1.5rem;
-        color: var(--primary-color);
+        color: var(--primary-green);
         background: none;
         border: none;
     }
@@ -329,8 +360,8 @@ footer {
         top: 100%;
         left: 0;
         width: 100%;
-        background: rgba(18, 18, 18, 0.98);
-        border-top: 1px solid #333;
+        background: rgba(255, 252, 238, 0.98);
+        border-top: 1px solid rgba(46, 102, 55, 0.15);
         box-sizing: border-box;
     }
 
@@ -355,7 +386,7 @@ footer {
     nav a {
         display: block;
         padding: 12px 20px;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        border-bottom: 1px solid rgba(46, 102, 55, 0.08);
     }
 
     .btn-account {

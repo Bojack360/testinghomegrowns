@@ -61,21 +61,19 @@ nav a:not(.btn-account):hover::after {
     display: flex;
     align-items: center;
     gap: 11px;
-    background: rgba(14, 14, 14, 0.93);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
+    background: #FFFFFF;
+    border: 1px solid rgba(46, 102, 55, 0.15);
+    border-radius: 12px;
     padding: 12px 20px;
     font-family: 'Lato', sans-serif;
     font-size: 0.88rem;
-    color: #f0f0f0;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+    color: #2B2B2B;
+    box-shadow: 0 10px 30px rgba(46, 102, 55, 0.18);
     max-width: 380px;
     min-width: 220px;
     text-align: left;
     line-height: 1.45;
-    border-left: 3px solid #d4c5b5;
+    border-left: 3px solid #2E6637;
     opacity: 0;
     transform: translateY(14px);
     transition: opacity 0.28s ease, transform 0.28s ease;
@@ -99,29 +97,29 @@ nav a:not(.btn-account):hover::after {
 .toast-msg { flex: 1; }
 
 .toast.toast-success {
-     border-left-color: #6ee8a0; 
+     border-left-color: #2E6637;
     }
 .toast.toast-error   {
-     border-left-color: #e74c3c; 
+     border-left-color: #c0392b;
     }
 .toast.toast-warning {
-     border-left-color: #f39c12; 
+     border-left-color: #c07a00;
     }
 .toast.toast-info    {
-     border-left-color: #d4c5b5; 
+     border-left-color: #5D8B61;
     }
 
 .toast-success .toast-icon {
-     color: #6ee8a0; 
+     color: #2E6637;
     }
 .toast-error   .toast-icon {
-     color: #e74c3c; 
+     color: #c0392b;
     }
 .toast-warning .toast-icon {
-     color: #f39c12; 
+     color: #c07a00;
     }
 .toast-info    .toast-icon {
-     color: #d4c5b5; 
+     color: #5D8B61;
     }
 
 /* ── SCROLL REVEAL ── */

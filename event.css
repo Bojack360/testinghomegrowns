@@ -1,13 +1,22 @@
 :root {
-    --primary-color: #f0f0f0;
-    --accent-color: #d4c5b5;
-    --bg-color: #121212;
-    --header-bg: rgba(18, 18, 18, 0.95);
+    --primary-green: #2E6637;
+    --accent-yellow: #EDEF67;
+    --accent-yellow-dark: #dfe14a;
+    --bg-cream: #FFFCEE;
+    --secondary-green: #5D8B61;
+    --dark-text: #2B2B2B;
+    --white: #FFFFFF;
+
+    /* legacy names remapped to the brand palette */
+    --primary-color: #2B2B2B;
+    --accent-color: #2E6637;
+    --bg-color: #FFFCEE;
+    --header-bg: rgba(255, 252, 238, 0.95);
     --font-heading: 'Playfair Display', serif;
     --font-body: 'Lato', sans-serif;
-    --border-radius: 8px;
+    --border-radius: 12px;
     --booked-color: #ffe6e6;
-    --cross-color: #e74c3c;
+    --cross-color: #c0392b;
     --pending-color: #fff3cd;
     --approved-color: #d4edda;
 }
@@ -20,20 +29,14 @@
 
 body {
     font-family: var(--font-body);
-    color: var(--primary-color);
+    color: var(--dark-text);
     line-height: 1.6;
     min-height: 100vh;
     padding-top: 130px;
     display: flex;
     flex-direction: column;
-    /* ========== BACKGROUND IMAGE WITH 50% TRANSPARENCY ========== */
-    background-image:
-        linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-        url('assets/images/realbg.jpg');
-    background-size: cover;
-    background-position: center;
+    background: var(--bg-cream);
     background-attachment: fixed;
-    background-repeat: no-repeat;
 }
 
 /* ========== NAVIGATION BAR (Matches index.html) ========== */
@@ -46,8 +49,9 @@ header {
     width: 100%;
     top: 0;
     background: var(--header-bg);
+    backdrop-filter: blur(8px);
     z-index: 1000;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid rgba(46, 102, 55, 0.15);
 }
 
 .logo {
@@ -60,7 +64,7 @@ header {
 }
 
 .logo img {
-    max-height: 80px; 
+    max-height: 80px;
     width: auto;
     display: block;
 }
@@ -74,53 +78,56 @@ nav ul {
 
 nav a {
     text-decoration: none;
-    color: var(--primary-color);
+    color: var(--primary-green);
     font-size: 0.9rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: color 0.3s;
 }
 
 nav a:hover {
-    color: var(--accent-color);
+    color: var(--secondary-green);
 }
 
 .btn-account {
-    background-color: transparent;
-    color: var(--primary-color) !important;
-    border: 1px solid var(--primary-color);
+    background-color: var(--white);
+    color: var(--primary-green) !important;
+    border: 1.5px solid var(--primary-green);
     padding: 10px 25px;
-    border-radius: 2px;
+    border-radius: 12px;
+    font-weight: 600;
     transition: all 0.3s ease;
 }
 
 .btn-account:hover {
-    background-color: var(--primary-color);
-    color: var(--bg-color) !important;
+    background-color: var(--primary-green);
+    color: var(--white) !important;
+    transform: translateY(-2px);
 }
 
 .mobile-menu-btn {
     display: none;
     cursor: pointer;
     font-size: 1.5rem;
-    color: var(--primary-color);
+    color: var(--primary-green);
 }
 
 /* ========== CALENDAR CONTAINER ========== */
 .calendar-container {
-    background: #1a1a1a74;
+    background: var(--white);
     width: 90%;
     max-width: 900px;
     margin: auto;
     border-radius: var(--border-radius);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 6px 24px rgba(46, 102, 55, 0.12), 0 2px 6px rgba(46, 102, 55, 0.06);
     overflow: hidden;
-    border: 1px solid #333;
+    border: 1px solid rgba(46, 102, 55, 0.15);
 }
 
 .calendar-header {
-    background-color: #25252580;
-    color: var(--accent-color);
+    background-color: var(--primary-green);
+    color: var(--white);
     padding: 20px;
     text-align: center;
     font-size: 1.5rem;
@@ -129,34 +136,34 @@ nav a:hover {
     justify-content: space-between;
     align-items: center;
     font-family: var(--font-heading);
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid rgba(46, 102, 55, 0.12);
 }
 
 .nav-btn {
     background: transparent;
-    border: 1px solid var(--primary-color);
-    color: var(--primary-color);
+    border: 1px solid var(--white);
+    color: var(--white);
     font-size: 1.2rem;
     cursor: pointer;
     padding: 8px 15px;
-    border-radius: 4px;
+    border-radius: 8px;
     transition: all 0.3s ease;
 }
 
 .nav-btn:hover {
-    background-color: var(--primary-color);
-    color: var(--bg-color);
+    background-color: var(--white);
+    color: var(--primary-green);
 }
 
 .weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    background-color: #252525;
+    background-color: rgba(46, 102, 55, 0.07);
     padding: 15px 0;
     text-align: center;
     font-weight: bold;
-    color: var(--accent-color);
-    border-bottom: 1px solid #333;
+    color: var(--primary-green);
+    border-bottom: 1px solid rgba(46, 102, 55, 0.12);
 }
 
 .days {
@@ -168,7 +175,7 @@ nav a:hover {
 
 .day {
     min-height: 80px;
-    border: 1px solid #333;
+    border: 1px solid rgba(46, 102, 55, 0.12);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -176,59 +183,59 @@ nav a:hover {
     padding: 10px 5px;
     cursor: pointer;
     transition: all 0.2s;
-    border-radius: 4px;
+    border-radius: 8px;
     position: relative;
-    background-color: #252525;
+    background-color: var(--white);
 }
 
 .day:hover {
-    background-color: #333;
-    border-color: var(--accent-color);
+    background-color: rgba(46, 102, 55, 0.08);
+    border-color: var(--secondary-green);
     transform: scale(1.02);
 }
 
 .day.inactive {
-    color: #555;
-    background-color: #1a1a1a;
+    color: #b3b0a2;
+    background-color: #f4f1e3;
     cursor: default;
 }
 
 .day.inactive:hover {
     transform: none;
-    border-color: #333;
+    border-color: rgba(46, 102, 55, 0.12);
 }
 
 .day.today {
-    background-color: #252525;
-    border-color: #333;
+    background-color: var(--white);
+    border-color: rgba(46, 102, 55, 0.12);
 }
 
 .day.today:hover {
-    border-color: #d4c5b5;
+    border-color: var(--secondary-green);
 }
 
 /* Booked Date Styles */
 .day.booked {
-    background-color: #4a1a1a;
-    border-color: #9e3333;
+    background-color: var(--booked-color);
+    border-color: #e2a3a3;
 }
 
 .day.pending {
-    background-color: #4a3d2d;
-    border-color: #7c5e4a;
+    background-color: var(--pending-color);
+    border-color: #e2cf8f;
 }
 
 .day-number {
     font-size: 1.1rem;
     font-weight: bold;
     z-index: 2;
-    color: var(--primary-color);
+    color: var(--dark-text);
     margin-bottom: 5px;
 }
 
 .booking-time {
     font-size: 0.65rem;
-    color: #e74c3c;
+    color: #c0392b;
     font-weight: bold;
     margin-top: 2px;
     z-index: 2;
@@ -241,7 +248,7 @@ nav a:hover {
 
 .pending-time {
     font-size: 0.65rem;
-    color: #7c5e4a;
+    color: #a67c00;
     font-weight: bold;
     margin-top: 2px;
     z-index: 2;
@@ -259,7 +266,7 @@ nav a:hover {
     color: var(--cross-color);
     font-size: 1.2rem;
     font-weight: bold;
-    opacity: 0.8;
+    opacity: 0.9;
     z-index: 2;
 }
 
@@ -267,10 +274,10 @@ nav a:hover {
     position: absolute;
     top: 5px;
     right: 5px;
-    color: #7c5e4a;
+    color: #a67c00;
     font-size: 1.2rem;
     font-weight: bold;
-    opacity: 0.8;
+    opacity: 0.9;
     z-index: 2;
 }
 
@@ -281,7 +288,7 @@ nav a:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    border-top: 2px solid rgba(158, 51, 51, 0.3);
+    border-top: 2px solid rgba(192, 57, 43, 0.2);
     transform: rotate(45deg);
     pointer-events: none;
 }
@@ -293,15 +300,15 @@ nav a:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    border-top: 2px solid rgba(124, 94, 74, 0.3);
+    border-top: 2px solid rgba(166, 124, 0, 0.2);
     transform: rotate(45deg);
     pointer-events: none;
 }
 
 /* Partial booking state */
 .day.partial {
-    background-color: #3a3218;
-    border-color: #7c6a1a;
+    background-color: #fbf1c9;
+    border-color: #e0cf8a;
 }
 
 .day.partial::after {
@@ -309,7 +316,7 @@ nav a:hover {
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    border-top: 2px solid rgba(124, 106, 26, 0.3);
+    border-top: 2px solid rgba(166, 124, 0, 0.2);
     transform: rotate(45deg);
     pointer-events: none;
 }
@@ -317,10 +324,10 @@ nav a:hover {
 .partial-icon {
     position: absolute;
     top: 4px; right: 5px;
-    color: #c8a800;
+    color: #a67c00;
     font-size: 0.7rem;
     font-weight: bold;
-    background: rgba(200, 168, 0, 0.2);
+    background: rgba(166, 124, 0, 0.15);
     border-radius: 50%;
     width: 18px; height: 18px;
     display: flex; align-items: center; justify-content: center;
@@ -329,7 +336,7 @@ nav a:hover {
 
 .partial-time {
     font-size: 0.6rem;
-    color: #c8a800;
+    color: #a67c00;
     font-weight: bold;
     margin-top: 2px;
     z-index: 2;
@@ -358,7 +365,7 @@ nav a:hover {
 
 .cal-slot-time {
     font-size: 0.55rem;
-    color: #d4c5b5;
+    color: var(--primary-green);
     font-weight: bold;
     white-space: nowrap;
 }
@@ -374,8 +381,8 @@ nav a:hover {
 
 /* Booked slots notice inside booking form */
 .booked-slots-info {
-    background: rgba(180, 60, 60, 0.1);
-    border: 1px solid rgba(180, 60, 60, 0.3);
+    background: rgba(192, 57, 43, 0.08);
+    border: 1px solid rgba(192, 57, 43, 0.25);
     border-radius: 8px;
     padding: 8px 12px;
     margin-bottom: 14px;
@@ -391,15 +398,15 @@ nav a:hover {
 }
 
 .booked-slot-tag.approved {
-    background: rgba(231, 76, 60, 0.2);
-    color: #e57373;
-    border: 1px solid rgba(231, 76, 60, 0.35);
+    background: rgba(192, 57, 43, 0.12);
+    color: #c0392b;
+    border: 1px solid rgba(192, 57, 43, 0.3);
 }
 
 .booked-slot-tag.pending {
-    background: rgba(200, 168, 0, 0.15);
-    color: #c8a800;
-    border: 1px solid rgba(200, 168, 0, 0.3);
+    background: rgba(166, 124, 0, 0.12);
+    color: #a67c00;
+    border: 1px solid rgba(166, 124, 0, 0.3);
 }
 
 /* ========== MODALS ========== */
@@ -410,7 +417,7 @@ nav a:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(43, 43, 43, 0.5);
     z-index: 2000;
     justify-content: center;
     align-items: center;
@@ -424,33 +431,33 @@ nav a:hover {
 }
 
 .modal-content {
-    background-color: #1a1a1a;
+    background-color: var(--white);
     padding: 30px;
     border-radius: var(--border-radius);
     width: 90%;
     max-width: 500px;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+    box-shadow: 0 12px 40px rgba(46, 102, 55, 0.2);
     position: relative;
     animation: slideDown 0.3s ease-out;
     max-height: 85vh;
     overflow-y: auto;
-    border: 1px solid #333;
+    border: 1px solid rgba(46, 102, 55, 0.15);
 }
 
 @keyframes slideDown {
-    from { 
-        transform: translateY(-50px); 
-        opacity: 0; 
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
     }
-    to { 
-        transform: translateY(0); 
-        opacity: 1; 
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }
 
 .modal-header h2 {
     margin-top: 0;
-    color: var(--accent-color);
+    color: var(--primary-green);
     text-align: center;
     font-family: var(--font-heading);
     font-size: 1.8rem;
@@ -467,9 +474,9 @@ nav a:hover {
     align-items: center;
     justify-content: center;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid #333;
-    color: #999;
+    background: rgba(46, 102, 55, 0.06);
+    border: 1px solid rgba(46, 102, 55, 0.15);
+    color: var(--secondary-green);
     font-size: 1.5rem;
     line-height: 1;
     cursor: pointer;
@@ -478,29 +485,29 @@ nav a:hover {
 }
 
 .modal-close:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.12);
+    color: var(--primary-green);
+    background: rgba(46, 102, 55, 0.14);
 }
 
 .selected-date-display {
     text-align: center;
     font-weight: bold;
-    color: var(--primary-color);
+    color: var(--primary-green);
     margin-bottom: 20px;
-    background: #252525;
+    background: #FBF9EC;
     padding: 12px;
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 1.1rem;
 }
 
 .pending-info {
-    background-color: #252525;
-    border: 1px solid #7c5e4a;
+    background-color: #FBF9EC;
+    border: 1px solid #e0cf8a;
     padding: 20px;
-    border-radius: 4px;
+    border-radius: 8px;
     margin-bottom: 20px;
     text-align: center;
-    color: #cccccc;
+    color: var(--dark-text);
 }
 
 .pending-info p {
@@ -519,31 +526,31 @@ nav a:hover {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: var(--accent-color);
+    color: var(--primary-green);
     font-size: 0.95rem;
 }
 
-.form-group input, 
-.form-group select, 
+.form-group input,
+.form-group select,
 .form-group textarea {
     width: 100%;
     padding: 12px;
-    border: 1px solid #333;
-    border-radius: 4px;
+    border: 1px solid rgba(46, 102, 55, 0.25);
+    border-radius: 8px;
     box-sizing: border-box;
     font-family: var(--font-body);
-    background: #252525;
-    color: var(--primary-color);
+    background: var(--white);
+    color: var(--dark-text);
     font-size: 1rem;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.2s ease;
 }
 
-.form-group input:focus, 
-.form-group select:focus, 
+.form-group input:focus,
+.form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 5px rgba(212, 197, 181, 0.3);
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(93, 139, 97, 0.18);
 }
 
 .form-group textarea {
@@ -574,7 +581,7 @@ nav a:hover {
     flex: 1;
     padding: 14px 20px;
     border: none;
-    border-radius: 4px;
+    border-radius: 12px;
     cursor: pointer;
     font-weight: 600;
     font-size: 0.95rem;
@@ -585,25 +592,25 @@ nav a:hover {
 }
 
 .btn-book {
-    background-color: var(--accent-color);
-    color: var(--bg-color);
+    background-color: var(--accent-yellow);
+    color: var(--primary-green);
 }
 
 .btn-book:hover {
-    background-color: #c4b5a5;
+    background-color: var(--accent-yellow-dark);
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(212, 197, 181, 0.3);
+    box-shadow: 0 6px 14px rgba(46, 102, 55, 0.18);
 }
 
 .btn-cancel {
-    background-color: transparent;
-    border: 1px solid var(--primary-color);
-    color: var(--primary-color);
+    background-color: var(--white);
+    border: 1.5px solid var(--secondary-green);
+    color: var(--primary-green);
 }
 
 .btn-cancel:hover {
-    background-color: var(--primary-color);
-    color: var(--bg-color);
+    background-color: rgba(46, 102, 55, 0.08);
+    border-color: var(--primary-green);
     transform: translateY(-2px);
 }
 
@@ -613,35 +620,37 @@ nav a:hover {
 
 /* ========== BOOKING CARDS ========== */
 .booking-card {
-    background-color: #252525;
-    border: 1px solid #333;
-    border-radius: 6px;
+    background-color: var(--white);
+    border: 1px solid rgba(46, 102, 55, 0.12);
+    border-radius: 12px;
     padding: 15px;
     margin-bottom: 15px;
-    border-left: 4px solid var(--accent-color);
+    border-left: 4px solid var(--primary-green);
+    box-shadow: 0 3px 10px rgba(46, 102, 55, 0.06);
     transition: all 0.3s ease;
 }
 
 .booking-card:hover {
-    background-color: #2a2a2a;
+    box-shadow: 0 8px 20px rgba(46, 102, 55, 0.12);
+    transform: translateY(-2px);
 }
 
 .booking-card.approved {
-    border-left-color: #4a7c5e;
+    border-left-color: var(--primary-green);
 }
 
 .booking-card.pending {
-    border-left-color: #7c5e4a;
+    border-left-color: #a67c00;
 }
 
 .booking-card.rejected {
-    border-left-color: #e74c3c;
-    opacity: 0.6;
+    border-left-color: #c0392b;
+    opacity: 0.7;
 }
 
 .booking-card h3 {
     margin: 0 0 10px 0;
-    color: var(--accent-color);
+    color: var(--primary-green);
     font-size: 1.1rem;
     font-family: var(--font-heading);
 }
@@ -649,18 +658,18 @@ nav a:hover {
 .booking-card p {
     margin: 5px 0;
     font-size: 0.9rem;
-    color: #cccccc;
+    color: #555;
     line-height: 1.5;
 }
 
 .booking-card strong {
-    color: var(--primary-color);
+    color: var(--dark-text);
 }
 
 .status-badge {
     display: inline-block;
     padding: 4px 10px;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 0.75rem;
     font-weight: bold;
     margin-left: 10px;
@@ -669,23 +678,23 @@ nav a:hover {
 }
 
 .status-badge.approved {
-    background-color: #2d4a3e;
-    color: #4a7c5e;
+    background-color: rgba(46, 102, 55, 0.12);
+    color: var(--primary-green);
 }
 
 .status-badge.pending {
-    background-color: #4a3d2d;
-    color: #7c5e4a;
+    background-color: rgba(166, 124, 0, 0.14);
+    color: #a67c00;
 }
 
 .status-badge.rejected {
-    background-color: #4a2d2d;
-    color: #e74c3c;
+    background-color: rgba(192, 57, 43, 0.12);
+    color: #c0392b;
 }
 
 .no-bookings {
     text-align: center;
-    color: #666;
+    color: #888;
     padding: 30px;
     font-style: italic;
     font-size: 1rem;
@@ -697,17 +706,17 @@ nav a:hover {
 }
 
 .modal-content::-webkit-scrollbar-track {
-    background: #1a1a1a;
+    background: #f4f1e3;
     border-radius: 4px;
 }
 
 .modal-content::-webkit-scrollbar-thumb {
-    background: #333;
+    background: var(--secondary-green);
     border-radius: 4px;
 }
 
 .modal-content::-webkit-scrollbar-thumb:hover {
-    background: #444;
+    background: var(--primary-green);
 }
 
 /* ========== RESPONSIVE ========== */
@@ -731,8 +740,8 @@ nav a:hover {
         top: 100%;
         left: 0;
         width: 100%;
-        background: rgba(18, 18, 18, 0.98);
-        border-top: 1px solid #333;
+        background: rgba(255, 252, 238, 0.98);
+        border-top: 1px solid rgba(46, 102, 55, 0.15);
         box-sizing: border-box;
         z-index: 999;
     }
@@ -759,7 +768,7 @@ nav a:hover {
     nav a {
         display: block;
         padding: 12px 20px;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        border-bottom: 1px solid rgba(46, 102, 55, 0.08);
     }
 
     .btn-account {
@@ -881,15 +890,16 @@ nav a:hover {
     }
 }
 .field-error {
-     color: #e74c3c; font-size: 0.8rem; margin-top: 6px; 
+     color: #c0392b; font-size: 0.8rem; margin-top: 6px;
     }
 .venue-capacity-info {
-     color: #d4c5b5; font-size: 0.8rem; margin-top: 6px; font-style: italic; 
+     color: var(--secondary-green); font-size: 0.8rem; margin-top: 6px; font-style: italic;
     }
 
 footer {
-    background-color: #0a0a0a;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--primary-green);
+    color: var(--white);
+    border-top: 4px solid var(--accent-yellow);
     padding-top: 32px;
     width: 100%;
     box-sizing: border-box;
@@ -923,7 +933,7 @@ footer {
 .footer-logo span {
     font-family: var(--font-heading);
     font-size: 1.2rem;
-    color: var(--primary-color);
+    color: var(--white);
     letter-spacing: 0.5px;
     text-transform: uppercase;
 }
@@ -931,7 +941,7 @@ footer {
 .footer-tagline {
     font-family: var(--font-heading);
     font-style: italic;
-    color: var(--accent-color);
+    color: var(--accent-yellow);
     font-size: 1.05rem;
     margin-bottom: 12px;
 }
@@ -941,7 +951,7 @@ footer {
 .footer-socials a {
     width: 38px;
     height: 38px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -951,8 +961,8 @@ footer {
 }
 
 .footer-socials a:hover {
-    border-color: var(--accent-color);
-    background: rgba(212, 197, 181, 0.1);
+    border-color: var(--accent-yellow);
+    background: rgba(237, 239, 103, 0.15);
     transform: translateY(-2px);
 }
 
@@ -968,33 +978,33 @@ footer {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    color: var(--accent-color);
+    color: var(--accent-yellow);
     margin-bottom: 10px;
 }
 
 .footer-col p {
     margin-bottom: 8px;
     font-size: 0.9rem;
-    color: #cccccc;
+    color: rgba(255, 255, 255, 0.85);
     line-height: 1.7;
 }
 
 .footer-col p strong {
-     color: var(--primary-color); font-weight: 700; 
+     color: var(--white); font-weight: 700;
     }
 
 .footer-link {
     display: inline-block;
-    color: var(--primary-color);
+    color: var(--white);
     font-size: 0.88rem;
     text-decoration: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
     transition: all 0.2s ease;
     margin-top: 4px;
 }
 
 .footer-link:hover {
-     color: var(--accent-color); border-color: var(--accent-color); 
+     color: var(--accent-yellow); border-color: var(--accent-yellow);
     }
 
 .footer-bottom {
@@ -1002,11 +1012,11 @@ footer {
     margin: 0 auto;
     padding: 14px 60px;
     box-sizing: border-box;
-    border-top: 1px dashed rgba(255, 255, 255, 0.15);
+    border-top: 1px dashed rgba(255, 255, 255, 0.25);
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 10px;
     font-size: 0.78rem;
-    color: #777;
+    color: rgba(255, 255, 255, 0.7);
 }
