@@ -541,7 +541,7 @@ tr:hover { background: rgba(255,255,255,0.02); }
 #detailsModal .modal-content {
     width: 82%;
     max-width: 1000px;
-    height: 85vh;
+    height: auto;                  /* fit content instead of a fixed tall box */
     max-height: 85vh;
     overflow: hidden;              /* the inner details area scrolls, not the whole box */
     display: flex;
@@ -557,24 +557,28 @@ tr:hover { background: rgba(255,255,255,0.02); }
     overflow-y: auto;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: 14px;
     align-content: start;
     padding-right: 6px;           /* keeps text off the scrollbar */
 }
 
-/* grid gap handles spacing; drop the per-row bottom margin to keep it even */
+/* grid gap handles spacing; drop the per-row bottom margin and trim padding for a more compact card */
 #detailsModal #bookingDetailsContent .detail-row {
     margin-bottom: 0;
+    padding: 8px 10px;
 }
 
 #detailsModal .modal-buttons {
     flex-shrink: 0;
+    margin-top: 22px;             /* sit directly below the last info row */
+    padding-top: 0;
+    border-top: none;
 }
 
 @media (max-width: 768px) {
     #detailsModal .modal-content {
         width: 92%;
-        height: 88vh;
+        height: auto;
         max-height: 88vh;
     }
 
