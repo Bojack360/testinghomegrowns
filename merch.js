@@ -11,6 +11,39 @@ let products         = [];
 let currentUserEmail = '';
 let currentUserPhone = '';
 
+// Cart is persisted to localStorage so it survives page refreshes / browser restarts.
+const CART_STORAGE_KEY = 'homegrowns_cart';
+
+function saveCart() {
+    try {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    } catch (e) {
+        console.warn('Could not save cart:', e);
+    }
+}
+
+function loadCart() {
+    try {
+        const raw = localStorage.getItem(CART_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        cart = Array.isArray(parsed)
+            ? parsed
+                .filter(i => i && i.key && i.name)
+                .map(i => ({
+                    key:   String(i.key),
+                    name:  String(i.name),
+                    price: Number(i.price) || 0,
+                    img:   i.img || 'assets/images/whitetee.png',
+                    size:  i.size || '',
+                    qty:   Math.max(1, Number(i.qty) || 1)
+                }))
+            : [];
+    } catch (e) {
+        console.warn('Could not load cart:', e);
+        cart = [];
+    }
+}
+
 // Preview-modal state
 let pmProduct = null;
 let pmSize    = null;
@@ -32,6 +65,7 @@ const SIZES = {
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
     buildProductModal();
+    loadCart();
     await loadProducts();
     renderProducts();
     renderCartItems();
@@ -151,6 +185,7 @@ function changeQty(key, change) {
 function getTotalItems() { return cart.reduce((sum, item) => sum + item.qty, 0); }
 function getTotalPrice() { return cart.reduce((sum, item) => sum + item.price * item.qty, 0); }
 function updateCartCounter() {
+    saveCart();   // every cart mutation routes through here, so persist the cart on each change
     const counter = document.getElementById('countercart');
     if (counter) counter.textContent = getTotalItems();
 }

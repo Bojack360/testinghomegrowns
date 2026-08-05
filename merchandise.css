@@ -706,9 +706,18 @@ footer {
 
 .cartfooter {
     display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
     margin-top: 20px;
+}
+
+.checkout-disclaimer {
+    width: 100%;
+    margin: 0;
+    text-align: left;
+    font-size: 0.85rem;
+    color: #f39c12;
 }
 
 .checkout,
