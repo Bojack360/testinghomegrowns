@@ -62,13 +62,25 @@
             </div>
         </div>
 
+        <!-- Report tab navigation -->
+        <div class="report-tabs" role="tablist">
+            <button type="button" class="report-tab active" data-target="panel-events">Confirmed Events</button>
+            <button type="button" class="report-tab" data-target="panel-orders">Merchandise Reservations</button>
+            <button type="button" class="report-tab" data-target="panel-pos">Product Sales</button>
+        </div>
+
         <!-- Confirmed Events -->
-        <div class="section-card">
-            <h2>Confirmed Events</h2>
+        <div class="section-card report-panel active" id="panel-events">
+            <div class="report-head">
+                <h2><span class="report-icon">&#128197;</span> Confirmed Events</h2>
+                <p class="report-desc">Manage and review approved event bookings.</p>
+            </div>
+            <div class="report-divider"></div>
             <div class="pagination-bar">
                 <span class="pagination-info" id="eventsInfo">Showing 0 records</span>
                 <div class="pagination" id="eventsPagination"></div>
             </div>
+            <div class="mini-cards" id="eventsMini"></div>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -88,12 +100,17 @@
         </div>
 
         <!-- Merchandise Reservations -->
-        <div class="section-card">
-            <h2>Merchandise Reservations (Online Orders)</h2>
+        <div class="section-card report-panel" id="panel-orders">
+            <div class="report-head">
+                <h2><span class="report-icon">&#128230;</span> Merchandise Reservations</h2>
+                <p class="report-desc">Review customer merchandise reservation orders.</p>
+            </div>
+            <div class="report-divider"></div>
             <div class="pagination-bar">
                 <span class="pagination-info" id="ordersInfo">Showing 0 records</span>
                 <div class="pagination" id="ordersPagination"></div>
             </div>
+            <div class="mini-cards" id="ordersMini"></div>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -112,12 +129,17 @@
         </div>
 
         <!-- POS Sales -->
-        <div class="section-card">
-            <h2>Product Sales (POS)</h2>
+        <div class="section-card report-panel" id="panel-pos">
+            <div class="report-head">
+                <h2><span class="report-icon">&#128722;</span> Product Sales</h2>
+                <p class="report-desc">Review completed POS transactions.</p>
+            </div>
+            <div class="report-divider"></div>
             <div class="pagination-bar">
                 <span class="pagination-info" id="posInfo">Showing 0 records</span>
                 <div class="pagination" id="posPagination"></div>
             </div>
+            <div class="mini-cards" id="posMini"></div>
             <div class="table-responsive">
                 <table>
                     <thead>

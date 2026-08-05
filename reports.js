@@ -26,7 +26,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         window.print();
     });
+    initReportTabs();
 });
+
+// Show one report panel at a time via the tab bar (data-only handled elsewhere).
+function initReportTabs() {
+    const tabs   = document.querySelectorAll('.report-tab');
+    const panels = document.querySelectorAll('.report-panel');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetId = tab.dataset.target;
+            tabs.forEach(t => t.classList.toggle('active', t === tab));
+            panels.forEach(p => p.classList.toggle('active', p.id === targetId));
+        });
+    });
+}
 
 async function loadReports() {
     const from = document.getElementById('dateFrom').value;
@@ -100,7 +114,7 @@ function buildPager(infoId, pagId, total, page, onPageChange) {
 
 // ── Events ──────────────────────────────────────────────────────────────────
 function renderEvents(data) {
-    if (data !== undefined) { eventsData = data; eventsPage = 1; }   // fresh load resets to page 1
+    if (data !== undefined) { eventsData = data; eventsPage = 1; renderEventsMini(); }   // fresh load resets to page 1
     const total    = eventsData.length;
     const pages    = Math.max(1, Math.ceil(total / PAGE_SIZE));
     if (eventsPage > pages) eventsPage = pages;
@@ -128,7 +142,7 @@ function renderEvents(data) {
 
 // ── Online Orders ──────────────────────────────────────────────────────────
 function renderOrders(data) {
-    if (data !== undefined) { ordersData = data; ordersPage = 1; }
+    if (data !== undefined) { ordersData = data; ordersPage = 1; renderOrdersMini(); }
     const total = ordersData.length;
     const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
     if (ordersPage > pages) ordersPage = pages;
@@ -163,7 +177,7 @@ function renderOrders(data) {
 
 // ── POS Transactions ───────────────────────────────────────────────────────
 function renderPos(data) {
-    if (data !== undefined) { posData = data; posPage = 1; }
+    if (data !== undefined) { posData = data; posPage = 1; renderPosMini(); }
     const total = posData.length;
     const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
     if (posPage > pages) posPage = pages;
@@ -203,6 +217,81 @@ function fmtDateTime(d) {
 }
 function esc(s) {
     return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Per-report summary cards (computed from the currently loaded data) ────────
+// Returns the most frequent non-empty string in a list, or null.
+function mode(list) {
+    const counts = {};
+    let best = null, bestN = 0;
+    list.forEach(v => {
+        if (!v) return;
+        counts[v] = (counts[v] || 0) + 1;
+        if (counts[v] > bestN) { bestN = counts[v]; best = v; }
+    });
+    return best;
+}
+
+function setMini(containerId, cards) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = cards.map(c => `
+        <div class="mini-card">
+            <span class="mini-label">${esc(c.label)}</span>
+            <span class="mini-value">${esc(c.value)}</span>
+            ${c.sub ? `<span class="mini-sub">${esc(c.sub)}</span>` : ''}
+        </div>`).join('');
+}
+
+function renderEventsMini() {
+    const d = eventsData;
+    const guests = d.reduce((s, e) => s + (Number(e.pax) || 0), 0);
+    const venue  = mode(d.map(e => e.venue));
+    const type   = mode(d.map(e => e.type || e.event_type || e.eventtype));
+    setMini('eventsMini', [
+        { label: 'Total Confirmed Events', value: d.length,       sub: 'approved bookings' },
+        { label: 'Total Guests',           value: guests,         sub: 'sum of pax' },
+        { label: 'Most Booked Venue',      value: venue || '—',   sub: 'top venue' },
+        { label: 'Most Common Event Type', value: type  || '—',   sub: 'top event type' },
+    ]);
+}
+
+function renderOrdersMini() {
+    const d = ordersData;
+    const st = o => String(o.status || '').toLowerCase();
+    const pending   = d.filter(o => st(o) === 'pending').length;
+    const completed = d.filter(o => ['approved', 'sold', 'claimed', 'completed'].includes(st(o))).length;
+    const items = d.reduce((s, o) => s + (Array.isArray(o.items)
+        ? o.items.reduce((a, i) => a + (Number(i.qty || i.quantity) || 0), 0) : 0), 0);
+    setMini('ordersMini', [
+        { label: 'Total Reservations', value: d.length,   sub: 'online orders' },
+        { label: 'Pending Orders',     value: pending,    sub: 'awaiting action' },
+        { label: 'Completed Orders',   value: completed,  sub: 'sold / claimed' },
+        { label: 'Reserved Items',     value: items,      sub: 'total quantity' },
+    ]);
+}
+
+function renderPosMini() {
+    const d = posData;
+    let itemsSold = 0;
+    const counts = {};
+    d.forEach(t => {
+        if (!Array.isArray(t.items)) return;
+        t.items.forEach(i => {
+            const q = Number(i.qty) || 0;
+            itemsSold += q;
+            if (i.name) counts[i.name] = (counts[i.name] || 0) + q;
+        });
+    });
+    let best = null, bestQ = 0;
+    for (const [name, q] of Object.entries(counts)) if (q > bestQ) { bestQ = q; best = name; }
+    const revenue = d.reduce((s, t) => s + (parseFloat(t.total) || 0), 0);
+    setMini('posMini', [
+        { label: 'Total Transactions',   value: d.length,                      sub: 'POS sales' },
+        { label: 'Total Items Sold',     value: itemsSold,                     sub: 'units' },
+        { label: 'Best Selling Product', value: best || '—',                   sub: best ? bestQ + ' sold' : '' },
+        { label: 'Total Revenue',        value: '₱' + revenue.toFixed(2),      sub: 'gross' },
+    ]);
 }
 
 window.logout = adminLogout;
