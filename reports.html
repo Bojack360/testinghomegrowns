@@ -37,9 +37,11 @@
 
         <!-- Print-only report header (hidden on screen, shown when printing) -->
         <div class="print-header" id="printHeader">
-            <h1>The Homegrowns &mdash; Sales &amp; Events Report</h1>
-            <p id="printDateRange">Date range: All dates</p>
-            <p id="printGeneratedAt">Generated: &mdash;</p>
+            <h1 class="print-brand">Homegrowns Cafe</h1>
+            <h2 class="print-title">Reports</h2>
+            <p id="printGeneratedAt">Date Generated: &mdash;</p>
+            <p id="printDateRange">Date Range: All dates</p>
+            <p id="printSections">Report Sections: &mdash;</p>
         </div>
 
         <!-- Summary Stats -->
@@ -80,6 +82,7 @@
                 <span class="pagination-info" id="eventsInfo">Showing 0 records</span>
                 <div class="pagination" id="eventsPagination"></div>
             </div>
+            <h3 class="print-summary-heading">Summary</h3>
             <div class="mini-cards" id="eventsMini"></div>
             <div class="table-responsive">
                 <table>
@@ -110,6 +113,7 @@
                 <span class="pagination-info" id="ordersInfo">Showing 0 records</span>
                 <div class="pagination" id="ordersPagination"></div>
             </div>
+            <h3 class="print-summary-heading">Summary</h3>
             <div class="mini-cards" id="ordersMini"></div>
             <div class="table-responsive">
                 <table>
@@ -139,6 +143,7 @@
                 <span class="pagination-info" id="posInfo">Showing 0 records</span>
                 <div class="pagination" id="posPagination"></div>
             </div>
+            <h3 class="print-summary-heading">Summary</h3>
             <div class="mini-cards" id="posMini"></div>
             <div class="table-responsive">
                 <table>
@@ -154,6 +159,28 @@
                 </table>
             </div>
             <p class="no-data" id="noPos">No POS transactions.</p>
+        </div>
+    </div>
+
+    <!-- Print section picker -->
+    <div id="printModal" class="modal-overlay">
+        <div class="modal-content print-modal">
+            <h2 class="modal-title">Print Reports</h2>
+            <p class="print-modal-sub">Select the report section(s) you would like to include.</p>
+            <div class="print-options">
+                <label class="print-option"><input type="checkbox" class="print-check" value="panel-events" checked> Events</label>
+                <label class="print-option"><input type="checkbox" class="print-check" value="panel-orders" checked> Merchandise Reservations</label>
+                <label class="print-option"><input type="checkbox" class="print-check" value="panel-pos" checked> Product Sales</label>
+            </div>
+            <div class="print-quick">
+                <button type="button" class="btn-quick" onclick="printSelectAll()">Select All</button>
+                <button type="button" class="btn-quick" onclick="printClearSelection()">Clear Selection</button>
+            </div>
+            <p class="print-error" id="printError" style="display:none;">Please select at least one report to print.</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closePrintModal()">Cancel</button>
+                <button class="btn-confirm" onclick="doPrint()">Print</button>
+            </div>
         </div>
     </div>
 

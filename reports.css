@@ -205,6 +205,9 @@ body {
     to   { opacity: 1; transform: none; }
 }
 
+/* Print-only "Summary" heading — hidden on screen, shown in @media print. */
+.print-summary-heading { display: none; }
+
 /* STATS */
 .stats-container {
      display: grid; 
@@ -511,6 +514,107 @@ tbody tr:hover {
 }
 
 /* ============================================================
+   PRINT SECTION-PICKER MODAL (matches the admin dark/glass theme)
+   ============================================================ */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 3000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.modal-content.print-modal {
+    background: #1c1c1c;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+.print-modal .modal-title {
+    font-family: "Playfair Display", serif;
+    font-size: 1.4rem;
+    color: var(--white);
+    margin-bottom: 6px;
+}
+.print-modal-sub {
+    color: var(--gray);
+    font-size: 0.85rem;
+    margin-bottom: 18px;
+}
+.print-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.print-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--white);
+    font-size: 0.92rem;
+    cursor: pointer;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.25);
+    transition: border-color 0.2s;
+}
+.print-option:hover { border-color: var(--gold); }
+.print-option input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--gold);
+    cursor: pointer;
+}
+.print-quick {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.btn-quick {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border);
+    color: var(--gray);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-quick:hover { border-color: var(--gold); color: var(--gold); }
+.print-error {
+    color: var(--danger);
+    font-size: 0.83rem;
+    margin-bottom: 12px;
+}
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+}
+.modal-actions button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.85rem;
+    transition: opacity 0.2s;
+}
+.modal-actions button:hover { opacity: 0.85; }
+.btn-cancel  { background: rgba(255, 255, 255, 0.1); color: var(--white); }
+.btn-confirm { background: var(--gold); color: #000; }
+
+/* ============================================================
    PRINT / PDF EXPORT
    White A4 portrait, black text, bordered tables. Only the report
    content prints; all screen chrome (nav, filters, pagination) is
@@ -532,20 +636,22 @@ tbody tr:hover {
         print-color-adjust: exact;
     }
 
-    /* Hide navbar, filters/buttons, pagination, and other non-report UI */
+    /* Hide navbar, filters/buttons, pagination, global stats, modal, other UI */
     .navbar,
     .reports-header,
     .date-filters,
     .pagination-bar,
     .report-tabs,
-    .mini-cards {
+    .stats-container,
+    .modal-overlay {
         display: none !important;
     }
 
-    /* Ignore the on-screen tab selection — print every report. */
-    .report-panel {
-        display: block !important;
-    }
+    /* Print only the sections chosen in the picker (fixed order). Sections
+       flow together; a page break only occurs when one doesn't fit — no
+       forced breaks between sections. */
+    .report-panel { display: none !important; }
+    .report-panel.print-include { display: block !important; }
 
     .reports-wrapper {
         max-width: none;
@@ -553,63 +659,95 @@ tbody tr:hover {
         padding: 0;
     }
 
-    /* Print-only report header: title, date range, generated timestamp */
+    /* Report header: brand, title, generated, range, sections */
     .print-header {
         display: block !important;
         text-align: center;
-        margin-bottom: 16px;
+        margin-bottom: 18px;
         padding-bottom: 10px;
         border-bottom: 2px solid #000;
     }
-    .print-header h1 {
-        font-size: 20pt;
-        margin: 0 0 6px;
+    .print-header .print-brand { font-size: 20pt; margin: 0; color: #000; }
+    .print-header .print-title {
+        font-size: 12pt;
+        font-weight: normal;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin: 2px 0 8px;
         color: #000;
     }
-    .print-header p {
-        font-size: 10pt;
-        margin: 2px 0;
-        color: #000;
-    }
+    .print-header p { font-size: 10pt; margin: 2px 0; color: #000; }
 
-    /* Summary stat cards -> compact bordered boxes */
-    .stats-container {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 16px;
-        page-break-inside: avoid;
-    }
-    .stat-card {
-        flex: 1;
-        padding: 8px;
-        text-align: center;
-        background: #fff !important;
-        border: 1px solid #000 !important;
-        border-radius: 0 !important;
-        backdrop-filter: none !important;
-        page-break-inside: avoid;
-    }
-    .stat-card h3,
-    .stat-card p {
-        color: #000 !important;
-    }
-    .stat-card p { font-size: 16pt; }
+    /* Strip decorative bits: emoji icons and coloured divider lines */
+    .report-icon,
+    .report-divider { display: none !important; }
 
-    /* Report sections */
+    /* Report sections — separated by headings and whitespace only */
     .section-card {
-        background: #fff !important;
+        background: none !important;
         border: none !important;
         border-radius: 0 !important;
         backdrop-filter: none !important;
+        box-shadow: none !important;
         padding: 0 !important;
-        margin-bottom: 18px;
-        page-break-inside: avoid;
+        margin: 0 0 26px !important;
     }
     .section-card h2 {
         color: #000 !important;
-        border-bottom: 1px solid #000;
+        border-bottom: none !important;
+        font-size: 15pt;
+        margin: 0 0 4px;
         page-break-after: avoid;
     }
+
+    /* Summary heading above the summary table */
+    .print-summary-heading {
+        display: block !important;
+        color: #000;
+        font-size: 11pt;
+        margin: 10px 0 6px;
+        page-break-after: avoid;
+    }
+
+    /* Summary cards -> a clean two-column table (label | value) */
+    .mini-cards {
+        display: table !important;
+        width: auto;
+        min-width: 340px;
+        border-collapse: collapse;
+        margin: 0 0 18px;
+        page-break-inside: avoid;
+    }
+    .mini-card {
+        display: table-row !important;
+        background: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        padding: 0 !important;
+    }
+    .mini-label {
+        display: table-cell !important;
+        border: 1px solid #000;
+        padding: 5px 12px;
+        color: #000 !important;
+        font-weight: normal;
+        font-size: 10pt;
+        text-transform: none;
+        letter-spacing: normal;
+    }
+    .mini-value {
+        display: table-cell !important;
+        border: 1px solid #000;
+        padding: 5px 12px;
+        color: #000 !important;
+        font-weight: bold;
+        font-size: 10pt;
+        text-align: right;
+        white-space: nowrap;
+    }
+    .mini-sub { display: none !important; }
 
     /* Tables: visible borders, aligned columns, repeat header per page */
     .table-responsive { overflow: visible !important; }
@@ -628,20 +766,28 @@ tbody tr:hover {
         text-align: left;
     }
     th {
-        background: #eaeaea !important;
+        background: #e6e6e6 !important;
+        font-weight: bold;
         text-transform: uppercase;
+    }
+    /* Subtle zebra striping that still prints clearly */
+    tbody tr:nth-child(even) td {
+        background: #f4f4f4 !important;
     }
     tr {
         page-break-inside: avoid;
         page-break-after: auto;
     }
 
-    /* Status badges -> plain bordered labels so they read in grayscale */
+    /* Status badges -> plain black text (no coloured pills, borders, or icons) */
     .status-badge {
         background: none !important;
         color: #000 !important;
-        border: 1px solid #000;
-        padding: 1px 5px;
+        border: none !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+        font-weight: normal !important;
+        text-transform: none !important;
     }
 
     .no-data { color: #000 !important; }

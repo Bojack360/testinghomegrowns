@@ -10,24 +10,74 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('dateTo').value   = '';
         loadReports();
     });
-    document.getElementById('printReport').addEventListener('click', () => {
-        // Fill the print-only header, then open the browser print dialog.
-        const from = document.getElementById('dateFrom').value;
-        const to   = document.getElementById('dateTo').value;
-        const fmt  = d => new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-        let range;
-        if (from && to)      range = `${fmt(from)} to ${fmt(to)}`;
-        else if (from)       range = `From ${fmt(from)}`;
-        else if (to)         range = `Up to ${fmt(to)}`;
-        else                 range = 'All dates';
-        document.getElementById('printDateRange').textContent = 'Date range: ' + range;
-        document.getElementById('printGeneratedAt').textContent =
-            'Generated: ' + new Date().toLocaleString('en-US',
-                { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-        window.print();
-    });
+    // The Print button now opens a section-picker modal instead of printing directly.
+    document.getElementById('printReport').addEventListener('click', openPrintModal);
     initReportTabs();
 });
+
+// ── Print section picker ─────────────────────────────────────────────────────
+const PRINT_ORDER  = ['panel-events', 'panel-orders', 'panel-pos'];
+const PRINT_LABELS = {
+    'panel-events': 'Events',
+    'panel-orders': 'Merchandise Reservations',
+    'panel-pos':    'Product Sales',
+};
+
+function openPrintModal() {
+    document.querySelectorAll('.print-check').forEach(c => { c.checked = true; });  // default: all
+    document.getElementById('printError').style.display = 'none';
+    document.getElementById('printModal').style.display = 'flex';
+}
+function closePrintModal() {
+    document.getElementById('printModal').style.display = 'none';
+}
+function printSelectAll() {
+    document.querySelectorAll('.print-check').forEach(c => { c.checked = true; });
+    document.getElementById('printError').style.display = 'none';
+}
+function printClearSelection() {
+    document.querySelectorAll('.print-check').forEach(c => { c.checked = false; });
+}
+
+function doPrint() {
+    const checked = [...document.querySelectorAll('.print-check')].filter(c => c.checked).map(c => c.value);
+    if (checked.length === 0) {
+        document.getElementById('printError').style.display = 'block';
+        return;
+    }
+    document.getElementById('printError').style.display = 'none';
+
+    // Mark only the selected panels for print, in the fixed section order,
+    // with a page break before every section after the first.
+    const selected = PRINT_ORDER.filter(id => checked.includes(id));
+    PRINT_ORDER.forEach(id => {
+        const p = document.getElementById(id);
+        if (p) p.classList.remove('print-include');
+    });
+    selected.forEach(id => {
+        document.getElementById(id).classList.add('print-include');
+    });
+
+    // Build the print header (brand / title / meta).
+    const from = document.getElementById('dateFrom').value;
+    const to   = document.getElementById('dateTo').value;
+    const fmt  = d => new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    let range;
+    if (from && to)  range = `${fmt(from)} to ${fmt(to)}`;
+    else if (from)   range = `From ${fmt(from)}`;
+    else if (to)     range = `Up to ${fmt(to)}`;
+    else             range = 'All dates';
+
+    document.getElementById('printGeneratedAt').textContent =
+        'Date Generated: ' + new Date().toLocaleString('en-US',
+            { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    document.getElementById('printDateRange').textContent = 'Date Range: ' + range;
+    document.getElementById('printSections').textContent  =
+        'Report Sections: ' + selected.map(id => PRINT_LABELS[id]).join(', ');
+
+    closePrintModal();
+    window.print();
+}
 
 // Show one report panel at a time via the tab bar (data-only handled elsewhere).
 function initReportTabs() {
@@ -238,7 +288,7 @@ function setMini(containerId, cards) {
     el.innerHTML = cards.map(c => `
         <div class="mini-card">
             <span class="mini-label">${esc(c.label)}</span>
-            <span class="mini-value">${esc(c.value)}</span>
+            <span class="mini-value">${esc(String(c.value))}</span>
             ${c.sub ? `<span class="mini-sub">${esc(c.sub)}</span>` : ''}
         </div>`).join('');
 }
@@ -294,4 +344,9 @@ function renderPosMini() {
     ]);
 }
 
+window.openPrintModal      = openPrintModal;
+window.closePrintModal     = closePrintModal;
+window.printSelectAll      = printSelectAll;
+window.printClearSelection = printClearSelection;
+window.doPrint             = doPrint;
 window.logout = adminLogout;
