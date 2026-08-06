@@ -144,9 +144,95 @@ main {
     color: var(--text-white);
 }
 
+.stat-card.reserved p { color: #3498db; }
+.stat-card.sold p     { color: var(--success); }
+.stat-card.expired p  { color: var(--danger); }
+/* legacy classes kept for safety */
 .stat-card.pending p { color: var(--accent-gold); }
 .stat-card.approved p { color: var(--success); }
 .stat-card.declined p { color: var(--danger); }
+
+/* --- HEADER ACTIONS + COMPACT PICKUP-PERIOD CONTROL --- */
+.panel-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+.pickup-period-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-white);
+    padding: 11px 18px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    transition: border-color 0.2s, transform 0.2s;
+}
+.pickup-period-btn:hover {
+    border-color: var(--accent-gold);
+    transform: translateY(-2px);
+}
+.pickup-period-btn strong { color: var(--accent-gold); }
+.pickup-period-btn .gear { font-size: 1rem; color: var(--text-gray); }
+
+/* Compact pickup-period modal (higher specificity so it beats the base .modal-content) */
+.modal-content.pickup-modal {
+    max-width: 460px;
+    padding: 22px 26px;
+}
+.pickup-modal .modal-title {
+    margin-bottom: 6px;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+.pickup-desc {
+    color: var(--text-gray);
+    font-size: 0.82rem;
+    line-height: 1.45;
+    margin-bottom: 14px;
+}
+.pickup-field-label {
+    display: block;
+    color: var(--text-white);
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.pickup-input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.pickup-input-group input {
+    width: 90px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    color: var(--text-white);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    text-align: center;
+}
+.pickup-input-group input:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+}
+.pickup-input-group span {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+}
+.pickup-modal .modal-actions {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
 
 /* --- FILTERS --- */
 .filters {
@@ -340,6 +426,11 @@ td:last-child .action-btn {
     text-transform: uppercase;
 }
 
+.status-badge.reserved  { background: rgba(52,152,219,0.2);  color: #5dade2; }
+.status-badge.sold      { background: rgba(46,204,113,0.2);  color: var(--success); }
+.status-badge.expired   { background: rgba(231,76,60,0.2);   color: var(--danger); }
+.status-badge.cancelled { background: rgba(149,165,166,0.22); color: #b7c0c1; }
+/* legacy status classes kept for safety */
 .status-badge.pending  { background: rgba(243,156,18,0.2); color: var(--accent-gold); }
 .status-badge.approved { background: rgba(46,204,113,0.2); color: var(--success); }
 .status-badge.declined { background: rgba(231,76,60,0.2); color: var(--danger); }

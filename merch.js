@@ -278,33 +278,45 @@ function closeConfirmation() {
     document.getElementById('cartcart').style.display     = 'block';
 }
 
+// Reads the admin-configured pickup duration (whole days). Falls back to 2.
+async function getPickupDuration() {
+    try {
+        const { data, error } = await supabase
+            .from('app_settings')
+            .select('value')
+            .eq('key', 'reservation_pickup_duration')
+            .maybeSingle();
+        if (error) throw error;
+        const n = parseInt(data?.value, 10);
+        if (Number.isFinite(n) && n >= 1 && n <= 30) return n;
+    } catch (err) {
+        console.warn('Could not read pickup duration, defaulting to 2:', err);
+    }
+    return 2;
+}
+
 async function finalizeOrder() {
     document.getElementById('confirmModal').style.display = 'none';
 
     try {
-        // Deduct stock for each item
-        for (const item of cart) {
-            const product = products.find(p => p.name === item.name);
-            if (product && product.id) {
-                const newStock = Math.max(0, product.stock_quantity - item.qty);
-                const { error } = await supabase
-                    .from('products')
-                    .update({ stock_quantity: newStock })
-                    .eq('id', product.id);
-                if (error) console.error('Stock update error:', error);
-                product.stock_quantity = newStock;
-            }
-        }
+        // This is a reservation tracking system — creating a reservation does NOT
+        // change inventory. Stock is only deducted when the reservation is marked Sold.
+        const now      = new Date();
+        const duration = await getPickupDuration();
+        const deadline = new Date(now.getTime() + duration * 24 * 60 * 60 * 1000);
 
-        // Save order
+        // Save reservation
         const { error } = await supabase.from('orders').insert({
             customer_email: currentUserEmail,
             customer_phone: currentUserPhone,
             pickup_desc:    document.getElementById('custDesc').value.trim(),
             items:          cart.map(i => ({ name: i.name, size: i.size, qty: i.qty, price: i.price })),
             total:          getTotalPrice(),
-            status:         'Pending',
-            created_at:     new Date().toISOString()
+            status:         'Reserved',
+            pickup_duration: duration,
+            pickup_deadline: deadline.toISOString(),
+            stock_deducted:  false,
+            created_at:     now.toISOString()
         });
 
         if (error) throw error;
@@ -315,9 +327,6 @@ async function finalizeOrder() {
         updateCartCounter();
         renderCartItems();
         document.getElementById('custDesc').value = '';
-
-        await loadProducts();
-        renderProducts();
     } catch (error) {
         console.error('Order failed:', error);
         showToast('Something went wrong. Please try again.', 'error');

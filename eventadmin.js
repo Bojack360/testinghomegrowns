@@ -14,7 +14,6 @@ let currentPage   = 1;
 const bookingsTableBody = document.getElementById('bookingsTableBody');
 const noBookings        = document.getElementById('noBookings');
 const statusFilter      = document.getElementById('statusFilter');
-const typeFilter        = document.getElementById('typeFilter');
 const venueFilter       = document.getElementById('venueFilter');
 const sortSelect        = document.getElementById('sortSelect');
 const searchInput       = document.getElementById('searchInput');
@@ -90,11 +89,8 @@ function updateStats() {
 // FILTER OPTIONS (populated from actual data)
 // ==========================================
 function populateFilterOptions() {
-    const types  = [...new Set(bookings.map(b => b.type).filter(Boolean))].sort();
     const venues = [...new Set(bookings.map(b => b.venue).filter(Boolean))].sort();
 
-    typeFilter.innerHTML = '<option value="all">All Event Types</option>' +
-        types.map(t => `<option value="${t}">${t}</option>`).join('');
     venueFilter.innerHTML = '<option value="all">All Venues</option>' +
         venues.map(v => `<option value="${v}">${v}</option>`).join('');
 }
@@ -106,7 +102,6 @@ function toTime(v) { const t = v ? new Date(v).getTime() : NaN; return Number.is
 
 function getFilteredSorted() {
     const status = statusFilter.value;
-    const type   = typeFilter.value;
     const venue  = venueFilter.value;
     const from   = dateFromInput.value;
     const to     = dateToInput.value;
@@ -115,7 +110,6 @@ function getFilteredSorted() {
 
     let list = bookings.filter(b => {
         if (status !== 'all' && b.status !== status) return false;
-        if (type   !== 'all' && b.type  !== type)   return false;
         if (venue  !== 'all' && b.venue !== venue)  return false;
 
         // Date range is applied against the event date
@@ -240,13 +234,12 @@ function applyFiltersAndRender() {
     renderBookings();
 }
 
-[statusFilter, typeFilter, venueFilter, sortSelect, dateFromInput, dateToInput].forEach(el =>
+[statusFilter, venueFilter, sortSelect, dateFromInput, dateToInput].forEach(el =>
     el.addEventListener('change', applyFiltersAndRender)
 );
 searchInput.addEventListener('input', applyFiltersAndRender);
 clearFiltersBtn.addEventListener('click', () => {
     statusFilter.value = 'all';
-    typeFilter.value   = 'all';
     venueFilter.value  = 'all';
     sortSelect.value   = 'newest';
     dateFromInput.value = '';

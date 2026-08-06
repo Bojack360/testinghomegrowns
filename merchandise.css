@@ -183,6 +183,9 @@ li {
     flex: 1;
     width: 100%;
     box-sizing: border-box;
+    /* Pack rows at their natural height so cards don't stretch to fill the
+       page — otherwise a single short row balloons and leaves a big gap. */
+    align-content: start;
 }
 
 .bayo-item {

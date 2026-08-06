@@ -40,21 +40,27 @@
     <main>
         <div class="panel-header">
             <h1>Admin Merchandise Panel</h1>
-            <button class="add-item-btn" onclick="openAddProductModal()">Add Product</button>
+            <div class="panel-header-actions">
+                <button class="add-item-btn" onclick="openAddProductModal()">Add Product</button>
+                <button class="pickup-period-btn" onclick="openPickupModal()" title="Reservation pickup period">
+                    Pickup Period: <strong id="duration-display">2</strong> Days
+                    <span class="gear" aria-hidden="true">&#9881;</span>
+                </button>
+            </div>
         </div>
 
         <div class="stats-container">
-            <div class="stat-card pending">
-                <h3>Pending</h3>
-                <p id="pending-count">0</p>
+            <div class="stat-card reserved">
+                <h3>Reserved</h3>
+                <p id="reserved-count">0</p>
             </div>
-            <div class="stat-card approved">
-                <h3>SOLD</h3>
-                <p id="approved-count">0</p>
+            <div class="stat-card sold">
+                <h3>Sold</h3>
+                <p id="sold-count">0</p>
             </div>
-            <div class="stat-card declined">
-                <h3>Declined</h3>
-                <p id="declined-count">0</p>
+            <div class="stat-card expired">
+                <h3>Expired</h3>
+                <p id="expired-count">0</p>
             </div>
             <div class="stat-card total">
                 <h3>Total</h3>
@@ -66,11 +72,9 @@
             <input type="search" id="order-search" class="filter-search" placeholder="Search by Order ID, email, or item…">
             <select id="status-filter" class="filter-select">
                 <option value="all">All Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Claimed">Claimed</option>
+                <option value="Reserved">Reserved</option>
                 <option value="Sold">Sold</option>
-                <option value="Declined">Declined</option>
+                <option value="Expired">Expired</option>
                 <option value="Cancelled">Cancelled</option>
             </select>
             <select id="category-filter" class="filter-select">
@@ -95,6 +99,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Date Submitted</th>
+                        <th>Pickup Deadline</th>
                         <th>Customer Email</th>
                         <th>Merchandise Name</th>
                         <th>Size</th>
@@ -152,13 +157,11 @@
                 <div class="detail-value status-badge" id="modal-status"></div>
             </div>
             <div class="detail-row">
-                <span class="detail-label">Date To Claim:</span>
+                <span class="detail-label">Pickup Deadline:</span>
                 <div class="detail-value" id="modal-date-claim"></div>
             </div>
             <div class="modal-actions">
-                <button class="btn-approve" onclick="approveOrder()">Approve</button>
-                <button class="btn-decline" onclick="declineOrder()">Decline</button>
-                <button class="btn-confirm" onclick="closeModal()">Confirm</button>
+                <button class="btn-confirm" onclick="closeModal()">Close</button>
             </div>
         </div>
     </div>
@@ -208,6 +211,22 @@
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeAddProductModal()">Cancel</button>
                 <button class="btn-confirm" onclick="addNewProduct()">Add Product</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pickupModal" class="modal-overlay">
+        <div class="modal-content pickup-modal">
+            <h2 class="modal-title">Reservation Pickup Period</h2>
+            <p class="pickup-desc">Configure how many days customers have to claim their reserved merchandise before the reservation expires.</p>
+            <label class="pickup-field-label" for="pickup-duration-input">Pickup Period</label>
+            <div class="pickup-input-group">
+                <input type="number" id="pickup-duration-input" min="1" max="30" step="1" value="2">
+                <span>Days</span>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closePickupModal()">Cancel</button>
+                <button class="btn-confirm" onclick="savePickupDuration()">Save</button>
             </div>
         </div>
     </div>

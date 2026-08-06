@@ -7,18 +7,107 @@ import { requireAdmin, adminLogout } from './auth.js';
 let products      = [];
 let orders        = [];
 let selectedOrder = null;
+let pickupDuration = 2;   // admin-configured reservation pickup window (days)
 
 // ==========================================
 // INITIALIZATION
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
     if (!(await requireAdmin())) return;   // block non-admins before loading data
+    await loadSettings();
     await loadProducts();
-    await loadOrders();
+    await loadOrders();          // also auto-expires overdue reservations
     renderOrdersTable();
     renderProductsGrid();
     updateStats();
 });
+
+// ==========================================
+// RESERVATION SETTINGS (pickup duration)
+// ==========================================
+async function loadSettings() {
+    try {
+        const { data, error } = await supabase
+            .from('app_settings')
+            .select('value')
+            .eq('key', 'reservation_pickup_duration')
+            .maybeSingle();
+        if (error) throw error;
+        const n = parseInt(data?.value, 10);
+        if (Number.isFinite(n) && n >= 1 && n <= 30) pickupDuration = n;
+    } catch (err) {
+        console.warn('Could not load pickup duration, using default:', err);
+    }
+    const inp  = document.getElementById('pickup-duration-input');
+    const disp = document.getElementById('duration-display');
+    if (inp)  inp.value = pickupDuration;
+    if (disp) disp.textContent = pickupDuration;
+}
+
+function openPickupModal() {
+    const inp = document.getElementById('pickup-duration-input');
+    if (inp) inp.value = pickupDuration;   // pre-fill with the current value
+    document.getElementById('pickupModal').style.display = 'flex';
+    if (inp) { inp.focus(); inp.select(); }
+}
+
+function closePickupModal() {
+    document.getElementById('pickupModal').style.display = 'none';
+}
+
+async function savePickupDuration() {
+    const inp = document.getElementById('pickup-duration-input');
+    const n   = parseInt(inp.value, 10);
+    if (!Number.isFinite(n) || n < 1 || n > 30) {
+        alert('Please enter a whole number of days between 1 and 30.');
+        return;
+    }
+    try {
+        const { error } = await supabase
+            .from('app_settings')
+            .upsert({ key: 'reservation_pickup_duration', value: String(n) }, { onConflict: 'key' });
+        if (error) throw error;
+        pickupDuration = n;
+        const disp = document.getElementById('duration-display');
+        if (disp) disp.textContent = n;
+        closePickupModal();
+        alert(`Reservation pickup period saved: ${n} day(s).`);
+    } catch (err) {
+        console.error('Failed to save pickup duration:', err);
+        alert('Failed to save the setting. Please try again.');
+    }
+}
+
+// Map any legacy statuses onto the current reservation vocabulary.
+function normStatus(s) {
+    const map = { Pending: 'Reserved', Approved: 'Sold', Claimed: 'Sold', Declined: 'Cancelled' };
+    return map[s] || s || 'Reserved';
+}
+
+function formatDeadline(d) {
+    if (!d) return '—';
+    return new Date(d).toLocaleString('en-US',
+        { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+// Flip any Reserved reservation whose pickup deadline has passed to Expired.
+// Inventory is never touched here.
+async function autoExpireReservations(rows) {
+    const now = Date.now();
+    const overdue = rows.filter(o =>
+        o.status === 'Reserved' && o.pickup_deadline && new Date(o.pickup_deadline).getTime() <= now);
+    for (const o of overdue) {
+        o.status = 'Expired';
+        try {
+            await supabase.from('orders')
+                .update({ status: 'Expired', updated_at: new Date().toISOString() })
+                .eq('id', o.id);
+        } catch (err) {
+            console.error('Auto-expire failed for order', o.id, err);
+        }
+    }
+    return rows;
+}
 
 // ==========================================
 // DATA LOADING
@@ -45,9 +134,12 @@ async function loadOrders() {
             .select('*')
             .order('created_at', { ascending: false });
         if (error) throw error;
-        orders = (data || []).map(row => ({
+        let rows = (data || []).map(row => ({ ...row, status: normStatus(row.status) }));
+        rows = await autoExpireReservations(rows);
+        orders = rows.map(row => ({
             ...row,
-            createdAt: row.created_at ? new Date(row.created_at).toLocaleString() : 'Unknown'
+            createdAt:    row.created_at ? new Date(row.created_at).toLocaleString() : 'Unknown',
+            deadlineText: formatDeadline(row.pickup_deadline)
         }));
         console.log(`Loaded ${orders.length} orders`);
     } catch (error) {
@@ -59,9 +151,9 @@ async function loadOrders() {
 // STATS
 // ==========================================
 function updateStats() {
-    document.getElementById('pending-count').innerText  = orders.filter(o => o.status === 'Pending').length;
-    document.getElementById('approved-count').innerText = orders.filter(o => o.status === 'Approved').length;
-    document.getElementById('declined-count').innerText = orders.filter(o => o.status === 'Declined').length;
+    document.getElementById('reserved-count').innerText = orders.filter(o => o.status === 'Reserved').length;
+    document.getElementById('sold-count').innerText     = orders.filter(o => o.status === 'Sold').length;
+    document.getElementById('expired-count').innerText  = orders.filter(o => o.status === 'Expired').length;
     document.getElementById('total-count').innerText    = orders.length;
 }
 
@@ -78,10 +170,7 @@ function renderOrdersTable() {
 // ── Filter helpers ──────────────────────────────────────────────────────────
 function orderMatchesStatus(order, status) {
     if (status === 'all') return true;
-    const s = String(order.status || '');
-    // "Approved" orders are shown as SOLD, so the Sold filter also matches them.
-    if (status === 'Sold') return s === 'Approved' || s === 'Sold';
-    return s === status;
+    return String(order.status) === status;
 }
 
 function orderMatchesCategory(order, cat) {
@@ -138,32 +227,35 @@ function renderOrders() {
     tbody.innerHTML = '';
 
     if (total === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px;">No orders found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:20px;">No orders found</td></tr>';
         renderOrdersPagination(0, 1, 0, 0);
         return;
     }
 
     pageRows.forEach(order => {
-        const statusClass = order.status.toLowerCase();
+        const status      = order.status;
+        const statusClass = status.toLowerCase();
         const firstItem   = (order.items && order.items[0]) || {};
         const row         = document.createElement('tr');
+
+        // Only Reserved reservations offer Sold / Cancel; everything else is View-only.
+        const actions = status === 'Reserved'
+            ? `<button class="action-btn btn-view" onclick="viewOrder('${order.id}')">View</button>
+               <button class="action-btn btn-approve" onclick="markAsSold('${order.id}')">Mark as Sold</button>
+               <button class="action-btn btn-decline" onclick="cancelReservation('${order.id}')">Cancel</button>`
+            : `<button class="action-btn btn-view" onclick="viewOrder('${order.id}')">View</button>`;
 
         row.innerHTML = `
             <td>#${order.id.toString().slice(-6).toUpperCase()}</td>
             <td>${order.createdAt}</td>
+            <td>${order.deadlineText}</td>
             <td>${order.customer_email || 'N/A'}</td>
             <td>${firstItem.name || 'Multiple Items'}</td>
             <td>${firstItem.size || '-'}</td>
             <td>${firstItem.qty  || '-'}</td>
             <td>₱${Number(order.total).toLocaleString()}</td>
-            <td><span class="status-badge ${statusClass}">${order.status === 'Approved' ? 'SOLD' : order.status}</span></td>
-            <td>
-                <button class="action-btn btn-view" onclick="viewOrder('${order.id}')">View</button>
-                ${order.status === 'Pending' ? `
-                    <button class="action-btn btn-approve" onclick="approveOrderById('${order.id}')">&#10003;</button>
-                    <button class="action-btn btn-decline" onclick="declineOrderById('${order.id}')">&#10007;</button>
-                ` : ''}
-            </td>
+            <td><span class="status-badge ${statusClass}">${status}</span></td>
+            <td>${actions}</td>
         `;
         tbody.appendChild(row);
     });
@@ -354,9 +446,9 @@ function viewOrder(orderId) {
     document.getElementById('modal-phone').textContent          = order.customer_phone || 'N/A';
     document.getElementById('modal-desc').textContent           = order.pickup_desc    || 'N/A';
     document.getElementById('modal-total').textContent          = `₱${Number(order.total).toLocaleString()}`;
-    document.getElementById('modal-status').textContent         = order.status === 'Approved' ? 'SOLD' : order.status;
+    document.getElementById('modal-status').textContent         = order.status;
     document.getElementById('modal-status').className           = `detail-value status-badge ${order.status.toLowerCase()}`;
-    document.getElementById('modal-date-claim').textContent     = order.date_to_claim  || 'Not set';
+    document.getElementById('modal-date-claim').textContent     = order.deadlineText || '—';
 
     const itemsHtml = (order.items || []).map(item => `
         <div style="display:flex; justify-content:space-between; margin-bottom:8px; padding:8px; background:rgba(255,255,255,0.05); border-radius:6px;">
@@ -368,10 +460,10 @@ function viewOrder(orderId) {
 
     const modalActions = document.querySelector('#orderModal .modal-actions');
     if (modalActions) {
-        let buttons = order.status === 'Pending'
-            ? `<button class="btn-approve" onclick="updateOrderStatus('${order.id}', 'Approved')">&#10003; Approve</button>
-               <button class="btn-decline" onclick="updateOrderStatus('${order.id}', 'Declined')">&#10007; Decline</button>`
-            : `<button class="btn-revert"  onclick="revertOrder('${order.id}')">&#8617; Revert to Pending</button>`;
+        let buttons = order.status === 'Reserved'
+            ? `<button class="btn-approve" onclick="markAsSold('${order.id}')">&#10003; Mark as Sold</button>
+               <button class="btn-decline" onclick="cancelReservation('${order.id}')">&#10007; Cancel</button>`
+            : '';
         buttons += `<button class="btn-confirm" onclick="closeModal()">Close</button>`;
         modalActions.innerHTML = buttons;
     }
@@ -379,62 +471,72 @@ function viewOrder(orderId) {
     document.getElementById('orderModal').style.display = 'flex';
 }
 
-async function approveOrderById(orderId) {
-    if (!confirm('Approve this order?')) return;
-    await updateOrderStatus(orderId, 'Approved');
-}
+// Mark a reservation as Sold — deducts stock exactly once and finalizes it.
+async function markAsSold(orderId) {
+    const order = orders.find(o => String(o.id) === String(orderId));
+    if (!order) return;
+    if (order.status !== 'Reserved') {
+        alert('Only reserved items can be marked as sold.');
+        return;
+    }
+    if (!confirm('Mark this reservation as Sold?\nThis will deduct the sold quantity from inventory.')) return;
 
-async function declineOrderById(orderId) {
-    if (!confirm('Decline this order?')) return;
-    await updateOrderStatus(orderId, 'Declined');
-}
-
-async function approveOrder() {
-    if (selectedOrder) await updateOrderStatus(selectedOrder.id, 'Approved');
-}
-
-async function declineOrder() {
-    if (selectedOrder) await updateOrderStatus(selectedOrder.id, 'Declined');
-}
-
-async function updateOrderStatus(orderId, newStatus) {
     try {
+        // Deduct stock exactly once. If it was already deducted (e.g. legacy data),
+        // skip the deduction but still finalize the status.
+        if (!order.stock_deducted) {
+            for (const item of (order.items || [])) {
+                const p = products.find(pr => pr.name === item.name);
+                if (p && p.id) {
+                    const newStock = Math.max(0, (Number(p.stock_quantity) || 0) - (Number(item.qty) || 0));
+                    await updateStock(p.id, newStock);   // reuses the existing stock-update path
+                }
+            }
+        }
+
         const { error } = await supabase
             .from('orders')
-            .update({ status: newStatus, updated_at: new Date().toISOString() })
+            .update({ status: 'Sold', stock_deducted: true, updated_at: new Date().toISOString() })
             .eq('id', orderId);
         if (error) throw error;
-        alert(`Order ${newStatus} successfully!`);
+
+        alert('Reservation marked as Sold. Inventory updated.');
         closeModal();
         await loadOrders();
         renderOrdersTable();
         updateStats();
     } catch (error) {
-        console.error('Failed to update order:', error);
-        alert('Failed to update order. Please try again.');
+        console.error('Failed to mark as sold:', error);
+        alert('Failed to mark as sold. Please try again.');
+        await loadProducts();
+        renderProductsGrid();
     }
 }
 
-async function revertOrder(orderId) {
-    if (!confirm('Revert this order to Pending?')) return;
+// Cancel a reservation — inventory is never touched.
+async function cancelReservation(orderId) {
+    const order = orders.find(o => String(o.id) === String(orderId));
+    if (!order) return;
+    if (order.status !== 'Reserved') {
+        alert('Only reserved items can be cancelled.');
+        return;
+    }
+    if (!confirm('Cancel this reservation? Inventory will not change.')) return;
+
     try {
         const { error } = await supabase
             .from('orders')
-            .update({
-                status:      'Pending',
-                updated_at:  new Date().toISOString(),
-                reverted_at: new Date().toISOString()
-            })
+            .update({ status: 'Cancelled', updated_at: new Date().toISOString() })
             .eq('id', orderId);
         if (error) throw error;
-        alert('Order reverted to Pending!');
+        alert('Reservation cancelled.');
         closeModal();
         await loadOrders();
         renderOrdersTable();
         updateStats();
     } catch (error) {
-        console.error('Failed to revert order:', error);
-        alert('Failed to revert order. Please try again.');
+        console.error('Failed to cancel reservation:', error);
+        alert('Failed to cancel reservation. Please try again.');
     }
 }
 
@@ -559,12 +661,11 @@ async function addNewProduct() {
 // EXPOSE TO GLOBAL SCOPE
 // ==========================================
 window.viewOrder           = viewOrder;
-window.approveOrder        = approveOrder;
-window.declineOrder        = declineOrder;
-window.approveOrderById    = approveOrderById;
-window.declineOrderById    = declineOrderById;
-window.updateOrderStatus   = updateOrderStatus;
-window.revertOrder         = revertOrder;
+window.markAsSold          = markAsSold;
+window.cancelReservation   = cancelReservation;
+window.savePickupDuration  = savePickupDuration;
+window.openPickupModal     = openPickupModal;
+window.closePickupModal    = closePickupModal;
 window.closeModal          = closeModal;
 window.deleteProduct       = deleteProduct;
 window.adjustStock         = adjustStock;
