@@ -25,15 +25,21 @@ document.querySelectorAll('a[href^="#"]:not(.btn-account)').forEach(anchor => {
     });
 })();
 
-// ── Drinks carousel (lightweight, no dependencies) ──
+// ── Card carousel (lightweight, no dependencies). One component reused by
+//    every ".drink-carousel" on the page (Drinks and Munchies). ──
 (function () {
     document.addEventListener('DOMContentLoaded', function () {
-        const track = document.getElementById('drinkTrack');
+        document.querySelectorAll('.drink-carousel').forEach(initCarousel);
+    });
+
+    function initCarousel(root) {
+        const track = root.querySelector('.carousel-track');
         if (!track) return;
         const total    = track.children.length;
-        const dotsWrap = document.getElementById('drinkDots');
-        const prev     = document.getElementById('drinkPrev');
-        const next     = document.getElementById('drinkNext');
+        const prev     = root.querySelector('.carousel-arrow.prev');
+        const next     = root.querySelector('.carousel-arrow.next');
+        // Dots live just outside the carousel, within the same section.
+        const dotsWrap = (root.parentElement || document).querySelector('.carousel-dots');
         let index = 0;
 
         function perView() {
@@ -95,5 +101,5 @@ document.querySelectorAll('a[href^="#"]:not(.btn-account)').forEach(anchor => {
         });
 
         update();
-    });
+    }
 })();

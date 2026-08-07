@@ -101,23 +101,50 @@
 
     <section id="munchies" class="reveal">
         <h2>Munchies</h2>
-        <div class="menu-grid">
-            <div class="menu-item">
-                <img src="assets/images/blueberry.jpg" alt="Blueberry Pie">
-                <h3>Blueberry Pie</h3>
-                <p>A classic, flaky pastry crust filled with sweet, juicy, and bursting blueberries.</p>
+        <div class="drink-carousel">
+            <button class="carousel-arrow prev" aria-label="Previous munchies">&#10094;</button>
+            <div class="carousel-viewport">
+                <div class="carousel-track">
+                    <div class="carousel-slide">
+                        <div class="menu-item">
+                            <img src="assets/images/blueberry.jpg" alt="Blueberry Pie" loading="lazy">
+                            <h3>Blueberry Pie</h3>
+                            <p>A classic, flaky pastry crust filled with sweet, juicy, and bursting blueberries.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="menu-item">
+                            <img src="assets/images/eggcustardpie.jpg" alt="Egg Custard Pie" loading="lazy">
+                            <h3>Egg Custard Pie</h3>
+                            <p>A rich, smooth, and creamy baked custard set inside a tender pastry shell.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="menu-item">
+                            <img src="assets/images/cheesybabesandwich.jpg" alt="Cheesy Babe Sandwich" loading="lazy">
+                            <h3>Cheesy Babe Sandwich</h3>
+                            <p>A decadent, indulgent sandwich loaded with generous layers of gooey, melted cheese.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="menu-item">
+                            <img src="assets/images/butcherscutsandwich.jpg" alt="Butcher's Cut Sandwich" loading="lazy">
+                            <h3>Butcher's Cut Sandwich</h3>
+                            <p>Tender slices of premium seasoned beef with fresh vegetables and savory sauce, served on toasted bread in a convenient takeaway.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="menu-item">
+                            <img src="assets/images/hamandcheese.jpg" alt="Ham and Cheese Sandwich" loading="lazy">
+                            <h3>Ham and Cheese Sandwich</h3>
+                            <p>Freshly toasted bread layered with savory ham and melted cheese, served warm in a convenient takeaway.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="menu-item">
-                <img src="assets/images/eggcustardpie.jpg" alt="Egg Custard Pie">
-                <h3>Egg Custard Pie</h3>
-                <p>A rich, smooth, and creamy baked custard set inside a tender pastry shell.</p>
-            </div>
-            <div class="menu-item">
-                <img src="assets/images/cheesybabesandwich.jpg" alt="Cheesy Babe Sandwich">
-                <h3>Cheesy Babe Sandwich</h3>
-                <p>A decadent, indulgent sandwich loaded with generous layers of gooey, melted cheese.</p>
-            </div>
+            <button class="carousel-arrow next" aria-label="Next munchies">&#10095;</button>
         </div>
+        <div class="carousel-dots"></div>
     </section>
 
     <footer id="contact">
