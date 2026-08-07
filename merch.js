@@ -303,7 +303,7 @@ async function finalizeOrder() {
         // change inventory. Stock is only deducted when the reservation is marked Sold.
         const now      = new Date();
         const duration = await getPickupDuration();
-        const deadline = new Date(now.getTime() + duration * 24 * 60 * 60 * 1000);
+        const deadline = new Date(now.getTime() + duration * 10 * 1000);
 
         // Save reservation
         const { error } = await supabase.from('orders').insert({
