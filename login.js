@@ -22,12 +22,8 @@ form.addEventListener('submit', async e => {
         return;
     }
 
-    // Admin gets a real Supabase session AND goes to the admin panel
-    if (data.user?.email === 'admin@gmail.com') {
-        window.location.href = 'merchadmin.html';
-        return;
-    }
-
+    // Everyone — admin or regular user — lands on the main (user-facing) site.
+    // Admins can then open the Admin Dashboard from the navbar button.
     const redirect = new URLSearchParams(window.location.search).get('redirect') || 'index.html';
     window.location.href = redirect;
 });

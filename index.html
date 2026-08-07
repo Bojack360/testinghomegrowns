@@ -53,23 +53,50 @@
 
     <section id="menu" class="reveal">
         <h2>Check out our Drinks</h2>
-        <div class="menu-grid">
-            <div class="menu-item">
-                <img src="assets/images/coffee1.png" alt="Coffee1">
-                <h3>Crème Brûlée Iced Coffee</h3>
-                <p>Iced coffee layered with milk, topped with torched/caramelized whipped cream creating a crème brûlée effect</p>
+        <div class="drink-carousel">
+            <button class="carousel-arrow prev" id="drinkPrev" aria-label="Previous drinks">&#10094;</button>
+            <div class="carousel-viewport">
+                <div class="carousel-track" id="drinkTrack">
+                    <div class="carousel-slide">
+                        <div class="menu-item">
+                            <img src="assets/images/coffee1.png" alt="Crème Brûlée Iced Coffee" loading="lazy">
+                            <h3>Crème Brûlée Iced Coffee</h3>
+                            <p>Iced coffee layered with milk, topped with torched/caramelized whipped cream creating a crème brûlée effect</p>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="menu-item">
+                            <img src="assets/images/coffee2.png" alt="Matcha Caffè Latte" loading="lazy">
+                            <h3>Matcha Caffè Latte</h3>
+                            <p>Hot whisked matcha with steamed milk featuring green foam art, served in a takeaway.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="menu-item">
+                            <img src="assets/images/coffee4.png" alt="Caramel Iced Coffee" loading="lazy">
+                            <h3>Caramel Iced Coffee</h3>
+                            <p>Iced coffee with milk, topped with whipped cream, caramel sauce drizzle, and caramelized sugar topping</p>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="menu-item">
+                            <img src="assets/images/coffee5.png" alt="Peanut Butter Latte" loading="lazy">
+                            <h3>Peanut Butter Latte</h3>
+                            <p>Smooth espresso mixed with creamy peanut butter and steamed milk, finished with velvety foam and served in a takeaway.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="menu-item">
+                            <img src="assets/images/coffee6.png" alt="Biscoff Latte" loading="lazy">
+                            <h3>Biscoff Latte</h3>
+                            <p>Rich espresso blended with creamy Biscoff spread and steamed milk, topped with smooth foam and served in a takeaway.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="menu-item">
-                <img src="assets/images/coffee2.png" alt="Coffee2">
-                <h3>Matcha Caffè Latte</h3>
-                <p>Hot whisked matcha with steamed milk featuring green foam art, served in a takeaway.</p>
-            </div>
-            <div class="menu-item">
-                <img src="assets\images\coffee4.png" alt="Coffe5">
-                <h3>Caramel Iced Coffee</h3>
-                <p>Iced coffee with milk, topped with whipped cream, caramel sauce drizzle, and caramelized sugar topping</p>
-            </div>
+            <button class="carousel-arrow next" id="drinkNext" aria-label="Next drinks">&#10095;</button>
         </div>
+        <div class="carousel-dots" id="drinkDots"></div>
     </section>
 
     <section id="munchies" class="reveal">

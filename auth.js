@@ -15,8 +15,14 @@ export async function getUser() {
 // Returns the admin user object when valid, or null after redirecting.
 export async function requireAdmin() {
     const user = await getUser();
-    if (!user || user.email !== ADMIN_EMAIL) {
+    if (!user) {
+        // Not logged in — send to login to authenticate.
         window.location.replace('login.html');
+        return null;
+    }
+    if (user.email !== ADMIN_EMAIL) {
+        // Logged in but not an admin — bounce back to the main user-facing site.
+        window.location.replace('index.html');
         return null;
     }
     return user;
@@ -77,9 +83,20 @@ export async function initNavAuth() {
 
         const li = loginLink.closest('li');
         if (li && !document.getElementById('nav-logout')) {
+            let anchorLi = li;
+
+            // Admin-only: an "Admin Dashboard" button beside Logout. Regular users
+            // and guests never reach this branch, so they never see it.
+            if (user.email === ADMIN_EMAIL) {
+                const adminLi = document.createElement('li');
+                adminLi.innerHTML = '<a href="merchadmin.html" id="nav-admin" class="btn-account">Admin Dashboard</a>';
+                anchorLi.after(adminLi);
+                anchorLi = adminLi;
+            }
+
             const logoutLi = document.createElement('li');
             logoutLi.innerHTML = '<a href="#" id="nav-logout" class="btn-account">Log-out</a>';
-            li.after(logoutLi);
+            anchorLi.after(logoutLi);
             document.getElementById('nav-logout').addEventListener('click', async e => {
                 e.preventDefault();
                 await supabase.auth.signOut();
