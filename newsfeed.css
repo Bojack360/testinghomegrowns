@@ -34,9 +34,9 @@ body {
 
 /* ── HEADER ── */
 header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; position: fixed; width: 100%; top: 0; background: var(--header-bg); backdrop-filter: blur(8px); z-index: 1000; border-bottom: 1px solid rgba(46, 102, 55, 0.15); }
-.logo img { max-height: 80px; width: auto; display: block; }
+.logo img { max-height: 100px; width: auto; display: block; }
 nav ul { display: flex; list-style: none; gap: 30px; align-items: center; }
-nav a { text-decoration: none; color: var(--primary-green); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s; }
+nav a { text-decoration: none; color: var(--primary-green); font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s; }
 nav a:hover { color: var(--secondary-green); }
 .btn-account { background: var(--white); border: 1.5px solid var(--primary-green); color: var(--primary-green); padding: 10px 25px; border-radius: 12px; font-weight: 600; transition: all 0.3s; }
 .btn-account:hover { background: var(--primary-green); color: var(--white) !important; transform: translateY(-2px); }
@@ -375,11 +375,11 @@ footer {
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
     header {
-        padding: 12px 16px;
+        padding: 10px 16px;
         box-sizing: border-box;
     }
 
-    .logo img { max-height: 55px; }
+    .logo img { max-height: 60px; }
 
     .mobile-menu-btn { display: block; }
 

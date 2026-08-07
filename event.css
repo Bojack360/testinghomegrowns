@@ -32,7 +32,7 @@ body {
     color: var(--dark-text);
     line-height: 1.6;
     min-height: 100vh;
-    padding-top: 130px;
+    padding-top: 150px;
     display: flex;
     flex-direction: column;
     background: var(--bg-cream);
@@ -64,7 +64,7 @@ header {
 }
 
 .logo img {
-    max-height: 80px;
+    max-height: 100px;
     width: auto;
     display: block;
 }
@@ -80,7 +80,7 @@ nav a {
     text-decoration: none;
     color: var(--primary-green);
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: color 0.3s;
@@ -722,13 +722,13 @@ nav a:hover {
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     header {
-        padding: 12px 16px;
+        padding: 10px 16px;
         box-sizing: border-box;
         position: fixed;
     }
 
     .logo img {
-        max-height: 55px;
+        max-height: 60px;
     }
 
     .mobile-menu-btn {
