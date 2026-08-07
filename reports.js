@@ -193,7 +193,18 @@ function renderEvents(data) {
 
 // ── Online Orders ──────────────────────────────────────────────────────────
 function renderOrders(data) {
-    if (data !== undefined) { ordersData = data; ordersPage = 1; renderOrdersMini(); }
+    if (data !== undefined) {
+        // Merchandise Reservations tab shows only completed (SOLD) records.
+        // Filter the dataset before rendering so the table, summary cards, and
+        // pagination all operate on SOLD-only data. ('approved' is the legacy
+        // value that the system already displays as SOLD.)
+        ordersData = data.filter(o => {
+            const s = String(o.status || '').toLowerCase();
+            return s === 'sold' || s === 'approved';
+        });
+        ordersPage = 1;
+        renderOrdersMini();
+    }
     const total = ordersData.length;
     const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
     if (ordersPage > pages) ordersPage = pages;
