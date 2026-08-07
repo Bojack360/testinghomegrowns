@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reports - The Homegrowns</title>
     <link rel="stylesheet" href="reports.css">
+    <link rel="stylesheet" href="receipt.css">
 </head>
 <body>
     <nav class="navbar">
@@ -153,6 +154,7 @@
                             <th>Items Sold</th>
                             <th>Total</th>
                             <th>Payment</th>
+                            <th>Receipt</th>
                         </tr>
                     </thead>
                     <tbody id="posBody"></tbody>
@@ -180,6 +182,17 @@
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closePrintModal()">Cancel</button>
                 <button class="btn-confirm" onclick="doPrint()">Print</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt view / reprint -->
+    <div id="receiptViewModal" class="modal-overlay receipt-view-overlay">
+        <div class="modal-content receipt-modal">
+            <div id="receiptViewBody"></div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeReceiptModal()">Close</button>
+                <button class="btn-confirm" onclick="printReceipt()">&#128424; Print Receipt</button>
             </div>
         </div>
     </div>

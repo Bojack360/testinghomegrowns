@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POS - The Homegrowns</title>
     <link rel="stylesheet" href="pos.css">
+    <link rel="stylesheet" href="receipt.css">
 </head>
 <body>
     <nav class="navbar">
@@ -79,10 +80,10 @@
 
     <!-- Receipt Modal -->
     <div class="modal-overlay" id="receiptModal">
-        <div class="modal-content">
-            <h2 class="modal-title">&#10003; Sale Complete</h2>
+        <div class="modal-content receipt-modal">
             <div id="receiptBody"></div>
             <div class="modal-actions">
+                <button class="btn-print-receipt" id="printReceiptBtn">&#128424; Print Receipt</button>
                 <button class="btn-confirm" id="newTxnBtn">New Transaction</button>
             </div>
         </div>

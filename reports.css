@@ -614,6 +614,23 @@ tbody tr:hover {
 .btn-cancel  { background: rgba(255, 255, 255, 0.1); color: var(--white); }
 .btn-confirm { background: var(--gold); color: #000; }
 
+/* Receipt action button in the Product Sales table */
+.receipt-btn {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.receipt-btn:hover { background: var(--gold); color: #000; }
+
+/* Receipt view modal sized to the paper receipt */
+.modal-content.receipt-modal { max-width: 360px; padding: 22px; }
+
 /* ============================================================
    PRINT / PDF EXPORT
    White A4 portrait, black text, bordered tables. Only the report
@@ -643,7 +660,7 @@ tbody tr:hover {
     .pagination-bar,
     .report-tabs,
     .stats-container,
-    .modal-overlay {
+    #printModal {
         display: none !important;
     }
 

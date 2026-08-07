@@ -1,11 +1,13 @@
 ﻿import { supabase } from './supabaseConfig.js';
-import { requireAdmin, adminLogout } from './auth.js';
+import { requireAdmin, adminLogout, getUser } from './auth.js';
+import { buildReceiptHTML, generateReceiptNo } from './receipt.js';
 
 let products       = [];
 let cart           = {};
 let activeCategory = 'merchandise';
 let discountType   = 'pct';
 let discountValue  = 0;
+let cashierName    = 'Admin';   // set from the logged-in admin on load
 
 // ── Coffee Menu (hardcoded) ────────────────────────────────────────────────
 const COFFEE_MENU = [
@@ -72,6 +74,8 @@ COFFEE_MENU.forEach(section =>
 // ── Init ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
     if (!(await requireAdmin())) return;   // block non-admins before loading data
+    const user = await getUser();
+    if (user) cashierName = user.email || 'Admin';
     await loadProducts();
     setupEvents();
 });
@@ -266,14 +270,28 @@ async function processSale() {
             await supabase.from('products').update({ stock_quantity: newStock }).eq('id', product.id);
         }
 
-        const { error } = await supabase.from('pos_transactions').insert({
-            items:      txnItems,
+        const now           = new Date();
+        const receiptNo     = generateReceiptNo(now);
+        const paymentMethod = 'Cash';
+
+        let { error } = await supabase.from('pos_transactions').insert({
+            items:          txnItems,
             total,
-            created_at: new Date().toISOString()
+            receipt_number: receiptNo,
+            payment_method: paymentMethod,
+            cashier:        cashierName,
+            created_at:     now.toISOString()
         });
+        // If the receipt columns haven't been migrated yet, still save the core
+        // transaction so the POS keeps working (receipt still shows on screen).
+        if (error && /column|schema|does not exist/i.test(error.message || '')) {
+            ({ error } = await supabase.from('pos_transactions').insert({
+                items: txnItems, total, created_at: now.toISOString()
+            }));
+        }
         if (error) throw error;
 
-        showReceipt(txnItems, sub, disc, total);
+        showReceipt({ items: txnItems, subtotal: sub, disc, total, receiptNo, payment: paymentMethod, date: now });
         await loadProducts();
         clearCart();
 
@@ -285,37 +303,19 @@ async function processSale() {
     }
 }
 
-function showReceipt(items, subtotal, disc, total) {
-    const date = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
-    const discLabel = discountType === 'pct'
-        ? `Discount (${discountValue}%)`
-        : `Discount`;
-    document.getElementById('receiptBody').innerHTML = `
-        <div class="receipt">
-            <p class="receipt-date">${date}</p>
-            <div class="receipt-items">
-                ${items.map(i => `
-                    <div class="receipt-row">
-                        <span>${esc(i.name)} &times; ${i.qty}</span>
-                        <span>₱${i.subtotal.toFixed(2)}</span>
-                    </div>`).join('')}
-            </div>
-            <div class="receipt-divider"></div>
-            ${disc > 0 ? `
-            <div class="receipt-row">
-                <span>Subtotal</span>
-                <span>₱${subtotal.toFixed(2)}</span>
-            </div>
-            <div class="receipt-row" style="color:#2ecc71;">
-                <span>${discLabel}</span>
-                <span>-₱${disc.toFixed(2)}</span>
-            </div>` : ''}
-            <div class="receipt-row total">
-                <span>Total</span>
-                <span>₱${total.toFixed(2)}</span>
-            </div>
-        </div>
-    `;
+function showReceipt({ items, subtotal, disc, total, receiptNo, payment, date }) {
+    const discLabel = discountType === 'pct' ? `Discount (${discountValue}%)` : 'Discount';
+    document.getElementById('receiptBody').innerHTML = buildReceiptHTML({
+        receiptNo,
+        dateStr: date.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }),
+        cashier: cashierName,
+        payment,
+        items,
+        subtotal,
+        discount: disc,
+        discountLabel: discLabel,
+        total,
+    });
     const modal = document.getElementById('receiptModal');
     modal.style.display = 'flex';
     modal.classList.add('active');
@@ -339,6 +339,12 @@ function setupEvents() {
 
     document.getElementById('clearCartBtn').addEventListener('click', clearCart);
     document.getElementById('processBtn').addEventListener('click', processSale);
+
+    document.getElementById('printReceiptBtn').addEventListener('click', () => {
+        document.body.classList.add('printing-receipt');
+        window.print();
+        document.body.classList.remove('printing-receipt');
+    });
 
     document.getElementById('newTxnBtn').addEventListener('click', () => {
         const modal = document.getElementById('receiptModal');

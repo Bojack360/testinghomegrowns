@@ -1,5 +1,6 @@
 ﻿import { supabase } from './supabaseConfig.js';
 import { requireAdmin, adminLogout } from './auth.js';
+import { buildReceiptHTML, receiptDataFromTransaction } from './receipt.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!(await requireAdmin())) return;   // block non-admins before loading data
@@ -249,6 +250,7 @@ function renderPos(data) {
                     <td class="items-cell">${items}</td>
                     <td>₱${parseFloat(t.total || 0).toFixed(2)}</td>
                     <td>${esc(t.payment_method || '-')}</td>
+                    <td><button class="receipt-btn" onclick="viewReceipt('${t.id}')">Receipt</button></td>
                 </tr>
             `;
         }).join('');
@@ -344,9 +346,29 @@ function renderPosMini() {
     ]);
 }
 
+// ── Receipt view / reprint (Product Sales) ───────────────────────────────────
+function viewReceipt(txnId) {
+    const txn = posData.find(t => String(t.id) === String(txnId));
+    if (!txn) return;
+    document.getElementById('receiptViewBody').innerHTML =
+        buildReceiptHTML(receiptDataFromTransaction(txn));
+    document.getElementById('receiptViewModal').style.display = 'flex';
+}
+function closeReceiptModal() {
+    document.getElementById('receiptViewModal').style.display = 'none';
+}
+function printReceipt() {
+    document.body.classList.add('printing-receipt');
+    window.print();
+    document.body.classList.remove('printing-receipt');
+}
+
 window.openPrintModal      = openPrintModal;
 window.closePrintModal     = closePrintModal;
 window.printSelectAll      = printSelectAll;
 window.printClearSelection = printClearSelection;
 window.doPrint             = doPrint;
+window.viewReceipt         = viewReceipt;
+window.closeReceiptModal   = closeReceiptModal;
+window.printReceipt        = printReceipt;
 window.logout = adminLogout;

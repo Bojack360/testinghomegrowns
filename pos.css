@@ -481,12 +481,26 @@ body {
      color: var(--success); 
     }
 .modal-actions {
-     display: flex; 
-     justify-content: flex-end; 
-     margin-top: 20px; 
-     padding-top: 16px; 
-     border-top: 1px solid var(--border); 
+     display: flex;
+     justify-content: flex-end;
+     gap: 10px;
+     flex-wrap: wrap;
+     margin-top: 20px;
+     padding-top: 16px;
+     border-top: 1px solid var(--border);
     }
+.modal-content.receipt-modal { max-width: 360px; padding: 20px; }
+.btn-print-receipt {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-print-receipt:hover { background: var(--gold); color: #000; }
 .btn-confirm {
      background: var(--gold); 
      color: #000; 
