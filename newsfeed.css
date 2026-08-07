@@ -53,16 +53,16 @@ nav a:hover { color: var(--secondary-green); }
 .page-hero-content p { font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-yellow); }
 
 /* ── FEED ── */
-.feed-main { max-width: 560px; margin: 0 auto; padding: 160px 0 60px; flex: 1; }
+.feed-main { max-width: 712px; margin: 0 auto; padding: 160px 16px 60px; flex: 1; }
 .loading-text { text-align: center; color: #888; font-style: italic; padding: 60px 0; }
 
 /* ── POST CARD ── */
 .post-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
-    border-radius: 16px;
+    border-radius: 18px;
     overflow: hidden;
-    margin-bottom: 28px;
+    margin-bottom: 34px;
     box-shadow: 0 6px 22px rgba(46, 102, 55, 0.1);
 }
 
@@ -70,15 +70,15 @@ nav a:hover { color: var(--secondary-green); }
 .post-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
+    gap: 12px;
+    padding: 14px 18px;
     background: #FBF9EC;
     border-bottom: 1px solid rgba(46, 102, 55, 0.1);
 }
 
 .post-avatar {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--primary-green);
@@ -87,7 +87,7 @@ nav a:hover { color: var(--secondary-green); }
 }
 
 .post-username {
-    font-size: 0.9rem;
+    font-size: 0.98rem;
     font-weight: 700;
     color: var(--dark-text);
     letter-spacing: 0.3px;
@@ -95,14 +95,14 @@ nav a:hover { color: var(--secondary-green); }
 
 /* ── MEDIA ── */
 .post-media img,
-.post-media video { width: 100%; max-height: 520px; object-fit: cover; display: block; }
+.post-media video { width: 100%; max-height: 640px; object-fit: cover; display: block; }
 
 /* ── ACTIONS ── */
 .post-actions {
     display: flex;
     align-items: center;
-    padding: 10px 14px 6px;
-    gap: 10px;
+    padding: 12px 18px 8px;
+    gap: 12px;
     border-top: 1px solid rgba(46, 102, 55, 0.08);
 }
 
@@ -116,9 +116,9 @@ nav a:hover { color: var(--secondary-green); }
 .react-btn {
     background: rgba(46, 102, 55, 0.06);
     border: 1px solid rgba(46, 102, 55, 0.2);
-    border-radius: 20px;
-    padding: 6px 16px;
-    font-size: 0.85rem;
+    border-radius: 22px;
+    padding: 8px 18px;
+    font-size: 0.92rem;
     font-family: var(--font-body);
     color: var(--primary-green);
     font-weight: 600;
@@ -140,25 +140,25 @@ nav a:hover { color: var(--secondary-green); }
 .tally-item {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
     background: #FBF9EC;
     border: 1px solid rgba(46, 102, 55, 0.12);
-    border-radius: 12px;
-    padding: 2px 8px;
-    font-size: 0.78rem;
+    border-radius: 14px;
+    padding: 3px 10px;
+    font-size: 0.84rem;
     color: #666;
     cursor: default;
 }
-.tally-item img { width: 18px; height: 18px; object-fit: cover; border-radius: 3px; }
+.tally-item img { width: 20px; height: 20px; object-fit: cover; border-radius: 3px; }
 .tally-item.mine { border-color: var(--primary-green); color: var(--primary-green); }
 
 /* ── POST BODY ── */
-.post-body { padding: 4px 14px 14px; }
+.post-body { padding: 6px 18px 18px; }
 
 .post-caption {
-    font-size: 0.88rem;
+    font-size: 0.96rem;
     color: var(--dark-text);
-    line-height: 1.55;
+    line-height: 1.6;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -176,19 +176,19 @@ nav a:hover { color: var(--secondary-green); }
     background: none;
     border: none;
     color: var(--secondary-green);
-    font-size: 0.82rem;
+    font-size: 0.88rem;
     cursor: pointer;
     padding: 0;
-    margin-top: 3px;
+    margin-top: 4px;
     display: block;
     font-family: var(--font-body);
 }
 .see-more-btn:hover { color: var(--primary-green); }
 
 .post-date {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     color: #999;
-    margin-top: 8px;
+    margin-top: 10px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
