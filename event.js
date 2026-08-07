@@ -331,7 +331,7 @@ const venueSelect       = document.getElementById('venue');
 const paxInput          = document.getElementById('pax');
 const venueCapacityMsg  = document.getElementById('venueCapacityMsg');
 
-const VENUE_CAPACITIES = { 'Veranda': 100, 'Pool': 50, 'Coffee Shop': 50 };
+const VENUE_CAPACITIES = { 'Veranda - 100 pax': 100, 'Pool - 50 pax': 50, 'Coffee Shop - 50 pax': 50 };
 
 
 function updateVenueOptions(unavailable = new Set()) {
