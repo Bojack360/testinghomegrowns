@@ -31,6 +31,12 @@
         </nav>
     </header>
 
+    <!-- Reschedule mode banner: shown only while the user is picking a new date -->
+    <div class="reschedule-banner" id="rescheduleBanner" style="display:none;">
+        <span id="rescheduleBannerText"></span>
+        <button type="button" class="btn-cancel-reschedule" id="cancelRescheduleModeBtn">Cancel Rescheduling</button>
+    </div>
+
     <div class="calendar-container reveal">
         <div class="calendar-header">
             <button class="nav-btn" id="prevMonth">&lt;</button>
@@ -52,6 +58,23 @@
         </div>
     </div>
 
+    <!-- My Bookings modal: opened from the header "My Bookings" button -->
+    <div class="modal-overlay" id="myBookingsModal">
+        <div class="modal-content my-bookings-modal-content">
+            <span class="modal-close" id="closeMyBookingsBtn" title="Close">&times;</span>
+            <div class="modal-header">
+                <h2>My Bookings</h2>
+            </div>
+            <div class="my-bookings-body">
+                <div id="myBookingsList" class="my-bookings-list"></div>
+                <div class="my-bookings-empty" id="noMyBookings" style="display:none;">
+                    <h3>No Bookings Yet</h3>
+                    <p>You don't have any event bookings at the moment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="bookingModal">
         <div class="modal-content">
             <span class="modal-close" id="closeBookingBtn" title="Close">&times;</span>
@@ -61,6 +84,10 @@
             
             <div class="selected-date-display" id="modalDateDisplay">
             </div>
+
+            <p class="deposit-disclaimer" id="depositDisclaimer">
+                &#9888; A 50% deposit of the selected venue fee is required. Please pay at the caf&eacute; to secure and approve your booking.
+            </p>
 
             <div id="bookedSlotsInfo" class="booked-slots-info" style="display:none;">
                 <div id="bookedSlotsList"></div>
@@ -143,6 +170,24 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="pastEventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="pastEventTitle">Event History</h2>
+            </div>
+
+            <div class="selected-date-display" id="pastEventDateDisplay">
+            </div>
+
+            <div id="pastEventList">
+            </div>
+
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-cancel" id="closePastEventBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="pendingModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -162,6 +207,67 @@
 
             <div class="modal-buttons">
                 <button type="button" class="btn btn-cancel" id="closePendingBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reschedule: pick a new schedule for an existing booking -->
+    <div class="modal-overlay" id="rescheduleModal">
+        <div class="modal-content">
+            <span class="modal-close" id="closeRescheduleBtn" title="Close">&times;</span>
+            <div class="modal-header">
+                <h2>Reschedule Event</h2>
+            </div>
+
+            <div class="reschedule-current" id="rescheduleCurrent"></div>
+
+            <div class="selected-date-display" id="rescheduleNewDateDisplay"></div>
+
+            <div id="rescheduleBookedSlotsInfo" class="booked-slots-info" style="display:none;">
+                <div id="rescheduleBookedSlotsList"></div>
+            </div>
+
+            <form id="rescheduleForm">
+                <div class="time-row">
+                    <div class="form-group">
+                        <label for="rescheduleStart">New Start Time</label>
+                        <input type="time" id="rescheduleStart" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rescheduleEnd">New End Time</label>
+                        <input type="time" id="rescheduleEnd" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="rescheduleVenue">New Venue</label>
+                    <select id="rescheduleVenue" required>
+                        <option value="" disabled selected>Select Venue</option>
+                    </select>
+                    <p class="venue-capacity-info" id="rescheduleVenueInfo" style="display:none;"></p>
+                    <p class="field-error" id="rescheduleVenueError" style="display:none;"></p>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-cancel" id="cancelRescheduleBtn">Cancel</button>
+                    <button type="submit" class="btn btn-book">Confirm Reschedule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reschedule: final Current vs New confirmation before the DB update -->
+    <div class="modal-overlay" id="rescheduleConfirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirm Rescheduling</h2>
+            </div>
+
+            <div id="rescheduleConfirmBody" class="reschedule-confirm-body"></div>
+
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-cancel" id="cancelRescheduleConfirmBtn">Cancel</button>
+                <button type="button" class="btn btn-book" id="confirmRescheduleBtn">Confirm Reschedule</button>
             </div>
         </div>
     </div>

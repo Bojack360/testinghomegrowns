@@ -561,6 +561,11 @@ function openAdminBookingModal() {
     document.getElementById('adminBookingModal').style.display = 'flex';
     document.getElementById('adminBookingForm').reset();
     document.getElementById('ab-other-group').style.display = 'none';
+    // Discourage past dates in the native picker (validation on submit is the real guard).
+    const now = new Date();
+    const todayYMD = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const dateInput = document.getElementById('ab-date');
+    if (dateInput) dateInput.min = todayYMD;
 }
 
 function closeAdminBookingModal() {
@@ -601,11 +606,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const dateObj    = new Date(dateVal);
+            // Build the stored date string from the picked Y-M-D parts directly.
+            // (Using `new Date("YYYY-MM-DD")` parses as UTC and can shift the day
+            // across a timezone boundary — so the stored/validated date matches
+            // exactly what the admin selected.)
+            const [py, pm, pd] = dateVal.split('-').map(Number);
             const monthNames = ['January','February','March','April','May','June',
                                 'July','August','September','October','November','December'];
-            const dateString = `${monthNames[dateObj.getMonth()]} ${dateObj.getDate()}, ${dateObj.getFullYear()}`;
+            const dateString = `${monthNames[pm - 1]} ${pd}, ${py}`;
             const eventType  = typeVal === 'Other' ? (otherVal || 'Other') : typeVal;
+
+            // FINAL past-date guard — immediately before the insert, comparing the
+            // exact local calendar date being saved against today's local date.
+            const selDate = new Date(py, pm - 1, pd); selDate.setHours(0, 0, 0, 0);
+            const todayD  = new Date();               todayD.setHours(0, 0, 0, 0);
+            if (selDate.getTime() < todayD.getTime()) {
+                alert('Past dates cannot be booked. Please select a current or future event date.');
+                return;
+            }
 
             try {
                 const { error } = await supabase.from('event_bookings').insert({
