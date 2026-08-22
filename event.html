@@ -213,6 +213,29 @@
         </div>
     </div>
 
+    <!-- Booking success: compact confirmation shown after a NEW booking is created -->
+    <div class="modal-overlay" id="bookingSuccessModal">
+        <div class="modal-content booking-success-content">
+            <span class="modal-close" id="closeBookingSuccessX" title="Close">&times;</span>
+            <div class="modal-header">
+                <h2>Booking Request Submitted!</h2>
+            </div>
+            <p class="booking-success-sub">Your request has been submitted.</p>
+            <div class="next-steps">
+                <p class="next-steps-title">What happens next?</p>
+                <ol class="next-steps-list">
+                    <li>Admin reviews your request.</li>
+                    <li>Check My Bookings for status.</li>
+                    <li>If approved, follow your event details.</li>
+                </ol>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-cancel" id="closeBookingSuccessBtn">Close</button>
+                <button type="button" class="btn btn-book" id="viewMyBookingsBtn">View My Bookings</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Reschedule: pick a new schedule for an existing booking -->
     <div class="modal-overlay" id="rescheduleModal">
         <div class="modal-content">

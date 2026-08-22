@@ -856,6 +856,41 @@ nav a:hover {
     border-color: var(--primary-green);
 }
 
+/* ========== BOOKING SUCCESS MODAL (compact) ========== */
+.booking-success-content { max-width: 420px; }
+
+.booking-success-sub {
+    text-align: center;
+    color: #555;
+    font-size: 0.95rem;
+    margin: 0 0 12px;
+}
+
+.next-steps {
+    background: #FBF9EC;
+    border: 1px solid rgba(46, 102, 55, 0.15);
+    border-radius: 8px;
+    padding: 10px 14px;
+}
+
+.next-steps-title {
+    font-weight: 700;
+    color: var(--primary-green);
+    font-size: 0.9rem;
+    margin: 0 0 5px;
+}
+
+.next-steps-list {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.next-steps-list li {
+    font-size: 0.85rem;
+    color: #555;
+    line-height: 1.5;
+}
+
 /* ========== LOGIN REQUIRED MODAL ========== */
 .login-required-content { max-width: 420px; }
 

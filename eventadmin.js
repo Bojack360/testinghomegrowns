@@ -258,23 +258,34 @@ function viewBooking(bookingId) {
     selectedBooking = booking;
     const statusText = booking.status.charAt(0).toUpperCase() + booking.status.slice(1);
 
-    bookingDetailsContent.innerHTML = `
-        <div class="detail-row"><label>Booking ID:</label><span>#${booking.id.toString().slice(-6).toUpperCase()}</span></div>
-        <div class="detail-row"><label>Date:</label><span>${booking.date || 'N/A'}</span></div>
-        <div class="detail-row"><label>Time:</label><span>${booking.start || ''} – ${booking.end || ''}</span></div>
-        <div class="detail-row"><label>Event Type:</label><span>${booking.type || 'N/A'}</span></div>
-        <div class="detail-row"><label>Number of Pax:</label><span>${booking.pax || '-'}</span></div>
-        <div class="detail-row"><label>Venue:</label><span>${booking.venue || 'N/A'}</span></div>
-        <div class="detail-row"><label>Venue Capacity:</label><span>${booking.venue_capacity ? booking.venue_capacity + ' pax' : 'N/A'}</span></div>
-        <div class="detail-row"><label>Requests:</label><span>${booking.description || 'None'}</span></div>
-        <div class="detail-row"><label>Status:</label><span class="status-badge ${booking.status}">${statusText}</span></div>
-        <div class="detail-row"><label>Submitted:</label><span>${booking.submittedAt}</span></div>
-        ${booking.approvedAt ? `<div class="detail-row"><label>Approved At:</label><span>${booking.approvedAt}</span></div>` : ''}
-        ${booking.rejectedAt ? `
-            <div class="detail-row"><label>Rejected At:</label><span>${booking.rejectedAt}</span></div>
-            <div class="detail-row"><label>Rejection Reason:</label><span>${booking.rejection_reason || 'No reason provided'}</span></div>
-        ` : ''}
-    `;
+    // Fields in the intended reading order: when → what → submitted → size →
+    // request/status → reference. The order lives in this array so the layout
+    // (a 2-column grid) fills left-to-right, top-to-bottom, and new fields can be
+    // added without reshuffling markup. Booking ID is last (secondary reference).
+    const fields = [
+        { label: 'Date',           value: booking.date || 'N/A' },
+        { label: 'Time',           value: `${booking.start || ''} – ${booking.end || ''}` },
+        { label: 'Event Type',     value: booking.type || 'N/A' },
+        { label: 'Date Submitted', value: booking.submittedAt },
+        { label: 'Number of Pax',  value: booking.pax || '-' },
+        { label: 'Venue Capacity', value: booking.venue_capacity ? `${booking.venue_capacity} pax` : 'N/A' },
+        { label: 'Request',        value: booking.description || 'None' },
+        { label: 'Status',         value: `<span class="status-badge ${booking.status}">${statusText}</span>` },
+        // No fake timestamp when a booking has not been approved yet.
+        { label: 'Date Approved',  value: booking.approvedAt ? booking.approvedAt : 'Not yet approved' },
+        { label: 'Booking ID',     value: `#${booking.id.toString().slice(-6).toUpperCase()}`, extraClass: 'detail-row-id' },
+    ];
+
+    let detailsHTML = fields.map(f =>
+        `<div class="detail-row ${f.extraClass || ''}"><label>${f.label}:</label><span>${f.value}</span></div>`
+    ).join('');
+
+    // Preserve the rejection reason for rejected bookings (full-width, below the grid).
+    if (booking.rejectedAt) {
+        detailsHTML += `<div class="detail-row detail-row-full"><label>Rejection Reason:</label><span>${booking.rejection_reason || 'No reason provided'}</span></div>`;
+    }
+
+    bookingDetailsContent.innerHTML = detailsHTML;
 
     if (booking.status === 'pending') {
         actionButtons.style.display = 'flex';

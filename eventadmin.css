@@ -568,6 +568,18 @@ tr:hover { background: rgba(255,255,255,0.02); }
     padding: 8px 10px;
 }
 
+/* Booking ID is administrative reference — keep it slightly less prominent. */
+#detailsModal #bookingDetailsContent .detail-row-id span {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+/* Rows that should span the full width of the two-column grid. */
+#detailsModal #bookingDetailsContent .detail-row-full {
+    grid-column: 1 / -1;
+}
+
 #detailsModal .modal-buttons {
     flex-shrink: 0;
     margin-top: 22px;             /* sit directly below the last info row */

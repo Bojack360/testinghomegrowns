@@ -40,6 +40,7 @@ const pendingBookingDetails = document.getElementById('pendingBookingDetails');
 const closePendingBtn   = document.getElementById('closePendingBtn');
 
 const loginRequiredModal  = document.getElementById('loginRequiredModal');
+const bookingSuccessModal = document.getElementById('bookingSuccessModal');
 
 // ==========================================
 // INITIALIZATION
@@ -411,6 +412,16 @@ function closeLoginRequiredModal() {
     loginRequiredModal.style.display = 'none';
 }
 
+// Compact confirmation shown only after a NEW booking is successfully created.
+function openBookingSuccessModal() {
+    bookingSuccessModal.classList.add('active');
+    bookingSuccessModal.style.display = 'flex';
+}
+function closeBookingSuccessModal() {
+    bookingSuccessModal.classList.remove('active');
+    bookingSuccessModal.style.display = 'none';
+}
+
 cancelBtn.addEventListener('click', closeBookingModal);
 document.getElementById('closeBookingBtn').addEventListener('click', closeBookingModal);
 closeDetailsBtn.addEventListener('click', closeDetailsModal);
@@ -419,16 +430,23 @@ bookAnEventBtn.addEventListener('click', bookAnEvent);
 closePendingBtn.addEventListener('click', closePendingModal);
 document.getElementById('closeLoginRequiredBtn').addEventListener('click', closeLoginRequiredModal);
 document.getElementById('cancelLoginRequiredBtn').addEventListener('click', closeLoginRequiredModal);
+document.getElementById('closeBookingSuccessX').addEventListener('click', closeBookingSuccessModal);
+document.getElementById('closeBookingSuccessBtn').addEventListener('click', closeBookingSuccessModal);
+document.getElementById('viewMyBookingsBtn').addEventListener('click', () => {
+    closeBookingSuccessModal();
+    openMyBookingsModal();
+});
 
 window.addEventListener('click', e => {
-    if (e.target === bookingModal)       closeBookingModal();
-    if (e.target === detailsModal)       closeDetailsModal();
-    if (e.target === pendingModal)       closePendingModal();
-    if (e.target === loginRequiredModal) closeLoginRequiredModal();
+    if (e.target === bookingModal)        closeBookingModal();
+    if (e.target === detailsModal)        closeDetailsModal();
+    if (e.target === pendingModal)        closePendingModal();
+    if (e.target === loginRequiredModal)  closeLoginRequiredModal();
+    if (e.target === bookingSuccessModal) closeBookingSuccessModal();
 });
 
 document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { closeBookingModal(); closeDetailsModal(); closePendingModal(); closeLoginRequiredModal(); }
+    if (e.key === 'Escape') { closeBookingModal(); closeDetailsModal(); closePendingModal(); closeLoginRequiredModal(); closeBookingSuccessModal(); }
 });
 
 // ==========================================
@@ -679,10 +697,11 @@ bookingForm.addEventListener('submit', async e => {
         if (error) throw error;
 
         closeBookingModal();
-        showToast(`Booking submitted for ${selectedDate}, ${startTime}–${endTime} at ${venue}. Pending admin approval.`, 'success', 5000);
         await loadBookings();
         renderCalendar();
         await loadMyBookings();
+        // Compact confirmation with the "What happens next?" steps — only on success.
+        openBookingSuccessModal();
     } catch (error) {
         console.error('Failed to submit booking:', error);
         showToast('Failed to submit booking. Please try again.', 'error');
