@@ -32,17 +32,14 @@ const detailsModal      = document.getElementById('detailsModal');
 const detailsDateDisplay  = document.getElementById('detailsDateDisplay');
 const bookingDetailsList  = document.getElementById('bookingDetailsList');
 const closeDetailsBtn   = document.getElementById('closeDetailsBtn');
+const bookAnEventBtn    = document.getElementById('bookAnEventBtn');
 
 const pendingModal      = document.getElementById('pendingModal');
 const pendingDateDisplay  = document.getElementById('pendingDateDisplay');
 const pendingBookingDetails = document.getElementById('pendingBookingDetails');
 const closePendingBtn   = document.getElementById('closePendingBtn');
 
-const pastEventModal      = document.getElementById('pastEventModal');
-const pastEventTitle      = document.getElementById('pastEventTitle');
-const pastEventDateDisplay = document.getElementById('pastEventDateDisplay');
-const pastEventList       = document.getElementById('pastEventList');
-const closePastEventBtn   = document.getElementById('closePastEventBtn');
+const loginRequiredModal  = document.getElementById('loginRequiredModal');
 
 // ==========================================
 // INITIALIZATION
@@ -62,10 +59,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ==========================================
 async function loadBookings() {
     try {
-        const { data, error } = await supabase
-            .from('event_bookings')
-            .select('*')
-            .in('status', ['approved', 'pending']);
+        // Field list intentionally excludes customer_email and other private
+        // columns — the calendar never displays them. Logged-out visitors only
+        // ever receive APPROVED events; logged-in users also see pending (needed
+        // for their own pending indicators + the booking form).
+        const publicFields = 'id, date, start, end, venue, venue_capacity, type, pax, status';
+        const authFields   = publicFields + ', description, submitted_at';
+
+        const base = supabase.from('event_bookings');
+        const { data, error } = currentUser
+            ? await base.select(authFields).in('status', ['approved', 'pending'])
+            : await base.select(publicFields).in('status', ['approved']);
 
         if (error) throw error;
 
@@ -221,81 +225,93 @@ function statusLabel(s) {
 }
 
 async function handleDayClick(dateString) {
-    const user = await requireAuth();
-    if (!user) return;
-
-    // Reschedule mode: the calendar is being used to pick a NEW date for an
-    // existing booking. Past dates keep their read-only history behavior but
-    // can NOT be chosen as the new event date.
+    // Reschedule mode is only ever active for a logged-in user (it is entered
+    // from My Bookings). The calendar acts as the new-date picker.
     if (reschedulingBooking) {
         if (isPastDate(dateString)) {
             showToast('Past dates cannot be selected for rescheduling. Please select a current or future event date.', 'error', 5000);
-            showPastEvent(dateString);
+            showDateDetails(dateString, { allowBooking: false });   // view-only history
             return;
         }
         openRescheduleForm(dateString);
         return;
     }
 
+    // Every calendar date (past / current / future, with or without events, and
+    // for both logged-in and logged-out visitors) opens the Date Details modal
+    // FIRST. Booking only happens from that modal's "Book an Event" button.
     selectedDate = dateString;
-
-    // Past dates stay clickable/selectable, but open the read-only history modal
-    // instead of the new-booking flow.
-    if (isPastDate(dateString)) {
-        showPastEvent(dateString);
-        return;
-    }
-
-    const dateBookings = bookingsData[dateString] || [];
-
-    if (isDayFullyBooked(dateString, dateBookings)) {
-        showBookingDetails(dateString);
-    } else {
-        openBookingForm(dateString);
-    }
+    showDateDetails(dateString, { allowBooking: true });
 }
 
-// Read-only "Event History" modal for past dates. Fetches the existing bookings
-// for that date (any real status) and displays them; shows a friendly empty
-// message when none exist. Never creates or modifies bookings.
-async function showPastEvent(dateString) {
-    pastEventTitle.innerText     = 'Event History';
-    pastEventDateDisplay.innerText = dateString;
-    pastEventList.innerHTML = '<p class="no-bookings">Loading…</p>';
-    pastEventModal.classList.add('active');
-    pastEventModal.style.display = 'flex';
+// Opens the existing booking form for the selected date. Reached only from the
+// Date Details modal's "Book an Event" button. Authentication is required, and
+// past-date / availability validation still happens in the submit handler.
+function bookAnEvent() {
+    // Past dates are not bookable — this takes precedence over the logged-out
+    // login prompt, and matches the disabled button (defense in depth).
+    if (isPastDate(selectedDate)) return;
+    closeDetailsModal();
+    if (!currentUser) {
+        showLoginRequired('booking');
+        return;
+    }
+    openBookingForm(selectedDate);
+}
+
+// The Date Details modal — the first step when any calendar date is clicked.
+// Shows the selected date plus the public approved/completed events for it, with
+// a "Book an Event" button. Only exposes non-private fields; never creates or
+// modifies bookings. `allowBooking:false` hides the button (reschedule context).
+async function showDateDetails(dateString, { allowBooking = true } = {}) {
+    detailsDateDisplay.innerText = dateString;
+
+    // Book an Event is disabled for past dates (Layer 1 UI guard). Recomputed on
+    // every open, so the state always matches the currently selected date.
+    const past = allowBooking && isPastDate(dateString);
+    bookAnEventBtn.style.display = allowBooking ? '' : 'none';
+    bookAnEventBtn.disabled = past;
+    document.getElementById('pastDateNote').style.display = past ? 'block' : 'none';
+
+    bookingDetailsList.innerHTML = '<p class="no-bookings">Loading…</p>';
+    detailsModal.classList.add('active');
+    detailsModal.style.display = 'flex';
 
     try {
+        // Public field list only — never customer_email, description, or other
+        // private columns. Only confirmed public events (approved/completed).
+        const publicFields = 'id, date, start, end, venue, venue_capacity, type, pax, status';
         const { data, error } = await supabase
             .from('event_bookings')
-            .select('*')
+            .select(publicFields)
             .eq('date', dateString)
-            .in('status', ['approved', 'completed', 'pending']);
+            .in('status', ['approved', 'completed']);
         if (error) throw error;
 
         const events = (data || []).sort((a, b) => (a.start || '').localeCompare(b.start || ''));
 
         if (events.length === 0) {
-            pastEventTitle.innerText = 'No Event Recorded';
-            pastEventList.innerHTML = '<div class="pending-info"><p>No event was recorded for this date.</p></div>';
+            bookingDetailsList.innerHTML = `
+                <div class="no-events-state">
+                    <h3>No Events Scheduled</h3>
+                    <p>No approved events are scheduled for this date.</p>
+                </div>`;
             return;
         }
 
-        pastEventList.innerHTML = events.map((b, i) => `
-            <div class="booking-card ${b.status}">
-                <h3>Event #${i + 1}: ${b.type || 'Event'} <span class="status-badge ${b.status}">${statusLabel(b.status)}</span></h3>
-                <p><strong>Event Date:</strong> ${dateString}</p>
-                <p><strong>Time:</strong> ${b.start || '—'} – ${b.end || '—'}</p>
-                <p><strong>Venue:</strong> ${b.venue || '—'}</p>
-                <p><strong>Capacity:</strong> ${b.venue_capacity ? b.venue_capacity + ' pax' : '—'}</p>
-                <p><strong>Number of Pax:</strong> ${b.pax || '—'}</p>
-                <p><strong>Status:</strong> ${statusLabel(b.status)}</p>
-                <p><strong>Description:</strong> ${b.description || 'No description'}</p>
+        // Render every approved/completed event for the date (not just the first).
+        bookingDetailsList.innerHTML = events.map(b => `
+            <div class="booking-card ${escHtml(b.status)}">
+                <h3>${escHtml(b.type || 'Event')} <span class="status-badge ${escHtml(b.status)}">${statusLabel(b.status)}</span></h3>
+                <p><strong>Time:</strong> ${escHtml(b.start || '—')} – ${escHtml(b.end || '—')}</p>
+                <p><strong>Venue:</strong> ${escHtml(b.venue || '—')}</p>
+                <p><strong>Capacity:</strong> ${b.venue_capacity ? escHtml(b.venue_capacity) + ' pax' : '—'}</p>
+                <p><strong>Number of Pax:</strong> ${escHtml(b.pax || '—')}</p>
             </div>
         `).join('');
     } catch (err) {
-        console.error('Failed to load past events:', err);
-        pastEventList.innerHTML = '<div class="pending-info"><p>Could not load event history. Please try again.</p></div>';
+        console.error('Failed to load event details:', err);
+        bookingDetailsList.innerHTML = '<p class="no-bookings">Could not load event details. Please try again.</p>';
     }
 }
 
@@ -349,23 +365,6 @@ function openBookingForm(dateString) {
     bookingModal.style.display = 'flex';
 }
 
-function showBookingDetails(dateString) {
-    detailsDateDisplay.innerText = `Date: ${dateString}`;
-    const approved = bookingsData[dateString].filter(b => b.status === 'approved');
-    bookingDetailsList.innerHTML = approved.map((b, i) => `
-        <div class="booking-card approved">
-            <h3>Event #${i + 1}: ${b.type} <span class="status-badge approved">Reserved</span></h3>
-            <p><strong>Time:</strong> ${b.start} – ${b.end}</p>
-            <p><strong>Venue:</strong> ${b.venue || '—'}</p>
-            <p><strong>Capacity:</strong> ${b.venue_capacity ? b.venue_capacity + ' pax' : '—'}</p>
-            <p><strong>Number of Pax:</strong> ${b.pax}</p>
-            <p><strong>Description:</strong> ${b.description || 'No description'}</p>
-        </div>
-    `).join('') || '<p class="no-bookings">No approved bookings for this date</p>';
-    detailsModal.classList.add('active');
-    detailsModal.style.display = 'flex';
-}
-
 function showPendingDetails(dateString) {
     pendingDateDisplay.innerText = `Date: ${dateString}`;
     const pending = bookingsData[dateString].filter(b => b.status === 'pending');
@@ -397,26 +396,39 @@ function closePendingModal() {
     pendingModal.classList.remove('active');
     pendingModal.style.display = 'none';
 }
-function closePastEventModal() {
-    pastEventModal.classList.remove('active');
-    pastEventModal.style.display = 'none';
+// Login-required prompt for logged-out visitors attempting an authenticated
+// action (booking or rescheduling). View-only actions never trigger this.
+function showLoginRequired(context) {
+    const msg = context === 'booking'
+        ? 'Please log in to submit an event booking request.'
+        : 'Please log in to manage or reschedule your event bookings.';
+    document.getElementById('loginRequiredMsg').textContent = msg;
+    loginRequiredModal.classList.add('active');
+    loginRequiredModal.style.display = 'flex';
+}
+function closeLoginRequiredModal() {
+    loginRequiredModal.classList.remove('active');
+    loginRequiredModal.style.display = 'none';
 }
 
 cancelBtn.addEventListener('click', closeBookingModal);
 document.getElementById('closeBookingBtn').addEventListener('click', closeBookingModal);
 closeDetailsBtn.addEventListener('click', closeDetailsModal);
+document.getElementById('closeDetailsX').addEventListener('click', closeDetailsModal);
+bookAnEventBtn.addEventListener('click', bookAnEvent);
 closePendingBtn.addEventListener('click', closePendingModal);
-closePastEventBtn.addEventListener('click', closePastEventModal);
+document.getElementById('closeLoginRequiredBtn').addEventListener('click', closeLoginRequiredModal);
+document.getElementById('cancelLoginRequiredBtn').addEventListener('click', closeLoginRequiredModal);
 
 window.addEventListener('click', e => {
-    if (e.target === bookingModal)   closeBookingModal();
-    if (e.target === detailsModal)   closeDetailsModal();
-    if (e.target === pendingModal)   closePendingModal();
-    if (e.target === pastEventModal) closePastEventModal();
+    if (e.target === bookingModal)       closeBookingModal();
+    if (e.target === detailsModal)       closeDetailsModal();
+    if (e.target === pendingModal)       closePendingModal();
+    if (e.target === loginRequiredModal) closeLoginRequiredModal();
 });
 
 document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { closeBookingModal(); closeDetailsModal(); closePendingModal(); closePastEventModal(); }
+    if (e.key === 'Escape') { closeBookingModal(); closeDetailsModal(); closePendingModal(); closeLoginRequiredModal(); }
 });
 
 // ==========================================
@@ -557,6 +569,13 @@ document.getElementById('endTime').addEventListener('change',   refreshVenueAvai
 bookingForm.addEventListener('submit', async e => {
     e.preventDefault();
 
+    // Authentication is required to submit a NEW booking. Checked here up front
+    // and again immediately before the insert below.
+    if (!(await getUser())) {
+        showLoginRequired('booking');
+        return;
+    }
+
     // Safety check: never allow creating a NEW booking on a past date, even if
     // the form was somehow opened for one.
     if (isPastDate(selectedDate)) {
@@ -628,6 +647,13 @@ bookingForm.addEventListener('submit', async e => {
     // Submit booking
     try {
         const user = await getUser();
+
+        // Definitive auth guard immediately before the insert — a logged-out
+        // visitor never reaches the Supabase insert, so no record is created.
+        if (!user) {
+            showLoginRequired('booking');
+            return;
+        }
 
         // FINAL past-date guard — immediately before the insert, validating the
         // exact date value that is about to be written to the database.
@@ -758,6 +784,9 @@ function renderMyBookings() {
 
 // ── OPEN / CLOSE MY BOOKINGS MODAL ───────────────────────────────────────────
 async function openMyBookingsModal() {
+    // My Bookings is authenticated-only (the header button is not shown to
+    // guests; this guards any programmatic access too).
+    if (!currentUser) { showLoginRequired('reschedule'); return; }
     // Always refresh from the existing retrieval logic so the list is current.
     await loadMyBookings();
     myBookingsModal.classList.add('active');
@@ -791,6 +820,9 @@ function addMyBookingsNavButton() {
 
 // ── ENTER / EXIT RESCHEDULE MODE ─────────────────────────────────────────────
 function startReschedule(bookingId) {
+    // Rescheduling is authenticated-only.
+    if (!currentUser) { showLoginRequired('reschedule'); return; }
+
     const booking = myBookings.find(b => String(b.id) === String(bookingId));
     // Re-verify eligibility (ownership + status + not past) before entering mode.
     if (!booking || !canReschedule(booking)) {
@@ -1052,6 +1084,10 @@ async function doReschedule() {
     if (isReschedulingBusy) return;      // guard against rapid double-clicks
     const b = reschedulingBooking;
     if (!b) return;
+
+    // Definitive auth guard immediately before the DB update — no update runs
+    // for a logged-out visitor.
+    if (!(await getUser())) { showLoginRequired('reschedule'); return; }
 
     const newDate = rescheduleNewDate;
     const start   = rescheduleStart.value;

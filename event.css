@@ -618,6 +618,22 @@ nav a:hover {
     transform: translateY(0);
 }
 
+/* Disabled button state (e.g. Book an Event on a past date). */
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* Subtle note shown above the Book an Event button for past dates. */
+.past-date-note {
+    text-align: center;
+    color: #b8730a;
+    font-size: 0.85rem;
+    margin: 6px 0 0;
+}
+
 /* ========== BOOKING CARDS ========== */
 .booking-card {
     background-color: var(--white);
@@ -699,6 +715,22 @@ nav a:hover {
     font-style: italic;
     font-size: 1rem;
 }
+
+/* Date Details modal — empty state when a date has no scheduled events. */
+.no-events-state {
+    text-align: center;
+    padding: 22px 10px 8px;
+    color: #666;
+}
+
+.no-events-state h3 {
+    font-family: var(--font-heading);
+    color: var(--primary-green);
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+}
+
+.no-events-state p { font-size: 0.95rem; }
 
 .status-badge.completed {
     background-color: rgba(93, 139, 97, 0.15);
@@ -822,6 +854,25 @@ nav a:hover {
 .btn-cancel-reschedule:hover {
     background-color: rgba(46, 102, 55, 0.08);
     border-color: var(--primary-green);
+}
+
+/* ========== LOGIN REQUIRED MODAL ========== */
+.login-required-content { max-width: 420px; }
+
+.login-required-msg {
+    text-align: center;
+    color: #555;
+    font-size: 1rem;
+    margin: 4px 0 2px;
+    line-height: 1.55;
+}
+
+/* Anchor styled as a modal button (the Log In link). */
+a.btn {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* ========== RESCHEDULE MODAL ========== */

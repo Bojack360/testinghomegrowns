@@ -152,38 +152,25 @@
         </div>
     </div>
 
+    <!-- Date Details modal: first step on any calendar date click -->
     <div class="modal-overlay" id="detailsModal">
         <div class="modal-content">
+            <span class="modal-close" id="closeDetailsX" title="Close">&times;</span>
             <div class="modal-header">
-                <h2>Booking Details</h2>
+                <h2>Event Details</h2>
             </div>
-            
+
             <div class="selected-date-display" id="detailsDateDisplay">
             </div>
 
             <div id="bookingDetailsList">
             </div>
 
+            <p class="past-date-note" id="pastDateNote" style="display:none;">Past dates cannot be booked.</p>
+
             <div class="modal-buttons">
                 <button type="button" class="btn btn-cancel" id="closeDetailsBtn">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="pastEventModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="pastEventTitle">Event History</h2>
-            </div>
-
-            <div class="selected-date-display" id="pastEventDateDisplay">
-            </div>
-
-            <div id="pastEventList">
-            </div>
-
-            <div class="modal-buttons">
-                <button type="button" class="btn btn-cancel" id="closePastEventBtn">Close</button>
+                <button type="button" class="btn btn-book" id="bookAnEventBtn">Book an Event</button>
             </div>
         </div>
     </div>
@@ -207,6 +194,21 @@
 
             <div class="modal-buttons">
                 <button type="button" class="btn btn-cancel" id="closePendingBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login required: shown when a logged-out visitor tries to book/reschedule -->
+    <div class="modal-overlay" id="loginRequiredModal">
+        <div class="modal-content login-required-content">
+            <span class="modal-close" id="closeLoginRequiredBtn" title="Close">&times;</span>
+            <div class="modal-header">
+                <h2>Login Required</h2>
+            </div>
+            <p class="login-required-msg" id="loginRequiredMsg"></p>
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-cancel" id="cancelLoginRequiredBtn">Cancel</button>
+                <a href="login.html?redirect=event.html" class="btn btn-book" id="loginRequiredBtn">Log In</a>
             </div>
         </div>
     </div>
