@@ -2,21 +2,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@600&display=swap');
 
 :root {
-    --bg-dark: #121212;
-    --card-bg: rgba(255, 255, 255, 0.05);
-    --border-color: rgba(255, 255, 255, 0.1);
-    --accent-gold: #f39c12;
-    --text-white: #ffffff;
-    --text-gray: #aaaaaa;
-    --success: #2ecc71;
-    --danger: #e74c3c;
+    /* Brand palette — same values as the user-facing site (index.css) */
+    --primary-green: #2E6637;
+    --secondary-green: #5D8B61;
+    --accent-yellow: #EDEF67;
+    --accent-yellow-dark: #dfe14a;
+    --bg-cream: #FFFCEE;
+    --dark-text: #2B2B2B;
+
+    /* legacy admin variable names remapped to the brand palette */
+    --bg-dark: #FFFCEE;
+    --card-bg: #FFFFFF;
+    --border-color: rgba(46, 102, 55, 0.15);
+    --accent-gold: #2E6637;
+    --text-white: #2B2B2B;   /* now the body text colour */
+    --text-gray: #666666;
+    --success: #2E6637;
+    --danger: #c0392b;
+    --warning: #a67c00;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-    background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
-                url('assets/images/realbg.jpg'); /* Same bg as main site */
+    background: var(--bg-cream);
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -29,7 +38,7 @@ body {
 
 /* --- NAVBAR (Matching Header) --- */
 .navbar {
-    background: rgba(18, 18, 18, 0.95);
+    background: rgba(255, 252, 238, 0.95);
     border-bottom: 1px solid var(--border-color);
     padding: 15px 40px;
     position: sticky;
@@ -57,27 +66,29 @@ body {
 
 .navbar a {
     text-decoration: none;
-    color: var(--text-white);
-    font-family: 'Playfair Display', serif;
+    color: var(--primary-green);
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
     letter-spacing: 1px;
     transition: color 0.3s;
 }
 
-.navbar a:hover { color: var(--accent-gold); }
+.navbar a:hover { color: var(--secondary-green); }
 
 .butones {
-    background: transparent;
-    border: 1px solid var(--text-white);
-    color: var(--text-white);
+    background: #FFFFFF;
+    border: 1px solid var(--primary-green);
+    color: var(--primary-green);
     padding: 8px 20px;
-    border-radius: 4px;
+    border-radius: 12px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
 }
 
 .butones:hover {
-    background: var(--text-white);
-    color: #000;
+    background: var(--primary-green);
+    color: #FFFFFF;
 }
 
 /* --- MAIN CONTAINER --- */
@@ -95,14 +106,15 @@ main {
 }
 
 .panel-header h1 {
+    color: var(--primary-green);
     font-family: 'Playfair Display', serif;
     font-size: 2rem;
     letter-spacing: 1px;
 }
 
 .add-item-btn {
-    background: var(--accent-gold);
-    color: #000;
+    background: var(--accent-yellow);
+    color: var(--primary-green);
     border: none;
     padding: 12px 24px;
     border-radius: 8px;
@@ -111,7 +123,7 @@ main {
     transition: transform 0.2s;
 }
 
-.add-item-btn:hover { transform: translateY(-2px); }
+.add-item-btn:hover { transform: translateY(-2px); background: var(--accent-yellow-dark); }
 
 /* --- STATS CARDS --- */
 .stats-container {
@@ -127,7 +139,7 @@ main {
     border-radius: 12px;
     padding: 25px;
     text-align: center;
-    backdrop-filter: blur(5px);
+    box-shadow: 0 6px 20px rgba(46, 102, 55, 0.08);
 }
 
 .stat-card h3 {
@@ -144,11 +156,11 @@ main {
     color: var(--text-white);
 }
 
-.stat-card.reserved p { color: #3498db; }
+.stat-card.reserved p { color: #2471a3; }
 .stat-card.sold p     { color: var(--success); }
 .stat-card.expired p  { color: var(--danger); }
 /* legacy classes kept for safety */
-.stat-card.pending p { color: var(--accent-gold); }
+.stat-card.pending p { color: var(--warning); }
 .stat-card.approved p { color: var(--success); }
 .stat-card.declined p { color: var(--danger); }
 
@@ -171,7 +183,6 @@ main {
     border-radius: 8px;
     font-size: 0.9rem;
     cursor: pointer;
-    backdrop-filter: blur(5px);
     transition: border-color 0.2s, transform 0.2s;
 }
 .pickup-period-btn:hover {
@@ -212,7 +223,7 @@ main {
 }
 .pickup-input-group input {
     width: 90px;
-    background: rgba(0, 0, 0, 0.3);
+    background: #FFFFFF;
     border: 1px solid var(--border-color);
     color: var(--text-white);
     padding: 10px 12px;
@@ -252,7 +263,7 @@ main {
 
 .filter-group select,
 .filter-group input {
-    background: rgba(0,0,0,0.3);
+    background: #FFFFFF;
     border: 1px solid var(--border-color);
     color: var(--text-white);
     padding: 10px 15px;
@@ -269,7 +280,7 @@ main {
     cursor: pointer;
 }
 
-.clear-filters:hover { border-color: var(--text-white); color: var(--text-white); }
+.clear-filters:hover { border-color: var(--primary-green); color: var(--primary-green); }
 
 /* --- ADVANCED FILTER TOOLBAR --- */
 .filter-toolbar {
@@ -283,7 +294,7 @@ main {
 .filter-search {
     flex: 1 1 240px;
     min-width: 170px;
-    background: rgba(0,0,0,0.3);
+    background: #FFFFFF;
     border: 1px solid var(--border-color);
     color: var(--text-white);
     padding: 10px 14px;
@@ -291,11 +302,11 @@ main {
     outline: none;
     font-size: 0.9rem;
 }
-.filter-search::placeholder { color: #777; }
+.filter-search::placeholder { color: #999; }
 .filter-search:focus { border-color: var(--accent-gold); }
 
 .filter-select {
-    background: rgba(0,0,0,0.3);
+    background: #FFFFFF;
     border: 1px solid var(--border-color);
     color: var(--text-white);
     padding: 10px 12px;
@@ -314,13 +325,13 @@ main {
     font-size: 0.82rem;
 }
 .filter-date input {
-    background: rgba(0,0,0,0.3);
+    background: #FFFFFF;
     border: 1px solid var(--border-color);
     color: var(--text-white);
     padding: 8px 10px;
     border-radius: 8px;
     outline: none;
-    color-scheme: dark;
+    color-scheme: light;
 }
 .filter-date input:focus { border-color: var(--accent-gold); }
 
@@ -346,7 +357,7 @@ main {
     min-width: 34px;
     height: 34px;
     padding: 0 10px;
-    background: rgba(0,0,0,0.3);
+    background: #FFFFFF;
     border: 1px solid var(--border-color);
     color: var(--text-white);
     border-radius: 8px;
@@ -359,9 +370,9 @@ main {
     color: var(--accent-gold);
 }
 .page-btn.active {
-    background: var(--accent-gold);
-    border-color: var(--accent-gold);
-    color: #000;
+    background: var(--accent-yellow);
+    border-color: var(--accent-yellow-dark);
+    color: var(--primary-green);
     font-weight: 700;
     cursor: default;
 }
@@ -382,7 +393,7 @@ main {
     border-radius: 12px;
     overflow-x: auto;
     margin-bottom: 50px;
-    backdrop-filter: blur(5px);
+    box-shadow: 0 6px 20px rgba(46, 102, 55, 0.08);
 }
 
 table {
@@ -398,7 +409,8 @@ th, td {
 }
 
 th {
-    color: var(--text-gray);
+    background: #FBF9EC;
+    color: var(--primary-green);
     font-weight: 600;
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -406,7 +418,7 @@ th {
 }
 
 tr:last-child td { border-bottom: none; }
-tr:hover { background: rgba(255,255,255,0.02); }
+tr:hover { background: rgba(46, 102, 55, 0.04); }
 
 td:last-child {
     white-space: nowrap;
@@ -426,14 +438,14 @@ td:last-child .action-btn {
     text-transform: uppercase;
 }
 
-.status-badge.reserved  { background: rgba(52,152,219,0.2);  color: #5dade2; }
-.status-badge.sold      { background: rgba(46,204,113,0.2);  color: var(--success); }
-.status-badge.expired   { background: rgba(231,76,60,0.2);   color: var(--danger); }
-.status-badge.cancelled { background: rgba(149,165,166,0.22); color: #b7c0c1; }
+.status-badge.reserved  { background: rgba(36,113,163,0.12); color: #2471a3; }
+.status-badge.sold      { background: rgba(46,102,55,0.12);  color: var(--success); }
+.status-badge.expired   { background: rgba(192,57,43,0.12);  color: var(--danger); }
+.status-badge.cancelled { background: rgba(102,102,102,0.14); color: #666666; }
 /* legacy status classes kept for safety */
-.status-badge.pending  { background: rgba(243,156,18,0.2); color: var(--accent-gold); }
-.status-badge.approved { background: rgba(46,204,113,0.2); color: var(--success); }
-.status-badge.declined { background: rgba(231,76,60,0.2); color: var(--danger); }
+.status-badge.pending  { background: rgba(166,124,0,0.14); color: var(--warning); }
+.status-badge.approved { background: rgba(46,102,55,0.12); color: var(--success); }
+.status-badge.declined { background: rgba(192,57,43,0.12); color: var(--danger); }
 
 .detail-value.status-badge {
     flex: unset;
@@ -442,7 +454,7 @@ td:last-child .action-btn {
 
 .action-btn.btn-delete {
     all: unset !important;
-    background-color: #000 !important;
+    background-color: var(--danger) !important;
     color: #fff !important;
     border: none !important;
     border-radius: 12px !important;
@@ -510,6 +522,7 @@ td:last-child .action-btn {
 
 /* --- PRODUCTS GRID --- */
 .products-section h2 {
+    color: var(--primary-green);
     font-family: 'Playfair Display', serif;
     margin-bottom: 20px;
     font-size: 1.5rem;
@@ -527,6 +540,7 @@ td:last-child .action-btn {
     border-radius: 12px;
     padding: 15px;
     text-align: center;
+    box-shadow: 0 6px 20px rgba(46, 102, 55, 0.08);
     transition: transform 0.3s;
 }
 
@@ -537,7 +551,7 @@ td:last-child .action-btn {
     height: 180px;
     object-fit: contain;
     margin-bottom: 15px;
-    background: rgba(255,255,255,0.03);
+    background: #FBF9EC;
     border-radius: 8px;
 }
 
@@ -561,7 +575,7 @@ td:last-child .action-btn {
 }
 
 .cat-select {
-    background: rgba(0, 0, 0, 0.3);
+    background: #FFFFFF;
     border: 1px solid var(--border-color);
     color: var(--text-white);
     font-family: inherit;
@@ -589,13 +603,13 @@ td:last-child .action-btn {
     font-weight: 600;
 }
 
-.stock-label.stock-low { color: var(--accent-gold); }
+.stock-label.stock-low { color: var(--warning); }
 .stock-label.stock-out { color: var(--danger); }
 
 .stock-stepper {
     display: inline-flex;
     align-items: center;
-    background: rgba(0, 0, 0, 0.3);
+    background: #FFFFFF;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     overflow: hidden;
@@ -617,7 +631,7 @@ td:last-child .action-btn {
     transition: background 0.2s ease, color 0.2s ease;
 }
 
-.stock-stepper button:hover { background: rgba(255, 255, 255, 0.1); color: var(--accent-gold); }
+.stock-stepper button:hover { background: rgba(46, 102, 55, 0.08); color: var(--accent-gold); }
 
 .stock-stepper input {
     width: 52px;
@@ -636,7 +650,7 @@ td:last-child .action-btn {
     -moz-appearance: textfield;
 }
 
-.stock-stepper input:focus { background: rgba(243, 156, 18, 0.1); }
+.stock-stepper input:focus { background: rgba(46, 102, 55, 0.06); }
 
 .stock-stepper input::-webkit-outer-spin-button,
 .stock-stepper input::-webkit-inner-spin-button {
@@ -647,7 +661,7 @@ td:last-child .action-btn {
 .product-actions { display: flex; gap: 10px; justify-content: center; }
 .btn-edit { border-color: var(--accent-gold); color: var(--accent-gold); }
 .btn-delete {
-    background-color: #000 !important;
+    background-color: var(--danger) !important;
     color: #fff !important;
     border: none !important;
     border-radius: 12px !important;
@@ -670,15 +684,15 @@ td:last-child .action-btn {
     display: none;
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(5px);
+    background: rgba(43, 43, 43, 0.5);
     z-index: 2000;
     align-items: center;
     justify-content: center;
 }
 
 .modal-content {
-    background: #1a1a1a;
+    background: #FFFFFF;
+    box-shadow: 0 12px 40px rgba(46, 102, 55, 0.2);
     border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 30px;
@@ -695,6 +709,7 @@ td:last-child .action-btn {
 }
 
 .modal-title {
+    color: var(--primary-green);
     font-family: 'Playfair Display', serif;
     margin-bottom: 25px;
     padding-bottom: 15px;
@@ -722,7 +737,7 @@ td:last-child .action-btn {
 
 .detail-input {
     width: 100%;
-    background: rgba(0,0,0,0.3);
+    background: #FFFFFF;
     border: 1px solid var(--border-color);
     color: var(--text-white);
     padding: 10px;
@@ -752,8 +767,8 @@ td:last-child .action-btn {
 
 .btn-approve { background: var(--success); color: #fff; }
 .btn-decline { background: var(--danger); color: #fff; }
-.btn-confirm { background: var(--accent-gold); color: #000; }
-.btn-cancel { background: rgba(255,255,255,0.1); color: var(--text-white); }
+.btn-confirm { background: var(--accent-yellow); color: var(--primary-green); }
+.btn-cancel { background: #FFFFFF; color: var(--primary-green); box-shadow: inset 0 0 0 1.5px var(--secondary-green); }
 
 /* --- FILE PICKER --- */
 .file-picker-group {
@@ -764,9 +779,9 @@ td:last-child .action-btn {
 }
 
 .btn-pick-file {
-    background: rgba(255,255,255,0.1);
-    color: var(--text-white);
-    border: 1px solid rgba(255,255,255,0.3);
+    background: #FFFFFF;
+    color: var(--primary-green);
+    border: 1px solid rgba(46, 102, 55, 0.3);
     padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
@@ -776,7 +791,7 @@ td:last-child .action-btn {
 }
 
 .btn-pick-file:hover {
-    background: rgba(255,255,255,0.2);
+    background: rgba(46, 102, 55, 0.08);
 }
 
 .file-name-display {
@@ -793,7 +808,7 @@ td:last-child .action-btn {
     max-height: 120px;
     object-fit: contain;
     border-radius: 6px;
-    border: 1px solid rgba(255,255,255,0.15);
+    border: 1px solid rgba(46, 102, 55, 0.15);
 }
 
 /* --- FOOTER --- */
@@ -810,8 +825,8 @@ footer img:hover { opacity: 1; }
 
 /* Revert Button - Gold Accent */
 .btn-revert {
-    background-color: #f39c12 !important;
-    color: #000 !important;
+    background-color: var(--accent-yellow) !important;
+    color: var(--primary-green) !important;
     border: none !important;
     padding: 10px 20px !important;
     border-radius: 8px !important;
@@ -822,7 +837,7 @@ footer img:hover { opacity: 1; }
 
 .btn-revert:hover {
     opacity: 0.8;
-    background-color: #e67e22 !important;
+    background-color: var(--accent-yellow-dark) !important;
 }
 
 /* --- RESPONSIVE --- */

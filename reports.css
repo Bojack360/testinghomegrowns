@@ -1,19 +1,29 @@
 ﻿@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@600&display=swap");
 
 :root {
-    --card-bg: rgba(255,255,255,0.05);
-    --border: rgba(255,255,255,0.1);
-    --gold: #f39c12;
-    --white: #ffffff;
-    --gray: #aaaaaa;
-    --success: #2ecc71;
-    --danger: #e74c3c;
-    --blue: #3498db;
+    /* Brand palette — same values as the user-facing site (index.css) */
+    --primary-green: #2E6637;
+    --secondary-green: #5D8B61;
+    --accent-yellow: #EDEF67;
+    --accent-yellow-dark: #dfe14a;
+    --bg-cream: #FFFCEE;
+    --dark-text: #2B2B2B;
+
+    /* legacy admin variable names remapped to the brand palette */
+    --card-bg: #FFFFFF;
+    --border: rgba(46, 102, 55, 0.15);
+    --gold: #2E6637;
+    --white: #2B2B2B;   /* now the body text colour */
+    --gray: #666666;
+    --success: #2E6637;
+    --danger: #c0392b;
+    --warning: #a67c00;
+    --blue: #2471a3;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-    background: linear-gradient(rgba(0,0,0,0.82),rgba(0,0,0,0.82)), url("assets/images/realbg.jpg") center/cover fixed;
+    background: var(--bg-cream);
     min-height: 100vh;
     color: var(--white);
     font-family: 'Lato', sans-serif;
@@ -22,7 +32,7 @@ body {
 
 /* NAVBAR */
 .navbar {
-     background: rgba(18,18,18,0.95); 
+     background: rgba(255, 252, 238, 0.95); 
      border-bottom: 1px solid var(--border); 
      padding: 15px 40px; 
      position: sticky; 
@@ -47,27 +57,30 @@ body {
     }
 .navbar a {
      text-decoration: none; 
-     color: var(--white); 
-     font-family: "Playfair Display", serif; 
+     color: var(--primary-green); 
+     font-family: 'Lato', sans-serif; 
+     font-weight: 700; 
      letter-spacing: 1px; 
      transition: color 0.3s; 
     }
 .navbar a:hover {
-     color: var(--gold); 
+     color: var(--secondary-green); 
     }
 .butones {
-     background: transparent; 
-     border: 1px solid var(--white); 
-     color: var(--white); 
-     padding: 8px 20px; 
-     border-radius: 4px; 
-     cursor: pointer; 
-     transition: all 0.3s; 
-    }
+    background: #FFFFFF;
+    border: 1px solid var(--primary-green);
+    color: var(--primary-green);
+    padding: 8px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
 .butones:hover {
-     background: var(--white); 
-     color: #000; 
-    }
+    background: var(--primary-green);
+    color: #FFFFFF;
+}
 
 /* LAYOUT */
 .reports-wrapper {
@@ -85,6 +98,7 @@ body {
      margin-bottom: 30px; 
     }
 .reports-header h1 {
+     color: var(--primary-green);
      font-family: "Playfair Display", serif; 
      font-size: 2rem; 
      letter-spacing: 1px; 
@@ -104,18 +118,18 @@ body {
      gap: 6px; 
     }
 .date-filters input[type="date"] {
-     background: rgba(0,0,0,0.35); 
+     background: #FFFFFF; 
      border: 1px solid var(--border); 
      color: var(--white); 
      padding: 8px 12px; 
      border-radius: 8px; 
      outline: none; 
      font-size: 0.88rem; 
-     color-scheme: dark; 
+     color-scheme: light; 
     }
 .btn-filter {
-     background: var(--gold); 
-     color: #000; 
+     background: var(--accent-yellow); 
+     color: var(--primary-green); 
      border: none; 
      padding: 9px 18px; 
      border-radius: 8px; 
@@ -153,8 +167,8 @@ body {
      transition: all 0.2s;
     }
 .btn-print:hover {
-     background: var(--gold);
-     color: #000;
+     background: var(--primary-green);
+     color: #FFFFFF;
     }
 
 /* Print-only report header — hidden on screen, revealed inside @media print. */
@@ -170,7 +184,7 @@ body {
     margin-bottom: 24px;
 }
 .report-tab {
-    background: rgba(0, 0, 0, 0.3);
+    background: #FFFFFF;
     border: 1px solid var(--border);
     color: var(--gray);
     padding: 9px 18px;
@@ -186,9 +200,9 @@ body {
     transform: translateY(-1px);
 }
 .report-tab.active {
-    background: var(--gold);
-    border-color: var(--gold);
-    color: #000;
+    background: var(--accent-yellow);
+    border-color: var(--accent-yellow-dark);
+    color: var(--primary-green);
     cursor: default;
 }
 
@@ -221,7 +235,7 @@ body {
      border-radius: 12px; 
      padding: 24px; 
      text-align: center; 
-     backdrop-filter: blur(5px); 
+     box-shadow: 0 6px 20px rgba(46, 102, 55, 0.08); 
     }
 .stat-card h3 {
      color: var(--gray); 
@@ -252,7 +266,7 @@ body {
      border-radius: 12px;
      padding: 20px 24px;
      margin-bottom: 24px;
-     backdrop-filter: blur(5px);
+     box-shadow: 0 6px 20px rgba(46, 102, 55, 0.08);
     }
 
 /* Report header: icon + title, muted description, yellow accent divider */
@@ -262,7 +276,7 @@ body {
 .section-card h2 {
     font-family: "Playfair Display", serif;
     font-size: 1.4rem;
-    color: var(--white);
+    color: var(--primary-green);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -279,7 +293,7 @@ body {
 }
 .report-divider {
     height: 2px;
-    background: var(--gold);
+    background: var(--accent-yellow);
     border-radius: 2px;
     opacity: 0.85;
     margin-bottom: 20px;
@@ -293,19 +307,18 @@ body {
     margin-bottom: 24px;
 }
 .mini-card {
-    background: rgba(255, 255, 255, 0.04);
+    background: #FFFFFF;
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 16px 18px;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 14px rgba(46, 102, 55, 0.08);
     display: flex;
     flex-direction: column;
     gap: 6px;
     transition: border-color 0.2s ease, transform 0.2s ease;
 }
 .mini-card:hover {
-    border-color: rgba(243, 156, 18, 0.4);
+    border-color: rgba(46, 102, 55, 0.35);
     transform: translateY(-2px);
 }
 .mini-label {
@@ -336,6 +349,11 @@ body {
     gap: 10px;
     margin-bottom: 16px;
 }
+/* Second pager under each report table */
+.pagination-bar-bottom {
+    margin-top: 16px;
+    margin-bottom: 0;
+}
 .pagination-info {
     color: var(--gray);
     font-size: 0.85rem;
@@ -349,7 +367,7 @@ body {
     min-width: 34px;
     height: 34px;
     padding: 0 10px;
-    background: rgba(0,0,0,0.3);
+    background: #FFFFFF;
     border: 1px solid var(--border);
     color: var(--white);
     border-radius: 8px;
@@ -362,9 +380,9 @@ body {
     color: var(--gold);
 }
 .page-btn.active {
-    background: var(--gold);
-    border-color: var(--gold);
-    color: #000;
+    background: var(--accent-yellow);
+    border-color: var(--accent-yellow-dark);
+    color: var(--primary-green);
     font-weight: 700;
     cursor: default;
 }
@@ -389,12 +407,12 @@ th, td {
      vertical-align: middle;
     }
 th {
-     color: var(--gray);
+     color: var(--primary-green);
      font-size: 0.78rem;
      text-transform: uppercase;
      letter-spacing: 1px;
      font-weight: 700;
-     background: rgba(0, 0, 0, 0.25);
+     background: #FBF9EC;
      padding-top: 15px;
      padding-bottom: 15px;
     }
@@ -404,13 +422,13 @@ tbody tr {
      transition: background 0.15s ease, box-shadow 0.15s ease;
     }
 tbody tr:nth-child(even) {
-     background: rgba(255, 255, 255, 0.02);
+     background: rgba(46, 102, 55, 0.03);
     }
 tr:last-child td {
      border-bottom: none;
     }
 tbody tr:hover {
-     background: rgba(255, 255, 255, 0.06);
+     background: rgba(46, 102, 55, 0.06);
      box-shadow: inset 3px 0 0 var(--gold);
     }
 
@@ -431,22 +449,22 @@ tbody tr:hover {
      text-transform: uppercase; 
     }
 .status-badge.approved, .status-badge.completed {
-     background: rgba(46,204,113,0.15); 
+     background: rgba(46,102,55,0.12); 
      color: var(--success); 
     }
 .status-badge.pending {
-     background: rgba(243,156,18,0.15); 
-     color: var(--gold); 
+     background: rgba(166,124,0,0.14); 
+     color: var(--warning); 
     }
 .status-badge.declined {
-     background: rgba(231,76,60,0.15); 
+     background: rgba(192,57,43,0.12); 
      color: var(--danger); 
     }
 
 .items-cell {
      max-width: 260px; 
      font-size: 0.82rem; 
-     color: #ccc; 
+     color: #555; 
     }
 
 @media (max-width: 900px) {
@@ -514,32 +532,31 @@ tbody tr:hover {
 }
 
 /* ============================================================
-   PRINT SECTION-PICKER MODAL (matches the admin dark/glass theme)
+   PRINT SECTION-PICKER MODAL (matches the admin brand theme)
    ============================================================ */
 .modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
+    background: rgba(43, 43, 43, 0.5);
     z-index: 3000;
     align-items: center;
     justify-content: center;
     padding: 20px;
 }
 .modal-content.print-modal {
-    background: #1c1c1c;
+    background: #FFFFFF;
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 26px;
     width: 100%;
     max-width: 420px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 20px 60px rgba(46, 102, 55, 0.2);
 }
 .print-modal .modal-title {
     font-family: "Playfair Display", serif;
     font-size: 1.4rem;
-    color: var(--white);
+    color: var(--primary-green);
     margin-bottom: 6px;
 }
 .print-modal-sub {
@@ -563,7 +580,7 @@ tbody tr:hover {
     padding: 10px 12px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    background: rgba(0, 0, 0, 0.25);
+    background: #FFFFFF;
     transition: border-color 0.2s;
 }
 .print-option:hover { border-color: var(--gold); }
@@ -580,7 +597,7 @@ tbody tr:hover {
 }
 .btn-quick {
     flex: 1;
-    background: rgba(0, 0, 0, 0.3);
+    background: #FFFFFF;
     border: 1px solid var(--border);
     color: var(--gray);
     padding: 8px 12px;
@@ -611,12 +628,12 @@ tbody tr:hover {
     transition: opacity 0.2s;
 }
 .modal-actions button:hover { opacity: 0.85; }
-.btn-cancel  { background: rgba(255, 255, 255, 0.1); color: var(--white); }
-.btn-confirm { background: var(--gold); color: #000; }
+.btn-cancel  { background: #FFFFFF; color: var(--primary-green); box-shadow: inset 0 0 0 1.5px var(--secondary-green); }
+.btn-confirm { background: var(--accent-yellow); color: var(--primary-green); }
 
 /* Receipt action button in the Product Sales table */
 .receipt-btn {
-    background: rgba(0, 0, 0, 0.3);
+    background: #FFFFFF;
     border: 1px solid var(--gold);
     color: var(--gold);
     padding: 6px 14px;
@@ -626,7 +643,7 @@ tbody tr:hover {
     cursor: pointer;
     transition: all 0.2s;
 }
-.receipt-btn:hover { background: var(--gold); color: #000; }
+.receipt-btn:hover { background: var(--primary-green); color: #FFFFFF; }
 
 /* Receipt view modal sized to the paper receipt */
 .modal-content.receipt-modal { max-width: 360px; padding: 22px; }

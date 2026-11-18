@@ -131,36 +131,50 @@ const PAGE_SIZE = 10;
 let eventsData = [], ordersData = [], posData = [];
 let eventsPage = 1, ordersPage = 1, posPage = 1;
 
+// Renders the pager above the table (infoId / pagId) and the matching one below it
+// (infoId + 'Bottom' / pagId + 'Bottom'). The bottom bar only shows when there is
+// more than one page; using it scrolls back up to the top of the report.
 function buildPager(infoId, pagId, total, page, onPageChange) {
-    const info = document.getElementById(infoId);
-    const pag  = document.getElementById(pagId);
     const pages    = Math.max(1, Math.ceil(total / PAGE_SIZE));
     const startIdx = (page - 1) * PAGE_SIZE;
     const shown    = Math.max(0, Math.min(PAGE_SIZE, total - startIdx));
-
-    if (info) info.textContent = total === 0
+    const infoText = total === 0
         ? 'Showing 0 records'
         : `Showing ${startIdx + 1}–${startIdx + shown} of ${total} records`;
 
-    if (!pag) return;
-    pag.innerHTML = '';
-    if (pages <= 1) return;
+    const topPag = document.getElementById(pagId);
+    const bottomPag = document.getElementById(pagId + 'Bottom');
+    const bottomBar = bottomPag && bottomPag.closest('.pagination-bar');
+    if (bottomBar) bottomBar.style.display = pages <= 1 ? 'none' : '';
 
-    const mk = (label, p, opts = {}) => {
-        const b = document.createElement('button');
-        b.className = 'page-btn' + (opts.active ? ' active' : '');
-        b.innerHTML = label;
-        b.disabled = !!opts.disabled;
-        if (!opts.disabled && !opts.active) b.addEventListener('click', () => onPageChange(p));
-        return b;
+    const render = (info, pag, isBottom) => {
+        if (info) info.textContent = infoText;
+        if (!pag) return;
+        pag.innerHTML = '';
+        if (pages <= 1) return;
+
+        const mk = (label, p, opts = {}) => {
+            const b = document.createElement('button');
+            b.className = 'page-btn' + (opts.active ? ' active' : '');
+            b.innerHTML = label;
+            b.disabled = !!opts.disabled;
+            if (!opts.disabled && !opts.active) b.addEventListener('click', () => {
+                onPageChange(p);
+                if (isBottom && topPag) topPag.closest('.report-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+            return b;
+        };
+
+        pag.appendChild(mk('&laquo;', 1, { disabled: page === 1 }));
+        pag.appendChild(mk('&lsaquo;', page - 1, { disabled: page === 1 }));
+        let s = Math.max(1, page - 2), e = Math.min(pages, s + 4); s = Math.max(1, e - 4);
+        for (let p = s; p <= e; p++) pag.appendChild(mk(String(p), p, { active: p === page }));
+        pag.appendChild(mk('&rsaquo;', page + 1, { disabled: page === pages }));
+        pag.appendChild(mk('&raquo;', pages, { disabled: page === pages }));
     };
 
-    pag.appendChild(mk('&laquo;', 1, { disabled: page === 1 }));
-    pag.appendChild(mk('&lsaquo;', page - 1, { disabled: page === 1 }));
-    let s = Math.max(1, page - 2), e = Math.min(pages, s + 4); s = Math.max(1, e - 4);
-    for (let p = s; p <= e; p++) pag.appendChild(mk(String(p), p, { active: p === page }));
-    pag.appendChild(mk('&rsaquo;', page + 1, { disabled: page === pages }));
-    pag.appendChild(mk('&raquo;', pages, { disabled: page === pages }));
+    render(document.getElementById(infoId), topPag, false);
+    render(document.getElementById(infoId + 'Bottom'), bottomPag, true);
 }
 
 // ── Events ──────────────────────────────────────────────────────────────────
