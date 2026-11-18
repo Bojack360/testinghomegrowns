@@ -4,7 +4,7 @@ import { buildReceiptHTML, generateReceiptNo } from './receipt.js';
 
 let products       = [];
 let cart           = {};
-let activeCategory = 'merchandise';
+let activeCategory = 'coffee';
 let discountType   = 'pct';
 let discountValue  = 0;
 let cashierName    = 'Admin';   // set from the logged-in admin on load
